@@ -2,6 +2,13 @@
 
 return [
     [
+        'key'        => 'dashboard11',
+        'name'       => 'admin::app.layouts.dashboard',
+        'route'      => 'admin.dashboard.index',
+        'sort'       => 2,
+        'icon-class' => 'dashboard-icon',
+    ],
+    [
         'key'        => 'dashboard',
         'name'       => 'admin::app.layouts.dashboard',
         'route'      => 'admin.dashboard.index',

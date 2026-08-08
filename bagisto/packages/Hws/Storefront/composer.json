@@ -1,0 +1,26 @@
+{
+    "name": "hws/storefront",
+    "description": "Public read-only storefront API (products, categories) for the Next.js frontend, built on Bagisto's existing repositories.",
+    "type": "bagisto-package",
+    "license": "proprietary",
+    "authors": [
+        { "name": "Himalayan Water Science" }
+    ],
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hws\\Storefront\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hws\\Storefront\\Providers\\StorefrontServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "784fc470c4b109fbf35ba360d76be525",
+    "content-hash": "131141c94d2c3c9d6ac405099c460ad9",
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
@@ -2323,6 +2323,43 @@
                 }
             ],
             "time": "2026-07-17T13:53:03+00:00"
+        },
+        {
+            "name": "hws/field-service",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/Hws/FieldService",
+                "reference": "2f44397d32a46c8a37f2a4af97407bbd02595b84"
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "type": "bagisto-package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Hws\\FieldService\\Providers\\FieldServiceServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hws\\FieldService\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Himalayan Water Science"
+                }
+            ],
+            "description": "Field service management (tasks, attendance, site surveys, leave, expenses) for Himalayan Water Science, built as a Bagisto package.",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "intervention/image",
@@ -7387,6 +7424,90 @@
                 }
             ],
             "time": "2025-07-17T15:46:43+00:00"
+        },
+        {
+            "name": "spatie/laravel-responsecache",
+            "version": "7.4.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-responsecache.git",
+                "reference": "cf0305f73fcc49dacfadd0f2228887a92fa736ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-responsecache/zipball/cf0305f73fcc49dacfadd0f2228887a92fa736ac",
+                "reference": "cf0305f73fcc49dacfadd0f2228887a92fa736ac",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/cache": "^8.71|^9.0|^10.0",
+                "illuminate/console": "^8.71|^9.0|^10.0",
+                "illuminate/container": "^8.71|^9.0|^10.0",
+                "illuminate/http": "^8.71|^9.0|^10.0",
+                "illuminate/support": "^8.71|^9.0|^10.0",
+                "nesbot/carbon": "^2.63",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.9"
+            },
+            "require-dev": {
+                "laravel/framework": "^9.0|^10.0",
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^6.23|^7.0|^8.0",
+                "pestphp/pest": "^1.22",
+                "phpunit/phpunit": "^9.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "ResponseCache": "Spatie\\ResponseCache\\Facades\\ResponseCache"
+                    },
+                    "providers": [
+                        "Spatie\\ResponseCache\\ResponseCacheServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\ResponseCache\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Speed up a Laravel application by caching the entire response",
+            "homepage": "https://github.com/spatie/laravel-responsecache",
+            "keywords": [
+                "cache",
+                "laravel",
+                "laravel-responsecache",
+                "performance",
+                "response",
+                "spatie"
+            ],
+            "support": {
+                "source": "https://github.com/spatie/laravel-responsecache/tree/7.4.10"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-10-28T18:47:12+00:00"
         },
         {
             "name": "spatie/laravel-sitemap",
@@ -13414,7 +13535,8 @@
     "stability-flags": {
         "codeception/codeception": 20,
         "codeception/module-laravel": 20,
-        "flynsarmy/db-blade-compiler": 20
+        "flynsarmy/db-blade-compiler": 20,
+        "hws/field-service": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

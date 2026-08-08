@@ -40,7 +40,7 @@ class UserController extends Controller
      * @return \Illuminate\View\View
      */
     public function index()
-    {
+    { 
         if (request()->ajax()) {
             return app(UserDataGrid::class)->toJson();
         }

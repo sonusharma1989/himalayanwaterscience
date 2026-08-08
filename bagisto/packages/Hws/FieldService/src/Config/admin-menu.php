@@ -1,0 +1,67 @@
+<?php
+
+return [
+    [
+        'key'        => 'field-service',
+        'name'       => 'Field Service',
+        'route'      => 'hws.admin.dashboard.index',
+        'sort'       => 15,
+        'icon-class' => 'icon-dashboard',
+    ],
+    [
+        'key'        => 'field-service.dashboard',
+        'name'       => 'Dashboard',
+        'route'      => 'hws.admin.dashboard.index',
+        'sort'       => 1,
+        'icon-class' => 'icon-dashboard',
+    ],
+    [
+        'key'        => 'field-service.employees',
+        'name'       => 'Employees',
+        'route'      => 'hws.admin.employees.index',
+        'sort'       => 2,
+        'icon-class' => 'icon-customers',
+    ],
+    [
+        'key'        => 'field-service.attendance',
+        'name'       => 'Attendance',
+        'route'      => 'hws.admin.attendance.index',
+        'sort'       => 3,
+        'icon-class' => 'icon-clock',
+    ],
+    [
+        'key'        => 'field-service.service_requests',
+        'name'       => 'Service Requests',
+        'route'      => 'hws.admin.service-requests.index',
+        'sort'       => 4,
+        'icon-class' => 'icon-warning',
+    ],
+    [
+        'key'        => 'field-service.sales_leads',
+        'name'       => 'Sales & Leads',
+        'route'      => 'hws.admin.sales-leads.index',
+        'sort'       => 5,
+        'icon-class' => 'icon-briefcase',
+    ],
+    [
+        'key'        => 'field-service.inventory',
+        'name'       => 'Inventory',
+        'route'      => 'hws.admin.inventory.index',
+        'sort'       => 6,
+        'icon-class' => 'icon-inventory',
+    ],
+    [
+        'key'        => 'field-service.expenses',
+        'name'       => 'Expenses',
+        'route'      => 'hws.admin.expenses.index',
+        'sort'       => 7,
+        'icon-class' => 'icon-card',
+    ],
+    [
+        'key'        => 'field-service.reports',
+        'name'       => 'Reports',
+        'route'      => 'hws.admin.reports.index',
+        'sort'       => 8,
+        'icon-class' => 'icon-document',
+    ],
+];
