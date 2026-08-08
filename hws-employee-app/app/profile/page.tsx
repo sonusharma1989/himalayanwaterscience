@@ -38,15 +38,15 @@ export default function ProfilePage() {
 
       <div className="mb-6 grid grid-cols-3 gap-3">
         <Card className="p-3 text-center">
-          <p className="font-display text-lg font-bold text-slate-800">142</p>
+          <p className="font-display text-lg font-bold text-slate-800">{user?.stats?.jobs ?? 0}</p>
           <p className="mt-0.5 text-[10px] font-semibold uppercase text-slate-400">Jobs</p>
         </Card>
         <Card className="p-3 text-center">
-          <p className="font-display text-lg font-bold text-amber-500">4.8</p>
+          <p className="font-display text-lg font-bold text-amber-500">{user?.stats?.rating ?? "5.0"}</p>
           <p className="mt-0.5 text-[10px] font-semibold uppercase text-slate-400">Rating</p>
         </Card>
         <Card className="p-3 text-center">
-          <p className="font-display text-lg font-bold text-emerald-600">96%</p>
+          <p className="font-display text-lg font-bold text-emerald-600">{user?.stats?.attendance ?? 0}%</p>
           <p className="mt-0.5 text-[10px] font-semibold uppercase text-slate-400">Attendance</p>
         </Card>
       </div>

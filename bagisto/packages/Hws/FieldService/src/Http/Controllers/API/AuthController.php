@@ -44,6 +44,7 @@ class AuthController extends Controller
                 'name'  => $user->name,
                 'email' => $user->email,
                 'role'  => $user->role ? $user->role->name : null,
+                'stats' => $this->getUserStats($user->id),
             ]
         ]);
     }
@@ -60,6 +61,7 @@ class AuthController extends Controller
             'name'  => $user->name,
             'email' => $user->email,
             'role'  => $user->role ? $user->role->name : null,
+            'stats' => $this->getUserStats($user->id),
         ]);
     }
 
@@ -71,5 +73,33 @@ class AuthController extends Controller
         auth()->guard('admin-api')->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * Calculate stats for the user.
+     */
+    private function getUserStats($userId)
+    {
+        $jobsCount = \Hws\FieldService\Models\Task::where('assigned_to', $userId)->where('step', 4)->count();
+        $averageRating = round(\Hws\FieldService\Models\Task::where('assigned_to', $userId)->where('step', 4)->whereNotNull('rating')->avg('rating') ?? 5.0, 1);
+
+        $firstAttendance = \Hws\FieldService\Models\Attendance::where('employee_id', $userId)->orderBy('date', 'asc')->first();
+        if ($firstAttendance) {
+            $daysSinceFirst = max(1, \Illuminate\Support\Carbon::parse($firstAttendance->date)->diffInDays(\Illuminate\Support\Carbon::now()) + 1);
+            $totalDaysToCompare = min(30, $daysSinceFirst);
+            $checkInsCount = \Hws\FieldService\Models\Attendance::where('employee_id', $userId)
+                ->where('date', '>=', \Illuminate\Support\Carbon::now()->subDays(30)->toDateString())
+                ->count();
+            $workingDays = max(1, round($totalDaysToCompare * 0.85));
+            $attendancePercentage = min(round(($checkInsCount / $workingDays) * 100), 100);
+        } else {
+            $attendancePercentage = 0;
+        }
+
+        return [
+            'jobs'       => $jobsCount,
+            'rating'     => $averageRating,
+            'attendance' => $attendancePercentage,
+        ];
     }
 }

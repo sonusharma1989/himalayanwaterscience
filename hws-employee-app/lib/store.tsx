@@ -10,6 +10,11 @@ interface UserProfile {
   name: string;
   email: string;
   role: string | null;
+  stats?: {
+    jobs: number;
+    rating: number;
+    attendance: number;
+  };
 }
 
 interface AppContextValue {
