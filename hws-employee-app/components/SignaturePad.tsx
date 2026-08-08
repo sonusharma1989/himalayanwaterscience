@@ -4,6 +4,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 export interface SignaturePadHandle {
   clear: () => void;
+  toDataURL: () => string;
 }
 
 export const SignaturePad = forwardRef<SignaturePadHandle>(function SignaturePad(_props, ref) {
@@ -15,6 +16,9 @@ export const SignaturePad = forwardRef<SignaturePadHandle>(function SignaturePad
       const ctx = canvas?.getContext("2d");
       if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
     },
+    toDataURL() {
+      return canvasRef.current?.toDataURL("image/png") || "";
+    }
   }));
 
   useEffect(() => {

@@ -6,10 +6,12 @@ import { Camera } from "lucide-react";
 interface PhotoUploadGridProps {
   photos: string[];
   onAdd: (dataUrl: string) => void;
+  readOnly?: boolean;
 }
 
-export function PhotoUploadGrid({ photos, onAdd }: PhotoUploadGridProps) {
+export function PhotoUploadGrid({ photos, onAdd, readOnly = false }: PhotoUploadGridProps) {
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    if (readOnly) return;
     const files = e.target.files;
     if (!files) return;
     Array.from(files).forEach((file) => {
@@ -32,17 +34,19 @@ export function PhotoUploadGrid({ photos, onAdd }: PhotoUploadGridProps) {
           <img src={src} alt="Uploaded" className="h-full w-full object-cover" />
         </div>
       ))}
-      <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-slate-300 transition-colors hover:border-aqua-400 hover:bg-aqua-50/50">
-        <Camera className="h-5 w-5 text-slate-400" strokeWidth={1.75} />
-        <span className="text-[9px] font-bold text-slate-400">ADD</span>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={handleChange}
-        />
-      </label>
+      {!readOnly && (
+        <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-slate-300 transition-colors hover:border-aqua-400 hover:bg-aqua-50/50">
+          <Camera className="h-5 w-5 text-slate-400" strokeWidth={1.75} />
+          <span className="text-[9px] font-bold text-slate-400">ADD</span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleChange}
+          />
+        </label>
+      )}
     </div>
   );
 }

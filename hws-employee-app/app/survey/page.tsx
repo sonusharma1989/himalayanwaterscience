@@ -12,7 +12,7 @@ import { ChipGroup } from "@/components/ChipGroup";
 
 export default function SurveyPage() {
   const router = useRouter();
-  const { tasks } = useApp();
+  const { tasks, submitSurvey } = useApp();
   const surveyTask = tasks.find((t) => t.isSurvey);
 
   const [propertyType, setPropertyType] = useState(["Hotel"]);
@@ -21,12 +21,58 @@ export default function SurveyPage() {
   const [inquiryTypes, setInquiryTypes] = useState(["STP"]);
   const [spaceAvailable, setSpaceAvailable] = useState(["Yes — open area"]);
   const [photos, setPhotos] = useState<string[]>([]);
+  
+  const [floors, setFloors] = useState("");
+  const [builtUpAreaSqft, setBuiltUpAreaSqft] = useState("");
+  const [roomsUnits, setRoomsUnits] = useState("");
+  const [waterUseKld, setWaterUseKld] = useState("");
+  const [notes, setNotes] = useState("Interested in replacing a 12-year-old STP. Decision maker available after 4pm.");
+  const [followUpDate, setFollowUpDate] = useState("2026-08-09");
+
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
+
+  useEffect(() => {
+    if (surveyTask) {
+      if (surveyTask.surveyPhotos) {
+        setPhotos(surveyTask.surveyPhotos);
+      }
+      if (surveyTask.step >= 4) {
+        setSubmitted(true);
+      }
+    }
+  }, [surveyTask]);
 
   function handleSaveDraft() {
     setDraftSaved(true);
     setTimeout(() => setDraftSaved(false), 2000);
+  }
+
+  async function handleSubmit() {
+    if (!surveyTask) return;
+    setLoading(true);
+    const success = await submitSurvey(surveyTask.id, {
+      propertyType,
+      waterSource,
+      wastewaterDisposal,
+      inquiryTypes,
+      spaceAvailable,
+      floors,
+      builtUpAreaSqft,
+      roomsUnits,
+      waterUseKld,
+      notes,
+      followUpDate,
+      photos,
+    });
+    setLoading(false);
+    if (success) {
+      setSubmitted(true);
+      setTimeout(() => {
+        router.push("/tasks");
+      }, 1500);
+    }
   }
 
   return (
@@ -57,21 +103,21 @@ export default function SurveyPage() {
         <div className="mb-5 space-y-4">
           <div>
             <FieldLabel htmlFor="svName">Property / business name</FieldLabel>
-            <FieldInput id="svName" defaultValue={surveyTask?.name ?? ""} />
+            <FieldInput id="svName" defaultValue={surveyTask?.name ?? ""} readOnly />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <FieldLabel htmlFor="svOwner">Owner / contact person</FieldLabel>
-              <FieldInput id="svOwner" defaultValue={surveyTask?.owner ?? ""} />
+              <FieldInput id="svOwner" defaultValue={surveyTask?.owner ?? ""} readOnly />
             </div>
             <div>
               <FieldLabel htmlFor="svPhone">Contact number</FieldLabel>
-              <FieldInput id="svPhone" defaultValue={surveyTask?.phone ?? ""} />
+              <FieldInput id="svPhone" defaultValue={surveyTask?.phone ?? ""} readOnly />
             </div>
           </div>
           <div>
             <FieldLabel htmlFor="svAddress">Address</FieldLabel>
-            <FieldTextarea id="svAddress" rows={2} defaultValue={surveyTask?.address ?? ""} />
+            <FieldTextarea id="svAddress" rows={2} defaultValue={surveyTask?.address ?? ""} readOnly />
           </div>
         </div>
 
@@ -104,21 +150,45 @@ export default function SurveyPage() {
         <div className="mb-3 grid grid-cols-2 gap-3">
           <div>
             <FieldLabel htmlFor="floors">Floors</FieldLabel>
-            <FieldInput id="floors" type="number" placeholder="e.g. 4" />
+            <FieldInput
+              id="floors"
+              type="number"
+              placeholder="e.g. 4"
+              value={floors}
+              onChange={(e) => setFloors(e.target.value)}
+            />
           </div>
           <div>
             <FieldLabel htmlFor="area">Built-up area (sq.ft)</FieldLabel>
-            <FieldInput id="area" type="number" placeholder="e.g. 12000" />
+            <FieldInput
+              id="area"
+              type="number"
+              placeholder="e.g. 12000"
+              value={builtUpAreaSqft}
+              onChange={(e) => setBuiltUpAreaSqft(e.target.value)}
+            />
           </div>
         </div>
         <div className="mb-4 grid grid-cols-2 gap-3">
           <div>
             <FieldLabel htmlFor="units">Rooms / beds / units</FieldLabel>
-            <FieldInput id="units" type="number" placeholder="e.g. 60" />
+            <FieldInput
+              id="units"
+              type="number"
+              placeholder="e.g. 60"
+              value={roomsUnits}
+              onChange={(e) => setRoomsUnits(e.target.value)}
+            />
           </div>
           <div>
             <FieldLabel htmlFor="waterUse">Est. water use (KLD)</FieldLabel>
-            <FieldInput id="waterUse" type="number" placeholder="e.g. 25" />
+            <FieldInput
+              id="waterUse"
+              type="number"
+              placeholder="e.g. 25"
+              value={waterUseKld}
+              onChange={(e) => setWaterUseKld(e.target.value)}
+            />
           </div>
         </div>
 
@@ -168,26 +238,32 @@ export default function SurveyPage() {
             id="notes"
             rows={3}
             placeholder="Anything the quotation team should know..."
-            defaultValue="Interested in replacing a 12-year-old STP. Decision maker available after 4pm."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
           />
         </div>
 
         <div className="mb-6">
           <FieldLabel htmlFor="followUp">Follow-up date</FieldLabel>
-          <FieldInput id="followUp" type="date" defaultValue="2026-08-09" />
+          <FieldInput
+            id="followUp"
+            type="date"
+            value={followUpDate}
+            onChange={(e) => setFollowUpDate(e.target.value)}
+          />
         </div>
 
         <div className="flex items-center gap-2.5">
-          <Button variant="secondary" className="flex-1" onClick={handleSaveDraft}>
+          <Button variant="secondary" className="flex-1" onClick={handleSaveDraft} disabled={loading || submitted}>
             {draftSaved ? "✓ Saved" : "Save Draft"}
           </Button>
           <Button
             className="flex-1"
             variant={submitted ? "secondary" : "primary"}
-            disabled={submitted}
-            onClick={() => setSubmitted(true)}
+            disabled={submitted || loading || !surveyTask}
+            onClick={handleSubmit}
           >
-            {submitted ? "✓ Survey Submitted" : "Submit Survey"}
+            {submitted ? "✓ Submitted" : loading ? "Submitting..." : "Submit Survey"}
           </Button>
         </div>
       </div>

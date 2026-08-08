@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, MapPin, Phone, Pencil } from "lucide-react";
 import { useApp } from "@/lib/store";
@@ -16,14 +16,43 @@ import { SignaturePad, SignaturePadHandle } from "@/components/SignaturePad";
 
 export function TaskDetailClient({ id }: { id: string }) {
   const router = useRouter();
-  const { tasks, advanceTaskStep } = useApp();
+  const { tasks, advanceTaskStep, loading } = useApp();
   const task = tasks.find((t) => t.id === Number(id));
 
   const [beforePhotos, setBeforePhotos] = useState<string[]>([]);
   const [afterPhotos, setAfterPhotos] = useState<string[]>([]);
   const [rating, setRating] = useState(0);
-  const [materials, setMaterials] = useState<string[]>(["RO Membrane ×1", "Sediment Filter ×2"]);
+  const [materials, setMaterials] = useState<string[]>([]);
+  const [newMaterial, setNewMaterial] = useState("");
+  const [workDesc, setWorkDesc] = useState(
+    "RO membrane replacement and full system service. Water quality tested — TDS reduced from 180 to 12 ppm."
+  );
   const sigRef = useRef<SignaturePadHandle>(null);
+
+  // Sync state values when task finishes loading
+  useEffect(() => {
+    if (task) {
+      setBeforePhotos(task.beforePhotos || []);
+      setAfterPhotos(task.afterPhotos || []);
+      setRating(task.rating || 0);
+      setMaterials(task.materials || []);
+      if (task.workDescription) {
+        setWorkDesc(task.workDescription);
+      }
+    }
+  }, [task]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-20 text-center">
+        <svg className="animate-spin h-8 w-8 text-aqua-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p className="text-sm font-semibold text-slate-500">Loading task details...</p>
+      </div>
+    );
+  }
 
   if (!task) {
     return (
@@ -39,10 +68,21 @@ export function TaskDetailClient({ id }: { id: string }) {
   const step = task.step;
   const isComplete = step >= 4;
 
-  function addMaterial() {
-    const value = window.prompt('Add material used (e.g. "Carbon Filter ×1")');
-    if (value && value.trim()) {
-      setMaterials((prev) => [...prev, value.trim()]);
+  async function handleActionClick() {
+    if (!task) return;
+    if (step === 3) {
+      // Completed step (step 3 -> 4): send full details
+      const signature = sigRef.current?.toDataURL() || undefined;
+      await advanceTaskStep(task.id, {
+        beforePhotos,
+        afterPhotos,
+        workDescription: workDesc,
+        materials,
+        rating,
+        signature,
+      });
+    } else {
+      await advanceTaskStep(task.id);
     }
   }
 
@@ -94,26 +134,48 @@ export function TaskDetailClient({ id }: { id: string }) {
           <FieldTextarea
             id="workDesc"
             rows={3}
-            defaultValue="RO membrane replacement and full system service. Water quality tested — TDS reduced from 180 to 12 ppm."
+            value={workDesc}
+            onChange={(e) => setWorkDesc(e.target.value)}
+            disabled={isComplete}
           />
         </div>
 
         <div className="mb-5">
           <FieldLabel>Materials used</FieldLabel>
-          <div className="flex flex-wrap gap-2">
-            {materials.map((m, i) => (
-              <Badge key={i} variant="neutral">
-                {m}
-              </Badge>
-            ))}
-            <button
-              type="button"
-              onClick={addMaterial}
-              className="inline-flex items-center gap-1 rounded-full border border-dashed border-slate-300 bg-white px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide text-slate-400"
-            >
-              + Add
-            </button>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {materials.length === 0 ? (
+              <span className="text-xs text-slate-400">No materials added yet.</span>
+            ) : (
+              materials.map((m, i) => (
+                <Badge key={i} variant="neutral">
+                  {m}
+                </Badge>
+              ))
+            )}
           </div>
+          {!isComplete && (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="e.g. Carbon Filter ×1"
+                value={newMaterial}
+                onChange={(e) => setNewMaterial(e.target.value)}
+                className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs focus:border-aqua-500 focus:bg-white focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (newMaterial.trim()) {
+                    setMaterials((prev) => [...prev, newMaterial.trim()]);
+                    setNewMaterial("");
+                  }
+                }}
+                className="rounded-xl bg-aqua-600 px-4 py-2 text-xs font-bold text-white hover:bg-aqua-700"
+              >
+                Add
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="mb-5">
@@ -121,6 +183,7 @@ export function TaskDetailClient({ id }: { id: string }) {
           <PhotoUploadGrid
             photos={beforePhotos}
             onAdd={(url) => setBeforePhotos((prev) => [...prev, url])}
+            readOnly={isComplete}
           />
         </div>
 
@@ -129,35 +192,38 @@ export function TaskDetailClient({ id }: { id: string }) {
           <PhotoUploadGrid
             photos={afterPhotos}
             onAdd={(url) => setAfterPhotos((prev) => [...prev, url])}
+            readOnly={isComplete}
           />
         </div>
 
-        <div className="mb-5">
-          <div className="mb-1.5 flex items-center justify-between">
-            <p className="mb-0 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500">
-              <Pencil className="h-3.5 w-3.5" strokeWidth={1.75} /> Customer signature
-            </p>
-            <button
-              type="button"
-              onClick={() => sigRef.current?.clear()}
-              className="text-[11px] font-bold text-aqua-600"
-            >
-              Clear
-            </button>
+        {!isComplete && (
+          <div className="mb-5">
+            <div className="mb-1.5 flex items-center justify-between">
+              <p className="mb-0 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                <Pencil className="h-3.5 w-3.5" strokeWidth={1.75} /> Customer signature
+              </p>
+              <button
+                type="button"
+                onClick={() => sigRef.current?.clear()}
+                className="text-[11px] font-bold text-aqua-600"
+              >
+                Clear
+              </button>
+            </div>
+            <SignaturePad ref={sigRef} />
           </div>
-          <SignaturePad ref={sigRef} />
-        </div>
+        )}
 
         <div className="mb-6">
           <FieldLabel>Customer rating</FieldLabel>
-          <StarRating value={rating} onChange={setRating} />
+          <StarRating value={rating} onChange={(val) => !isComplete && setRating(val)} />
         </div>
 
         <Button
           block
           variant={isComplete ? "secondary" : "primary"}
           disabled={isComplete}
-          onClick={() => advanceTaskStep(task.id)}
+          onClick={handleActionClick}
         >
           {isComplete ? "✓ Job Completed" : STEP_ACTIONS[step]}
         </Button>

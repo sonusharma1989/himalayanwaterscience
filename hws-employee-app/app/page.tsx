@@ -1,18 +1,25 @@
 "use client";
 
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Droplet } from "lucide-react";
 import { ContourBackground } from "@/components/ContourBackground";
 import { Button } from "@/components/ui/Button";
 import { FieldLabel, FieldInput } from "@/components/ui/Field";
+import { useApp } from "@/lib/store";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login, error, loading } = useApp();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    router.push("/home");
+    const success = await login(email, password);
+    if (success) {
+      router.push("/home");
+    }
   }
 
   return (
@@ -44,14 +51,33 @@ export default function LoginPage() {
 
       <div className="-mt-1 flex-1 px-6 pb-8 pt-2">
         <p className="mb-4 text-sm font-bold text-slate-700">Sign in to continue</p>
+        {error && (
+          <div className="mb-4 rounded-lg bg-rose-50 p-3 text-xs font-medium text-rose-600">
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <FieldLabel htmlFor="email">Mobile number or email</FieldLabel>
-            <FieldInput id="email" type="text" placeholder="you@hws.in" required />
+            <FieldInput
+              id="email"
+              type="text"
+              placeholder="you@hws.in"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div>
             <FieldLabel htmlFor="password">Password</FieldLabel>
-            <FieldInput id="password" type="password" placeholder="Enter your password" required />
+            <FieldInput
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
           <div className="flex items-center justify-between pt-1 text-xs">
             <label className="flex items-center gap-1.5 font-medium text-slate-500">
@@ -62,8 +88,8 @@ export default function LoginPage() {
               Forgot password?
             </a>
           </div>
-          <Button type="submit" block className="mt-2">
-            Login
+          <Button type="submit" block disabled={loading} className="mt-2">
+            {loading ? "Signing in..." : "Login"}
           </Button>
           <div className="relative py-2 text-center">
             <span className="relative z-10 bg-slate-50 px-2 text-[11px] text-slate-400">or</span>

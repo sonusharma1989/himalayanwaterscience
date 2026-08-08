@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('check_out_time')->nullable();
             $table->decimal('check_out_lat', 10, 7)->nullable();
             $table->decimal('check_out_lng', 10, 7)->nullable();
+            $table->string('check_out_selfie_path')->nullable();
             $table->timestamps();
 
             $table->unique(['employee_id', 'date']);

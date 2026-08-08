@@ -1,29 +1,38 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Calendar, Briefcase, Wallet, SlidersHorizontal, ChevronRight, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-
-const MENU_ITEMS = [
-  { label: "Attendance history", icon: Calendar },
-  { label: "Leave requests", icon: Briefcase },
-  { label: "Expense claims", icon: Wallet },
-  { label: "Settings", icon: SlidersHorizontal },
-];
+import { useApp } from "@/lib/store";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { user, logout } = useApp();
+
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "EM";
+
+  function handleLogout() {
+    logout();
+    router.push("/");
+  }
 
   return (
     <div className="flex-1 px-5 pb-6 pt-6">
       <div className="mb-6 flex flex-col items-center text-center">
         <div className="mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-aqua-600 font-display text-2xl font-bold text-white">
-          RK
+          {initials}
         </div>
-        <p className="font-display text-base font-bold text-slate-800">Ramesh Kumar</p>
+        <p className="font-display text-base font-bold text-slate-800">{user?.name || "Employee"}</p>
         <p className="mt-0.5 text-xs font-semibold text-slate-400">
-          Field Service Engineer · Dehradun
+          {user?.role || "Field Service Engineer"} · Dehradun
         </p>
       </div>
 
@@ -42,20 +51,7 @@ export default function ProfilePage() {
         </Card>
       </div>
 
-      <Card className="mb-6 divide-y divide-slate-100 overflow-hidden">
-        {MENU_ITEMS.map(({ label, icon: Icon }) => (
-          <button
-            key={label}
-            className="flex w-full items-center gap-3 px-4 py-3.5 hover:bg-slate-50"
-          >
-            <Icon className="h-5 w-5 text-slate-400" strokeWidth={1.75} />
-            <span className="flex-1 text-left text-sm font-semibold text-slate-700">{label}</span>
-            <ChevronRight className="h-4 w-4 text-slate-300" strokeWidth={1.75} />
-          </button>
-        ))}
-      </Card>
-
-      <Button variant="danger" block onClick={() => router.push("/")}>
+      <Button variant="danger" block onClick={handleLogout}>
         <LogOut className="h-4 w-4" strokeWidth={1.75} />
         Logout
       </Button>

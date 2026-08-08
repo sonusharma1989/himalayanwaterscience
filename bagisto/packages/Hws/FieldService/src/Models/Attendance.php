@@ -20,6 +20,7 @@ class Attendance extends Model
         'check_out_time',
         'check_out_lat',
         'check_out_lng',
+        'check_out_selfie_path',
     ];
 
     protected $casts = [

@@ -12,6 +12,33 @@ class Task extends Model
 {
     protected $table = 'hws_tasks';
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($task) {
+            if ($task->assigned_to) {
+                \Hws\FieldService\Models\Notification::create([
+                    'admin_id' => $task->assigned_to,
+                    'title'    => 'New Task Assigned',
+                    'message'  => "New task assigned: #{$task->task_no} ({$task->customer_name}).",
+                    'is_read'  => false,
+                ]);
+            }
+        });
+
+        static::updated(function ($task) {
+            if ($task->wasChanged('assigned_to') && $task->assigned_to) {
+                \Hws\FieldService\Models\Notification::create([
+                    'admin_id' => $task->assigned_to,
+                    'title'    => 'New Task Assigned',
+                    'message'  => "New task assigned: #{$task->task_no} ({$task->customer_name}).",
+                    'is_read'  => false,
+                ]);
+            }
+        });
+    }
+
     protected $fillable = [
         'task_no',
         'type',

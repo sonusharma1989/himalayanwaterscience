@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Bell, Clock } from "lucide-react";
@@ -19,9 +19,13 @@ function useGreeting() {
 }
 
 export default function HomePage() {
-  const { tasks, attendance } = useApp();
+  const { tasks, attendance, user, loading, unreadCount, fetchNotifications } = useApp();
   const router = useRouter();
   const greeting = useGreeting();
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
   const today = useMemo(
     () =>
       new Date().toLocaleDateString("en-IN", {
@@ -41,32 +45,47 @@ export default function HomePage() {
     [tasks]
   );
 
-  const attendanceLabel = attendance.checkedIn
-    ? `Checked in at ${attendance.checkInTime}`
-    : attendance.checkOutTime
-      ? `Checked out at ${attendance.checkOutTime}`
-      : "Not checked in";
-  const attendanceValue = attendance.checkedIn
-    ? "Have a productive day!"
-    : attendance.checkOutTime
-      ? "See you tomorrow"
-      : "Mark your attendance";
-  const attendanceBtnLabel = attendance.checkedIn
-    ? "Check Out"
-    : attendance.checkOutTime
-      ? "Done"
-      : "Check In";
+  const attendanceLabel = loading
+    ? "Checking attendance..."
+    : attendance.checkedIn
+      ? `Checked in at ${attendance.checkInTime}`
+      : attendance.checkOutTime
+        ? `Checked out at ${attendance.checkOutTime}`
+        : "Not checked in";
+
+  const attendanceValue = loading
+    ? "Please wait..."
+    : attendance.checkedIn
+      ? "Have a productive day!"
+      : attendance.checkOutTime
+        ? "See you tomorrow"
+        : "Mark your attendance";
+
+  const attendanceBtnLabel = loading
+    ? "Checking..."
+    : attendance.checkedIn
+      ? "Check Out"
+      : attendance.checkOutTime
+        ? "Done"
+        : "Check In";
 
   return (
     <div className="flex-1 px-5 pb-6 pt-5">
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <p className="font-display text-lg font-bold text-slate-800">{greeting}, Ramesh</p>
+          <p className="font-display text-lg font-bold text-slate-800">{greeting}, {user?.name || "Employee"}</p>
           <p className="mt-0.5 text-xs font-medium text-slate-400">{today}</p>
         </div>
-        <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white">
+        <button
+          onClick={() => router.push("/notifications")}
+          className="relative flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition-colors"
+        >
           <Bell className="h-5 w-5 text-slate-500" strokeWidth={1.75} />
-          <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-rose-500" />
+          {unreadCount > 0 && (
+            <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white ring-2 ring-white">
+              {unreadCount}
+            </span>
+          )}
         </button>
       </div>
 
@@ -80,7 +99,11 @@ export default function HomePage() {
             <p className="text-sm font-bold text-slate-700">{attendanceValue}</p>
           </div>
         </div>
-        <Button size="sm" onClick={() => router.push("/attendance")}>
+        <Button
+          size="sm"
+          onClick={() => router.push("/attendance")}
+          disabled={loading || attendanceBtnLabel === "Done"}
+        >
           {attendanceBtnLabel}
         </Button>
       </Card>
