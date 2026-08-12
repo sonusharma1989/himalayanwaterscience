@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useState, useEffect, ReactNode } from "react";
 import { Task, AttendanceState, AppNotification } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1/employee";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1/employee";
 
 interface UserProfile {
   id: number;

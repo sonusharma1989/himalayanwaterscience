@@ -41,6 +41,3 @@
     </modal>
 @stop
 
-@push('scripts')
-    @include('admin::export.export', ['gridName' => app('Webkul\Admin\DataGrids\CMSPageDataGrid')])
-@endpush
