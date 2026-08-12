@@ -9,6 +9,7 @@ use Hws\FieldService\Http\Controllers\Admin\SalesLeadsController;
 use Hws\FieldService\Http\Controllers\Admin\InventoryController;
 use Hws\FieldService\Http\Controllers\Admin\ExpensesController;
 use Hws\FieldService\Http\Controllers\Admin\ReportsController;
+use Hws\FieldService\Http\Controllers\Admin\QuotationController;
 
 Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_url', 'admin')], function () {
 
@@ -36,6 +37,21 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
             ->name('hws.admin.sales-leads.store');
         Route::post('sales-leads/{id}/edit', [SalesLeadsController::class, 'update'])
             ->name('hws.admin.sales-leads.update');
+        Route::post('sales-leads/{id}/activity', [SalesLeadsController::class, 'logActivity'])
+            ->name('hws.admin.sales-leads.activity');
+        Route::post('sales-leads/{id}/patch', [SalesLeadsController::class, 'patchField'])
+            ->name('hws.admin.sales-leads.patch');
+        Route::post('sales-leads/{id}/convert-to-task', [SalesLeadsController::class, 'convertToTask'])
+            ->name('hws.admin.sales-leads.convert-to-task');
+
+        Route::get('sales-leads/{id}/quote', [QuotationController::class, 'create'])
+            ->name('hws.admin.quotations.create');
+        Route::post('quotations', [QuotationController::class, 'store'])
+            ->name('hws.admin.quotations.store');
+        Route::get('quotations/{id}/pdf', [QuotationController::class, 'downloadPdf'])
+            ->name('hws.admin.quotations.pdf');
+        Route::post('quotations/{id}/email', [QuotationController::class, 'sendEmail'])
+            ->name('hws.admin.quotations.email');
 
         Route::get('inventory', [InventoryController::class, 'index'])
             ->name('hws.admin.inventory.index');
