@@ -12,6 +12,9 @@ class SiteSurvey extends Model
 
     protected $fillable = [
         'task_id',
+        'customer_name',
+        'customer_phone',
+        'customer_address',
         'property_type',
         'floors',
         'built_up_area_sqft',
@@ -25,6 +28,7 @@ class SiteSurvey extends Model
         'status',
         'latitude',
         'longitude',
+        'photos',
     ];
 
     protected $casts = [
@@ -32,6 +36,7 @@ class SiteSurvey extends Model
         'water_use_kld'  => 'decimal:2',
         'latitude'       => 'decimal:7',
         'longitude'      => 'decimal:7',
+        'photos'         => 'array',
     ];
 
     public function task(): BelongsTo

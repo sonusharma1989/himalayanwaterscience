@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { StatusPill } from "@/components/ui/StatusPill";
 
 export function TaskCard({ task }: { task: Task }) {
-  const href = task.isSurvey ? "/survey" : `/tasks/${task.id}`;
+  const href = task.isSurvey ? `/survey?taskId=${task.id}` : `/tasks/${task.id}`;
 
   return (
     <Link

@@ -21,7 +21,7 @@ Route::group(['prefix' => 'api/v1/employee'], function () {
 
         Route::get('tasks', [TaskController::class, 'index']);
         Route::post('tasks/{id}/step', [TaskController::class, 'updateStep']);
-        Route::post('tasks/{id}/survey', [SurveyController::class, 'submitSurvey']);
+        Route::post('survey/submit', [SurveyController::class, 'submitSurvey']);
 
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::post('notifications/mark-read', [NotificationController::class, 'markRead']);
