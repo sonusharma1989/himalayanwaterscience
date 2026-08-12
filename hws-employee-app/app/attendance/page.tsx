@@ -79,6 +79,27 @@ export default function AttendancePage() {
   const [selfiePreview, setSelfiePreview] = useState<string | null>(null);
   const [compressing, setCompressing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [coords, setCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  // Fetch device geolocation on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCoords({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        () => {
+          // Fallback to Dehradun coordinates if blocked
+          setCoords({ latitude: 30.3165, longitude: 78.0322 });
+        }
+      );
+    } else {
+      setCoords({ latitude: 30.3165, longitude: 78.0322 });
+    }
+  }, []);
 
   const today = useMemo(
     () => new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" }),
@@ -107,7 +128,11 @@ export default function AttendancePage() {
 
   async function handleToggleAttendance() {
     setSubmitting(true);
-    await toggleAttendance(selfieFile || undefined);
+    await toggleAttendance(
+      selfieFile || undefined,
+      coords?.latitude,
+      coords?.longitude
+    );
     // Clear selfie states after checkin
     setSelfieFile(null);
     setSelfiePreview(null);
@@ -146,18 +171,28 @@ export default function AttendancePage() {
           <MapPin className="h-4 w-4 text-slate-400" strokeWidth={1.75} />
           <p className="text-xs font-bold text-slate-600">Location captured</p>
         </div>
-        <div className="relative flex h-24 items-center justify-center overflow-hidden rounded-xl bg-slate-100">
-          <div
-            className="absolute inset-0 opacity-40"
-            style={{
-              backgroundImage: "radial-gradient(circle,#94a3b8 1px,transparent 1px)",
-              backgroundSize: "14px 14px",
-            }}
-          />
-          <MapPin className="relative z-10 h-7 w-7 text-rose-500" strokeWidth={1.75} />
+        <div className="relative flex h-36 items-center justify-center overflow-hidden rounded-xl bg-slate-100">
+          {coords ? (
+            <iframe
+              src={`https://maps.google.com/maps?q=${coords.latitude},${coords.longitude}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={false}
+              loading="lazy"
+            />
+          ) : (
+            <div className="text-xs text-slate-400 flex items-center gap-2">
+              <svg className="animate-spin h-4 w-4 text-aqua-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Getting location coordinates...
+            </div>
+          )}
         </div>
         <p className="mt-2 text-[11px] font-medium text-slate-400">
-          30.3165° N, 78.0322° E · Rajpur Road, Dehradun
+          {coords ? `${coords.latitude.toFixed(4)}° N, ${coords.longitude.toFixed(4)}° E · Live location` : "Rajpur Road, Dehradun"}
         </p>
       </Card>
 

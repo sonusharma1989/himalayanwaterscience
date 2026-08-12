@@ -32,6 +32,10 @@ export function TaskDetailClient({ id }: { id: string }) {
   // Sync state values when task finishes loading
   useEffect(() => {
     if (task) {
+      if (task.isSurvey) {
+        router.replace("/survey");
+        return;
+      }
       setBeforePhotos(task.beforePhotos || []);
       setAfterPhotos(task.afterPhotos || []);
       setRating(task.rating || 0);
@@ -40,7 +44,7 @@ export function TaskDetailClient({ id }: { id: string }) {
         setWorkDesc(task.workDescription);
       }
     }
-  }, [task]);
+  }, [task, router]);
 
   if (loading) {
     return (

@@ -41,8 +41,8 @@ interface AppContextValue {
     }
   ) => Promise<void>;
   fetchAttendance: () => Promise<void>;
-  toggleAttendance: (selfieFile?: File) => Promise<void>;
-  submitSurvey: (id: number, data: any) => Promise<boolean>;
+  toggleAttendance: (selfieFile?: File, latitude?: number, longitude?: number) => Promise<void>;
+  submitSurvey: (id: number, data: any, status?: "draft" | "submitted") => Promise<number | false>;
   fetchNotifications: () => Promise<void>;
   markNotificationsRead: (id?: number) => Promise<void>;
 }
@@ -210,18 +210,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     } catch (err) {}
   };
 
-  const toggleAttendance = async (selfieFile?: File) => {
+  const toggleAttendance = async (selfieFile?: File, latitude?: number, longitude?: number) => {
     if (!token) return;
     const method = attendance.checkedIn ? "check-out" : "check-in";
 
     try {
-      // Fetch mock GPS location coords
-      const latitude = 30.3165;
-      const longitude = 78.0322;
+      const lat = latitude ?? 30.3165;
+      const lng = longitude ?? 78.0322;
 
       const formData = new FormData();
-      formData.append("latitude", latitude.toString());
-      formData.append("longitude", longitude.toString());
+      formData.append("latitude", lat.toString());
+      formData.append("longitude", lng.toString());
       if (selfieFile) {
         formData.append("selfie", selfieFile);
       }
@@ -240,7 +239,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     } catch (err) {}
   };
 
-  const submitSurvey = async (id: number, surveyData: any): Promise<boolean> => {
+  const submitSurvey = async (
+    id: number,
+    surveyData: any,
+    status: "draft" | "submitted" = "submitted"
+  ): Promise<number | false> => {
     if (!token) return false;
 
     // Convert frontend string chips/values to DB enum strings
@@ -261,6 +264,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
 
     const formData = {
+      id: id > 0 ? id : undefined,
+      customer_name: surveyData.customer_name,
+      customer_phone: surveyData.customer_phone,
+      customer_address: surveyData.customer_address,
       property_type: dbPropertyType,
       floors: parseInt(surveyData.floors) || null,
       built_up_area_sqft: parseInt(surveyData.builtUpAreaSqft) || null,
@@ -271,14 +278,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       space_available: dbSpaceAvailable,
       notes: surveyData.notes || "",
       follow_up_date: surveyData.followUpDate || null,
-      latitude: 30.3268,
-      longitude: 78.0421,
+      latitude: surveyData.latitude ?? 30.3268,
+      longitude: surveyData.longitude ?? 78.0421,
       inquiry_types: dbInquiryTypes,
       photos: surveyData.photos || [],
+      status,
     };
 
     try {
-      const res = await fetch(`${API_URL}/tasks/${id}/survey`, {
+      const res = await fetch(`${API_URL}/survey/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -287,8 +295,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(formData),
       });
       if (res.ok) {
+        const data = await res.json();
         await fetchTasks(); // Refresh list to reflect step 4 status
-        return true;
+        return data.survey.id;
       }
       return false;
     } catch (err) {
