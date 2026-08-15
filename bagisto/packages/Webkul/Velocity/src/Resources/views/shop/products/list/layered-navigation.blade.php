@@ -11,13 +11,13 @@
 
 @push('scripts')
     <script type="text/x-template" id="layered-navigation-template">
-        <div v-if="attributes.length > 0">
-
-            <h5 class="filter-title fw6 mb20">
-                {{ __('shop::app.products.layered-nav-title') }}
+        <div class="hws-filter-inner">
+            <h5 class="filter-title fw6">
+                <span>Filter products</span>
+                <small>Refine your selection</small>
             </h5>
 
-            <div class="filter-content">
+            <div class="filter-content" v-if="attributes.length > 0">
                 <div class="filter-attributes">
                     <filter-attribute-item
                         v-for='(attribute, index) in attributes'
@@ -29,6 +29,10 @@
                         @onFilterAdded="addFilters(attribute.code, $event)">
                     </filter-attribute-item>
                 </div>
+            </div>
+
+            <div class="hws-filter-empty" v-else>
+                All products in this category are shown. More filters will appear here when product attributes are available.
             </div>
         </div>
     </script>
@@ -175,7 +179,7 @@
 
             data: function() {
                 return {
-                    active: false,
+                    active: true,
 
                     appliedFilters: [],
 
@@ -185,12 +189,12 @@
                         value: [0, 0],
 
                         processStyle: {
-                            "backgroundColor": "#FF6472"
+                            "backgroundColor": "#E27A34"
                         },
 
                         tooltipStyle: {
-                            "borderColor": "#FF6472",
-                            "backgroundColor": "#FF6472",
+                            "borderColor": "#E27A34",
+                            "backgroundColor": "#E27A34",
                         },
 
                         priceTo: 0,
@@ -201,8 +205,6 @@
             },
 
             created: function () {
-                if (! this.index) this.active = false;
-
                 if (this.appliedFilterValues && this.appliedFilterValues.length) {
                     this.appliedFilters = this.appliedFilterValues;
 

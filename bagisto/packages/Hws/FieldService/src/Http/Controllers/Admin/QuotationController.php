@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use Illuminate\Support\Facades\Schema;
+
 class QuotationController extends Controller
 {
     /**
@@ -21,8 +23,19 @@ class QuotationController extends Controller
     {
         $lead = SiteSurvey::findOrFail($leadId);
 
-        return view('hws::admin.quotations.create', compact('lead'));
+        $products = [];
+        if (Schema::hasTable('product_flat')) {
+            $products = DB::table('product_flat')
+                ->select('product_id', 'name', 'price')
+                ->where('locale', app()->getLocale())
+                ->get()
+                ->toArray();
+        }
+
+        return view('hws::admin.quotations.create', compact('lead', 'products'));
     }
+
+
 
     /**
      * Store the quotation.

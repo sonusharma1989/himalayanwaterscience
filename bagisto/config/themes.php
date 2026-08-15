@@ -18,7 +18,7 @@ return [
         // ]
 
         'velocity' => [
-            'views_path' => 'resources/themes/velocity/views',
+            'views_path' => 'packages/Webkul/Velocity/src/Resources/views/shop',
             'assets_path' => 'public/themes/velocity/assets',
             'name' => 'Velocity',
             'parent' => 'default'

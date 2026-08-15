@@ -35,6 +35,8 @@
 
             <div class="product-information">
                 <div>
+                    <span class="hws-list-kicker">Water treatment component</span>
+
                     <div class="product-name">
                         <a
                             href="{{ route('shop.productOrCategory.index', $product->url_key) }}"
@@ -62,6 +64,8 @@
                     <div class="product-price">
                         @include ('shop::products.price', ['product' => $product])
                     </div>
+
+                    <p class="hws-list-note">Commercial grade · Technical support included</p>
 
                     @if( $totalReviews )
                         <div class="product-rating">
