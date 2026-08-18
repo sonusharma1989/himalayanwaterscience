@@ -101,9 +101,31 @@
     <div class="hws-section__head"><div><span class="hws-eyebrow">Field-proven essentials</span><h2>Most specified</h2></div></div>
     <div class="hws-product-grid">
         @forelse ($products as $product)
-            @php $productUrl = $product->url_key ? route('shop.productOrCategory.index', $product->url_key) : route('shop.search.index', ['term' => $product->name]); @endphp
+            @php
+                $productUrl = isset($product->url_key) && $product->url_key ? route('shop.productOrCategory.index', $product->url_key) : route('shop.search.index', ['term' => $product->name]);
+                
+                $imageUrl = null;
+                if (isset($product->base_image) && $product->base_image) {
+                    $imgs = json_decode($product->base_image, true);
+                    $imageUrl = $imgs['medium_image_url'] ?? $imgs['small_image_url'] ?? null;
+                }
+                
+                if (! $imageUrl) {
+                    $imagePath = DB::table('product_images')->where('product_id', $product->product_id)->value('path');
+                    if ($imagePath) {
+                        $imageUrl = asset('storage/' . $imagePath);
+                    }
+                }
+                
+                if (! $imageUrl) {
+                    $imageUrl = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80';
+                }
+            @endphp
             <article class="hws-product">
-                <a class="hws-product__media" href="{{ $productUrl }}"><div class="hws-product__symbol"><i></i><i></i><i></i></div><span>HWS SELECTED</span></a>
+                <a class="hws-product__media" href="{{ $productUrl }}" style="position:relative;display:block;overflow:hidden;background:#f7f7f5;height:220px;">
+                    <img src="{{ $imageUrl }}" alt="{{ $product->name }}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                    <span style="position:absolute;z-index:2;top:12px;left:12px;padding:4px 8px;border-radius:6px;background:rgba(15,14,13,.65);color:#fff;font-size:9px;font-weight:700;letter-spacing:.06em;backdrop-filter:blur(4px);">HWS SELECTED</span>
+                </a>
                 <div class="hws-product__body"><span class="hws-product__type">Water treatment component</span><a href="{{ $productUrl }}"><h3>{{ $product->name }}</h3></a><p>Commercial grade · Technical support included</p><div class="hws-product__buy"><div><b>{{ core()->currency($product->price) }}</b><small>excl. applicable GST</small></div><a href="{{ $productUrl }}">View</a></div></div>
             </article>
         @empty
