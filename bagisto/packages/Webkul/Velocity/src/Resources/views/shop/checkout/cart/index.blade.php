@@ -241,18 +241,19 @@
                             <coupon-component></coupon-component>
                         </div>
                     @else
-                        <div class="fs16 col-12 empty-cart-message">
-                            {{ __('shop::app.checkout.cart.empty') }}
+                        <div class="hws-empty-cart col-12">
+                            <span class="hws-empty-cart__icon" aria-hidden="true">
+                                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 10h5l4 22h20l4-15H15"></path><circle cx="21" cy="39" r="2"></circle><circle cx="35" cy="39" r="2"></circle></svg>
+                            </span>
+                            <span class="hws-kicker">Your selection</span>
+                            <h3>Your cart is ready for the right components.</h3>
+                            <p>{{ __('shop::app.checkout.cart.empty') }} Browse the catalog or speak with an engineer for product selection help.</p>
+                            <div class="hws-empty-cart__actions">
+                                <a class="hws-btn hws-btn--primary" href="{{ route('shop.home.index') }}#catalog">{{ __('shop::app.checkout.cart.continue-shopping') }}</a>
+                                <button type="button" class="hws-btn hws-btn--ghost" data-hws-request="engineer_callback">Talk to an engineer</button>
+                            </div>
+                            <div class="hws-empty-cart__trust"><span>✓ GST-ready invoice</span><span>✓ Secure checkout</span><span>✓ Technical guidance</span></div>
                         </div>
-
-                        <a
-                            class="fs16 mt15 col-12 remove-decoration continue-shopping"
-                            href="{{ route('shop.home.index') }}">
-
-                            <button type="button" class="theme-btn remove-decoration">
-                                {{ __('shop::app.checkout.cart.continue-shopping') }}
-                            </button>
-                        </a>
                     @endif
 
                 {!! view_render_event('bagisto.shop.checkout.cart.summary.after', ['cart' => $cart]) !!}

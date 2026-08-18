@@ -41,9 +41,14 @@ class Task extends Model
 
     protected $fillable = [
         'task_no',
+        'customer_id',
+        'order_id',
         'type',
+        'source',
+        'reference_no',
         'customer_name',
         'customer_phone',
+        'customer_email',
         'customer_address',
         'priority',
         'step',

@@ -161,7 +161,9 @@
                             {{ $lead->created_at ? $lead->created_at->format('M d, Y') : '—' }}
                         </td>
                         <td style="padding: 14px 20px; font-weight: 700; color: #1e293b;">
-                            @if ($lead->task)
+                            @if ($lead->reference_no)
+                                {{ $lead->reference_no }}
+                            @elseif ($lead->task)
                                 #{{ $lead->task->task_no }}
                             @else
                                 #SRV-{{ $lead->id }}
@@ -174,7 +176,7 @@
                         <td style="padding: 14px 20px;">
                             <span style="display: inline-flex; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700;
                                 background: #eff6ff; color: #1e40af;">
-                                {{ ucfirst($lead->property_type) }}
+                                {{ $lead->request_type ? ucwords(str_replace('_', ' ', $lead->request_type)) : ucfirst($lead->property_type) }}
                             </span>
                         </td>
                         <td style="padding: 14px 20px; color: #334155; font-weight: 500;">
@@ -236,6 +238,7 @@
                                                 <select name="source" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px; background: #fff;">
                                                     <option value="Field Survey" {{ $lead->source === 'Field Survey' ? 'selected' : '' }}>Field Survey</option>
                                                     <option value="Website" {{ $lead->source === 'Website' ? 'selected' : '' }}>Website</option>
+                                                    <option value="Website Checkout" {{ $lead->source === 'Website Checkout' ? 'selected' : '' }}>Website Checkout</option>
                                                     <option value="Reference" {{ $lead->source === 'Reference' ? 'selected' : '' }}>Reference</option>
                                                     <option value="Cold Call" {{ $lead->source === 'Cold Call' ? 'selected' : '' }}>Cold Call</option>
                                                     <option value="Social Media" {{ $lead->source === 'Social Media' ? 'selected' : '' }}>Social Media</option>
@@ -260,7 +263,7 @@
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
                                         <div>
                                             <span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase;">
-                                                {{ ucfirst($lead->property_type) }} Lead
+                                                {{ $lead->request_type ? ucwords(str_replace('_', ' ', $lead->request_type)) : ucfirst($lead->property_type) }} Lead
                                             </span>
                                             <h3 style="font-size: 18px; font-weight: 800; color: #1e293b; margin: 6px 0 0;">CRM Timeline &amp; Actions @if($lead->task)#{{ $lead->task->task_no }}@else#SRV-{{ $lead->id }}@endif</h3>
                                         </div>
@@ -320,6 +323,10 @@
                                         <div>
                                             <h4 style="font-size: 10px; text-transform: uppercase; color: #94a3b8; margin: 0 0 4px; font-weight: 700;">LEAD SOURCE</h4>
                                             <p style="font-weight: 600; color: #334155; margin: 0; font-size: 13px;">{{ $lead->source ?? 'Field Survey' }}</p>
+                                        </div>
+                                        <div>
+                                            <h4 style="font-size: 10px; text-transform: uppercase; color: #94a3b8; margin: 0 0 4px; font-weight: 700;">REFERENCE</h4>
+                                            <p style="font-weight: 600; color: #334155; margin: 0; font-size: 13px;">{{ $lead->reference_no ?? 'SRV-'.$lead->id }}</p>
                                         </div>
                                         <div>
                                             <h4 style="font-size: 10px; text-transform: uppercase; color: #94a3b8; margin: 0 0 4px; font-weight: 700;">ASSIGN AGENT</h4>

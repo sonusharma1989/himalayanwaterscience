@@ -12,6 +12,8 @@ class SiteSurvey extends Model
 
     protected $fillable = [
         'task_id',
+        'customer_id',
+        'order_id',
         'customer_name',
         'customer_phone',
         'customer_email',
@@ -29,6 +31,9 @@ class SiteSurvey extends Model
         'status',
         'temperature',
         'source',
+        'request_type',
+        'reference_no',
+        'request_details',
         'assigned_to',
         'next_follow_up_at',
         'latitude',
@@ -42,6 +47,7 @@ class SiteSurvey extends Model
         'latitude'       => 'decimal:7',
         'longitude'      => 'decimal:7',
         'photos'         => 'array',
+        'request_details'=> 'array',
     ];
 
     public function task(): BelongsTo

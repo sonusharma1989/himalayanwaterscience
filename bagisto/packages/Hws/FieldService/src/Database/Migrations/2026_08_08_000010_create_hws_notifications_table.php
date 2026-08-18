@@ -11,15 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('hws_notifications')) {
+            return;
+        }
+
         Schema::create('hws_notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admin_id')->constrained('admins')->cascadeOnDelete();
+            $table->unsignedInteger('admin_id');
             $table->string('title');
             $table->text('message');
             $table->boolean('is_read')->default(false);
             $table->timestamps();
 
             $table->index(['admin_id', 'is_read']);
+            $table->foreign('admin_id')->references('id')->on('admins')->cascadeOnDelete();
         });
     }
 

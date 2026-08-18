@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(BagistoDatabaseSeeder::class);
         $this->call(VelocityMetaDataSeeder::class);
+        $this->call(IndrayaniProductsSeeder::class);
     }
 }

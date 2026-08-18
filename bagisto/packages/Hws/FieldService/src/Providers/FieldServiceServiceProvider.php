@@ -3,6 +3,8 @@
 namespace Hws\FieldService\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Hws\FieldService\Listeners\CreateLeadFromOrder;
 
 class FieldServiceServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,9 @@ class FieldServiceServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
         $this->loadRoutesFrom(__DIR__.'/../Routes/admin-routes.php');
         $this->loadRoutesFrom(__DIR__.'/../Routes/api-routes.php');
+        $this->loadRoutesFrom(__DIR__.'/../Routes/web-routes.php');
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'hws');
+
+        Event::listen('checkout.order.save.after', [CreateLeadFromOrder::class, 'handle']);
     }
 }

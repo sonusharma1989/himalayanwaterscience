@@ -179,6 +179,12 @@
                                                                 ? true : false,
                                             ])
                                         </div>
+
+                                        <div class="col-12 hws-product-help">
+                                            <span>Need technical help with this product?</span>
+                                            <button type="button" data-hws-request="engineer_callback" data-hws-product="{{ $product->name }}">Talk to engineer</button>
+                                            <button type="button" data-hws-request="installation" data-hws-product="{{ $product->name }}">Request installation</button>
+                                        </div>
                                     </div>
 
                                     @include ('shop::products.view.short-description')

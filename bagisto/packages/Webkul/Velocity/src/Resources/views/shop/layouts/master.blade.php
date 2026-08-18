@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="{{ asset('hws-storefront-polish.css') }}?v=1">
     <link rel="stylesheet" href="{{ asset('hws-spacing-fix.css') }}?v=1">
     <link rel="stylesheet" href="{{ asset('hws-category-sidebar.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('hws-account-crm.css') }}?v=1">
+    <link rel="stylesheet" href="{{ asset('hws-services.css') }}?v=4">
     @stack('css')
 </head>
 <body @if (core()->getCurrentLocale() && core()->getCurrentLocale()->direction === 'rtl') class="rtl" @endif>
@@ -48,5 +50,6 @@
     <div id="alert-container"></div>
     {!! view_render_event('bagisto.shop.layout.body.after') !!}
     @include('shop::layouts.scripts')
+    @include('hws::shop.partials.request-modal')
 </body>
 </html>

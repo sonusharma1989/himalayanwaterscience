@@ -13,6 +13,7 @@
         <div class="customer-email col-12 text-break">{{ auth('customer')->user()->email }}</div>
     </div>
 
+
     @foreach ($menu->items as $menuItem)
         <ul type="none" class="navigation">
             {{-- rearrange menu items --}}

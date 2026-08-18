@@ -14,6 +14,7 @@
         ->orderByDesc('new')
         ->limit(8)
         ->get();
+    $homeServices = \Hws\FieldService\Support\ServiceCatalog::all()->take(6);
 @endphp
 
 @section('page_title'){{ $homeSEO->meta_title ?? 'Himalaya N Water Science — Water Treatment Components' }}@endsection
@@ -29,7 +30,7 @@
             <span class="hws-eyebrow">Water treatment components · Pan-India</span>
             <h1>Every component.<br><em>Zero guesswork.</em></h1>
             <p>Membranes, vessels, cartridges, chemicals and instruments—factory-direct, spec-accurate, with an engineer one call away.</p>
-            <div class="hws-hero__buttons"><a class="hws-btn hws-btn--primary" href="#catalog">Browse the catalog</a><a class="hws-btn hws-btn--outline" href="mailto:info@himalayanwaterscience.com?subject=Technical consultation">Talk to an engineer</a></div>
+            <div class="hws-hero__buttons"><a class="hws-btn hws-btn--primary" href="#catalog">Browse the catalog</a><a class="hws-btn hws-btn--outline" href="#" data-hws-request="engineer_callback">Talk to an engineer</a></div>
             <div class="hws-hero__trust"><span>GST invoice on every order</span><span>Transparent pricing</span><span>Free technical support</span></div>
         </div>
         <div class="hws-hero__visual" aria-label="Industrial water treatment system illustration">
@@ -42,6 +43,45 @@
     <article><b>01</b><div><h3>Transparent project pricing</h3><p>Clear component pricing and GST-ready invoices for every order.</p></div></article>
     <article><b>02</b><div><h3>Specification accuracy</h3><p>Product selection backed by practical water-treatment experience.</p></div></article>
     <article><b>03</b><div><h3>Free technical support</h3><p>Sizing, installation and commissioning guidance from our team.</p></div></article>
+</div></section>
+
+<section class="hws-home-stories" id="project-stories"><div class="hws-container">
+    <div class="hws-home-stories__head">
+        <div><span class="hws-eyebrow">Engineered in the field</span><h2>Systems you can see.<br>Performance you can measure.</h2></div>
+        <p>Explore how we approach clean water, responsible wastewater treatment and efficient hot-water infrastructure—from design to lifecycle support.</p>
+    </div>
+
+    <div class="hws-home-stories__grid">
+        <a class="hws-home-story hws-home-story--feature" href="{{ route('hws.services.show', 'water-treatment-plants') }}">
+            <img src="{{ asset('images/hws-services/water-treatment-hero.webp') }}" alt="Engineer inspecting an industrial water treatment plant">
+            <span class="hws-home-story__shade"></span>
+            <div class="hws-home-story__copy"><small>01 · Water treatment</small><h3>Plant engineering built around your actual water report.</h3><p>WTP, RO, filtration and purification systems.</p><b>Explore solution ↗</b></div>
+        </a>
+
+        <div class="hws-home-stories__stack">
+            <a class="hws-home-story" href="{{ route('hws.services.show', 'sewage-treatment-plants') }}">
+                <img src="{{ asset('images/hws-services/wastewater-hero.webp') }}" alt="Engineers at a sewage and effluent treatment facility" loading="lazy">
+                <span class="hws-home-story__shade"></span>
+                <div class="hws-home-story__copy"><small>02 · Reuse &amp; compliance</small><h3>Wastewater treated for safer discharge and practical reuse.</h3><b>STP &amp; ETP solutions ↗</b></div>
+            </a>
+            <a class="hws-home-story" href="{{ route('hws.services.show', 'heat-pump-water-heating-systems') }}">
+                <img src="{{ asset('images/hws-services/heating-service-hero.webp') }}" alt="Technicians commissioning a heat pump water heating system" loading="lazy">
+                <span class="hws-home-story__shade"></span>
+                <div class="hws-home-story__copy"><small>03 · Efficient hot water</small><h3>Lower-energy heating with dependable service support.</h3><b>Heating systems ↗</b></div>
+            </a>
+        </div>
+    </div>
+
+    <div class="hws-home-stories__foot"><span>Need help selecting the right process?</span><a href="#" data-hws-request="engineer_callback">Discuss your project with an engineer <b>→</b></a></div>
+</div></section>
+
+<section class="hws-home-services"><div class="hws-container">
+    <div class="hws-section__head"><div><span class="hws-eyebrow">Our core services</span><h2>Engineering beyond equipment</h2></div><a href="{{ route('hws.services.index') }}">View all services →</a></div>
+    <div class="hws-home-services__grid">
+        @foreach ($homeServices as $service)
+            <a class="hws-home-service" href="{{ route('hws.services.show', $service['slug']) }}"><small>{{ $service['group'] }}</small><div><h3>{{ $service['title'] }}</h3><p>{{ $service['summary'] }}</p></div><span>↗</span></a>
+        @endforeach
+    </div>
 </div></section>
 
 <section class="hws-section" id="catalog"><div class="hws-container">
@@ -72,5 +112,5 @@
     </div>
 </div></section>
 
-<section class="hws-oem"><div class="hws-container hws-oem__inner"><div><span class="hws-eyebrow">For OEMs & system integrators</span><h2>Building plants at scale?</h2><p>Get project-site delivery, consolidated GST billing, datasheet packs and a dedicated engineer for sizing and commissioning.</p></div><a class="hws-btn hws-btn--primary" href="mailto:info@himalayanwaterscience.com?subject=Bulk project quotation">Request a bulk quote</a></div></section>
+<section class="hws-oem"><div class="hws-container hws-oem__inner"><div><span class="hws-eyebrow">For OEMs & system integrators</span><h2>Building plants at scale?</h2><p>Get project-site delivery, consolidated GST billing, datasheet packs and a dedicated engineer for sizing and commissioning.</p></div><a class="hws-btn hws-btn--primary" href="#" data-hws-request="bulk_quote">Request a bulk quote</a></div></section>
 @endsection

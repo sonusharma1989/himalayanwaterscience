@@ -149,6 +149,8 @@
                         <td style="padding: 14px 20px;">
                             <div style="font-weight: 600; color: #334155;">{{ $task->customer_name }}</div>
                             <div style="font-size: 12px; color: #64748b;">📞 {{ $task->customer_phone }}</div>
+                            @if($task->customer_email)<div style="font-size: 11px; color: #64748b;">{{ $task->customer_email }}</div>@endif
+                            @if($task->source)<div style="font-size: 10px; color: #ea7b32; font-weight: 700; text-transform: uppercase; margin-top: 3px;">{{ $task->source }}</div>@endif
                             <div style="font-size: 11px; color: #94a3b8; max-width: 250px; margin-top: 4px;" class="truncate" title="{{ $task->customer_address }}">
                                 {{ $task->customer_address }}
                             </div>

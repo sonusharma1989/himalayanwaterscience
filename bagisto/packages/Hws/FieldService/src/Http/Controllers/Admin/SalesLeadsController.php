@@ -91,17 +91,6 @@ class SalesLeadsController extends Controller
 
         $lead = SiteSurvey::findOrFail($id);
         
-        if ($lead->status === 'won') {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Updates are disabled because this lead has already been won!'
-                ], 422);
-            }
-            session()->flash('error', 'Updates are disabled because this lead has already been won!');
-            return redirect()->back();
-        }
-
         $data = $request->only([
             'customer_name',
             'customer_phone',
@@ -113,6 +102,11 @@ class SalesLeadsController extends Controller
             'source',
             'next_follow_up_at'
         ]);
+
+        // Won/checkout leads remain won, but contact details and ownership stay manageable.
+        if ($lead->status === 'won') {
+            $data['status'] = 'won';
+        }
 
         if (empty($data['assigned_to'])) {
             $data['assigned_to'] = null;
@@ -172,17 +166,6 @@ class SalesLeadsController extends Controller
         ]);
 
         $lead = SiteSurvey::findOrFail($id);
-
-        if ($lead->status === 'won') {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Logging new interactions is disabled because this lead has already been won!'
-                ], 422);
-            }
-            session()->flash('error', 'Logging new interactions is disabled because this lead has already been won!');
-            return redirect()->back();
-        }
 
         $activity = LeadActivity::create([
             'survey_id'     => $id,
@@ -276,10 +259,10 @@ class SalesLeadsController extends Controller
 
         $lead = SiteSurvey::findOrFail($id);
 
-        if ($lead->status === 'won') {
+        if ($lead->status === 'won' && $request->field === 'status') {
             return response()->json([
                 'success' => false,
-                'message' => 'Updates are disabled because this lead has already been won!'
+                'message' => 'A won lead cannot be moved back into the pipeline.'
             ], 422);
         }
 
