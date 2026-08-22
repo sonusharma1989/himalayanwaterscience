@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kalnia:wght@300;400;500;600&family=Red+Hat+Display:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('hws-storefront.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('hws-storefront.css') }}?v=3">
     <link rel="stylesheet" href="{{ asset('hws-storefront-polish.css') }}?v=1">
     <link rel="stylesheet" href="{{ asset('hws-spacing-fix.css') }}?v=1">
     <link rel="stylesheet" href="{{ asset('hws-category-sidebar.css') }}?v=1">

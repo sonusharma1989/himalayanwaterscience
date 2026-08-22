@@ -6,6 +6,22 @@
     <meta name="description" content="{{ $service['summary'] }} Get a site-specific technical quotation from Himalaya N Water Science.">
 @endsection
 
+@php
+    $serviceContentImages = [
+        'reverse-osmosis-plants' => 'service-purification.png',
+        'industrial-water-purification-systems' => 'service-purification.png',
+        'commercial-residential-water-filtration' => 'service-purification.png',
+        'water-softeners' => 'service-softener.png',
+    ];
+    $serviceGroupImages = [
+        'Water Treatment & Purification' => 'service-water-treatment.png',
+        'Wastewater Treatment' => 'service-wastewater.png',
+        'Hot Water & Energy Systems' => 'service-hot-water.png',
+        'Project & Lifecycle Support' => 'service-maintenance.png',
+    ];
+    $contentImage = $serviceContentImages[$service['slug']] ?? $serviceGroupImages[$service['group']] ?? 'service-water-treatment.png';
+@endphp
+
 @section('content-wrapper')
 <nav class="hws-service-breadcrumb hws-container" aria-label="Breadcrumb">
     <a href="{{ route('shop.home.index') }}">Home</a><span>›</span><a href="{{ route('hws.services.index') }}">Services</a><span>›</span><b>{{ $service['title'] }}</b>
@@ -23,6 +39,17 @@
 <section class="hws-service-detail"><div class="hws-container hws-service-detail__layout">
     <div class="hws-service-detail__content">
         <div class="hws-service-lead"><span class="hws-eyebrow">Designed for your site</span><h2>Right process. Right capacity. Clear operating plan.</h2><p>{{ $service['intro'] }}</p></div>
+
+        <figure class="hws-service-media">
+            <img src="{{ asset('images/hws-services/' . $contentImage) }}" alt="{{ $service['title'] }} system" loading="lazy">
+            <figcaption><small>{{ $service['group'] }}</small><span>Real project deployments, sized and engineered around your site conditions.</span></figcaption>
+        </figure>
+
+        <div class="hws-service-highlights">
+            <article><i>✓</i><div><h4>Transparent pricing</h4><p>Clear component and project pricing with GST-ready invoices.</p></div></article>
+            <article><i>✓</i><div><h4>Specification accuracy</h4><p>Product and process selection backed by practical experience.</p></div></article>
+            <article><i>✓</i><div><h4>Free technical support</h4><p>Sizing, installation and commissioning guidance included.</p></div></article>
+        </div>
 
         <section class="hws-service-block" id="service-scope">
             <div class="hws-service-block__title"><span>01</span><div><small>Applications</small><h2>Where this solution fits</h2></div></div>

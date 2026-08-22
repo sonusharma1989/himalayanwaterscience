@@ -1,7 +1,7 @@
 @php
     $navCategories = app('Webkul\Category\Repositories\CategoryRepository')->getVisibleCategoryTree(core()->getCurrentChannel()->root_category_id);
     $navServiceGroups = \Hws\FieldService\Support\ServiceCatalog::grouped();
-    $supportPhone = '+91 98765 43210';
+    $supportPhone = '+91 97850 33795';
 @endphp
 <div class="hws-announcement">GST invoice on every order <span>•</span> Pan-India doorstep delivery <span>•</span> Free technical guidance</div>
 <header class="hws-header">
@@ -78,6 +78,7 @@
         </div>
 
         <a href="{{ route('hws.vision') }}">Our vision</a>
+        <a href="{{ route('shop.home.index') }}#project-stories">Our projects</a>
         <a class="hws-nav__quote" href="#" data-hws-request="bulk_quote">Request bulk quote</a>
     </div></nav>
 </header>
