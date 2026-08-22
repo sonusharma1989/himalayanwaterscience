@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{{ asset('hws-spacing-fix.css') }}?v=1">
     <link rel="stylesheet" href="{{ asset('hws-category-sidebar.css') }}?v=1">
     <link rel="stylesheet" href="{{ asset('hws-account-crm.css') }}?v=1">
-    <link rel="stylesheet" href="{{ asset('hws-services.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('hws-services.css') }}?v=5">
     @stack('css')
 </head>
 <body @if (core()->getCurrentLocale() && core()->getCurrentLocale()->direction === 'rtl') class="rtl" @endif>

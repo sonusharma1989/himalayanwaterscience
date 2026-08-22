@@ -58,12 +58,12 @@
         </div>
         <div class="hws-hero__visual" aria-label="Our water treatment services">
             <div class="hws-hero-slider" id="hwsHeroSlider">
-                <button class="hws-hero-slider__arrow hws-hero-slider__arrow--prev" aria-label="Previous slide" onclick="hwsHeroSlider.prev()">←</button>
-                <button class="hws-hero-slider__arrow hws-hero-slider__arrow--next" aria-label="Next slide" onclick="hwsHeroSlider.next()">→</button>
+                <button type="button" class="hws-hero-slider__arrow hws-hero-slider__arrow--prev" aria-label="Previous slide" data-hws-hero-prev>←</button>
+                <button type="button" class="hws-hero-slider__arrow hws-hero-slider__arrow--next" aria-label="Next slide" data-hws-hero-next>→</button>
                 <div class="hws-hero-slider__viewport">
                     <div class="hws-hero-slider__track">
                         @foreach ($heroServiceSlides as $i => $slide)
-                            <div class="hws-hero-slider__slide">
+                            <div class="hws-hero-slider__slide" aria-hidden="{{ $i === 0 ? 'false' : 'true' }}">
                                 <img src="{{ asset('images/hws-services/' . $slide['image']) }}" alt="{{ $slide['title'] }}" loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
                                 <span class="hws-hero-slider__shade"></span>
                                 <div class="hws-hero-slider__copy">
@@ -80,7 +80,7 @@
                 </div>
                 <div class="hws-hero-slider__dots" id="hwsHeroSliderDots">
                     @foreach ($heroServiceSlides as $i => $slide)
-                        <button class="{{ $i === 0 ? 'is-active' : '' }}" aria-label="Slide {{ $i + 1 }}" onclick="hwsHeroSlider.goTo({{ $i }})"></button>
+                        <button type="button" class="{{ $i === 0 ? 'is-active' : '' }}" aria-label="Show slide {{ $i + 1 }}" aria-current="{{ $i === 0 ? 'true' : 'false' }}" data-hws-hero-slide="{{ $i }}"></button>
                     @endforeach
                 </div>
             </div>
@@ -368,31 +368,7 @@
 })();
 </script>
 
-<script>
-(function(){
-    function init() {
-        const track = document.querySelector('#hwsHeroSlider .hws-hero-slider__track');
-        const slides = document.querySelectorAll('#hwsHeroSlider .hws-hero-slider__slide');
-        const dots   = document.querySelectorAll('#hwsHeroSliderDots button');
-        if (!track || !slides.length || !dots.length) return;
-        let current = 0, total = slides.length, timer;
-
-        function goTo(i) {
-            current = ((i % total) + total) % total;
-            track.style.transform = 'translateX(-' + (current * 100) + '%)';
-            dots.forEach((d, idx) => d.classList.toggle('is-active', idx === current));
-            resetTimer();
-        }
-        function next() { goTo(current + 1); }
-        function prev() { goTo(current - 1); }
-        function resetTimer() { clearInterval(timer); timer = setInterval(next, 5000); }
-
-        resetTimer();
-        window.hwsHeroSlider = { goTo, next, prev };
-    }
-    document.addEventListener('DOMContentLoaded', init);
-})();
-</script>
+<script src="{{ asset('hws-home-slider.js') }}?v=2" defer></script>
 @endpush
 
 @php
