@@ -33,6 +33,9 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
 
         Route::get('sales-leads', [SalesLeadsController::class, 'index'])
             ->name('hws.admin.sales-leads.index');
+        Route::get('sales-leads/{id}', [SalesLeadsController::class, 'show'])
+            ->whereNumber('id')
+            ->name('hws.admin.sales-leads.show');
         Route::post('sales-leads', [SalesLeadsController::class, 'store'])
             ->name('hws.admin.sales-leads.store');
         Route::post('sales-leads/{id}/edit', [SalesLeadsController::class, 'update'])
@@ -52,6 +55,10 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
             ->name('hws.admin.quotations.pdf');
         Route::post('quotations/{id}/email', [QuotationController::class, 'sendEmail'])
             ->name('hws.admin.quotations.email');
+        Route::post('quotations/{id}/convert-to-order', [QuotationController::class, 'convertToOrder'])
+            ->name('hws.admin.quotations.convert-to-order');
+        Route::post('orders/{id}/manual-payment', [QuotationController::class, 'recordManualPayment'])
+            ->name('hws.admin.orders.manual-payment');
 
         Route::get('inventory', [InventoryController::class, 'index'])
             ->name('hws.admin.inventory.index');

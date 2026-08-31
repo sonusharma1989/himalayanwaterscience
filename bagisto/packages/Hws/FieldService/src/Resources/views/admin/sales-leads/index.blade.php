@@ -71,6 +71,14 @@
                     </select>
                 </div>
                 <div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Sales Type</label>
+                    <select name="sales_type" required style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 14px; background: #fff;">
+                        <option value="trading">Trading</option>
+                        <option value="projects">Projects</option>
+                        <option value="services">Services</option>
+                    </select>
+                </div>
+                <div>
                     <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Assign Agent</label>
                     <select name="assigned_to" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 14px; background: #fff;">
                         <option value="">Unassigned</option>
@@ -128,6 +136,15 @@
                     <option value="cold" {{ request('temperature') === 'cold' ? 'selected' : '' }}>Cold</option>
                 </select>
             </div>
+            <div>
+                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px;">Sales Type</label>
+                <select name="sales_type" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 12px; font-size: 13.5px; background: #fff; min-width: 140px;">
+                    <option value="">All Sales Types</option>
+                    <option value="trading" {{ request('sales_type') === 'trading' ? 'selected' : '' }}>Trading</option>
+                    <option value="projects" {{ request('sales_type') === 'projects' ? 'selected' : '' }}>Projects</option>
+                    <option value="services" {{ request('sales_type') === 'services' ? 'selected' : '' }}>Services</option>
+                </select>
+            </div>
             <div style="display: flex; gap: 8px;">
                 <button type="submit" style="background: #3c50e0; color: #fff; border: 0; border-radius: 8px; padding: 7px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer;">
                     Filter
@@ -147,7 +164,8 @@
                     <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Created Date</th>
                     <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Lead ID</th>
                     <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Customer &amp; Phone</th>
-                    <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Type</th>
+                    <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Lead Type</th>
+                    <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Sales Type</th>
                     <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Assigned Agent</th>
                     <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Temp</th>
                     <th style="padding: 14px 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8;">Pipeline Status</th>
@@ -179,6 +197,19 @@
                                 {{ $lead->request_type ? ucwords(str_replace('_', ' ', $lead->request_type)) : ucfirst($lead->property_type) }}
                             </span>
                         </td>
+                        <td style="padding: 14px 20px;">
+                            @php
+                                $salesTypeStyles = [
+                                    'trading' => ['#eff6ff', '#1d4ed8', '#bfdbfe'],
+                                    'projects' => ['#f5f3ff', '#7c3aed', '#ddd6fe'],
+                                    'services' => ['#ecfdf5', '#047857', '#a7f3d0'],
+                                ];
+                                [$salesBg, $salesColor, $salesBorder] = $salesTypeStyles[$lead->sales_type ?: 'trading'];
+                            @endphp
+                            <span style="display:inline-flex;align-items:center;border-radius:100px;padding:5px 10px;font-size:11px;font-weight:800;background:{{ $salesBg }};color:{{ $salesColor }};border:1px solid {{ $salesBorder }};">
+                                {{ ucfirst($lead->sales_type ?: 'trading') }}
+                            </span>
+                        </td>
                         <td style="padding: 14px 20px; color: #334155; font-weight: 500;">
                             {{ $lead->assigned_to ? $employees->firstWhere('id', $lead->assigned_to)->name : 'Unassigned' }}
                         </td>
@@ -206,9 +237,7 @@
                                     </button>
                                     <span>·</span>
                                 @endif
-                                <button onclick="document.getElementById('viewLead-{{ $lead->id }}').style.display='flex'" style="background: transparent; border: 0; color: #475569; font-weight: 600; cursor: pointer; font-size: 13px;">
-                                    View Timeline
-                                </button>
+                                <a href="{{ route('hws.admin.sales-leads.show', $lead->id) }}" style="color: #475569; font-weight: 600; font-size: 13px; text-decoration: none;">View Details</a>
                             </div>
 
                             <!-- Edit Lead Modal -->
@@ -244,6 +273,14 @@
                                                     <option value="Social Media" {{ $lead->source === 'Social Media' ? 'selected' : '' }}>Social Media</option>
                                                 </select>
                                             </div>
+                                            <div>
+                                                <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 4px;">Sales Type</label>
+                                                <select name="sales_type" required style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px; background: #fff;">
+                                                    <option value="trading" {{ $lead->sales_type === 'trading' ? 'selected' : '' }}>Trading</option>
+                                                    <option value="projects" {{ $lead->sales_type === 'projects' ? 'selected' : '' }}>Projects</option>
+                                                    <option value="services" {{ $lead->sales_type === 'services' ? 'selected' : '' }}>Services</option>
+                                                </select>
+                                            </div>
                                             <div style="grid-column: span 2;">
                                                 <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 4px;">Customer Address</label>
                                                 <textarea name="customer_address" required rows="2" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px; resize: vertical;">{{ $lead->customer_address }}</textarea>
@@ -257,6 +294,8 @@
                                 </div>
                             </div>
 
+                            {{-- Legacy popup retired: lead details now live on a dedicated page. --}}
+                            @if(false)
                             <!-- View Lead/Survey Details Modal -->
                             <div id="viewLead-{{ $lead->id }}" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 9999; align-items: center; justify-content: center; overflow: hidden;">
                                 <div style="background: #fff; border-radius: 16px; padding: 28px; width: 680px; max-width: 95%; margin: 3% auto; text-align: left; box-shadow: 0 10px 25px -3px rgba(0,0,0,0.1); max-height: 85vh; overflow-y: auto;">
@@ -421,6 +460,7 @@
                                     @endif
                                 </div>
                             </div>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

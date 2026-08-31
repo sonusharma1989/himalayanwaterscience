@@ -44,6 +44,7 @@ class CreateLeadFromOrder
                 'temperature'      => 'hot',
                 'source'           => 'Website Checkout',
                 'request_type'     => 'checkout',
+                'sales_type'       => $order->sales_type ?: 'trading',
                 'reference_no'     => $reference,
                 'request_details'  => [
                     'order_id'     => $order->id,

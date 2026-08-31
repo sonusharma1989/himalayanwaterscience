@@ -269,6 +269,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       customer_phone: surveyData.customer_phone,
       customer_address: surveyData.customer_address,
       property_type: dbPropertyType,
+      sales_type: surveyData.salesType?.[0]?.toLowerCase() || "trading",
       floors: parseInt(surveyData.floors) || null,
       built_up_area_sqft: parseInt(surveyData.builtUpAreaSqft) || null,
       rooms_units: parseInt(surveyData.roomsUnits) || null,

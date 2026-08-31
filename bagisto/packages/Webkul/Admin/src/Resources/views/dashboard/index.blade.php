@@ -10,6 +10,7 @@
         <div class="page-header">
             <div class="page-title">
                 <h1>{{ __('admin::app.dashboard.title') }}</h1>
+                <p class="dashboard-subtitle">Business performance, orders, customers and inventory at a glance.</p>
             </div>
 
             <div class="page-action">

@@ -9,6 +9,25 @@
 --}}
 @extends('admin::layouts.content')
 
+@push('css')
+    <style>
+        /* One shared content rhythm for every Field Service admin screen. */
+        .hws-admin-page {
+            box-sizing: border-box;
+            padding-top: 24px;
+            padding-bottom: 28px;
+        }
+
+        @media (max-width: 768px) {
+            .hws-admin-page {
+                padding-top: 18px;
+            }
+        }
+    </style>
+@endpush
+
 @section('content')
-    @yield('page-content')
+    <div class="hws-admin-page">
+        @yield('page-content')
+    </div>
 @endsection

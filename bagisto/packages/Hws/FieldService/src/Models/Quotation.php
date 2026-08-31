@@ -12,6 +12,7 @@ class Quotation extends Model
 
     protected $fillable = [
         'lead_id',
+        'order_id',
         'quote_no',
         'customer_name',
         'customer_email',

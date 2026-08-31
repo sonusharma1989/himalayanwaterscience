@@ -102,6 +102,11 @@
                                             {!! view_render_event('sales.order.status_label.after', ['order' => $order]) !!}
 
                                             <div class="row">
+                                                <span class="title">Sales Type</span>
+                                                <span class="value">{{ ucfirst($order->sales_type ?: 'trading') }}</span>
+                                            </div>
+
+                                            <div class="row">
                                                 <span class="title">
                                                     {{ __('admin::app.sales.orders.channel') }}
                                                 </span>
@@ -223,7 +228,7 @@
                                                 </span>
 
                                                 <span class="value">
-                                                    {{ core()->getConfigData('sales.paymentmethods.' . $order->payment->method . '.title') }}
+                                                    {{ $order->payment->method_title ?: core()->getConfigData('sales.paymentmethods.' . $order->payment->method . '.title') ?: ucwords(str_replace('_', ' ', $order->payment->method)) }}
                                                 </span>
                                             </div>
 
@@ -237,7 +242,14 @@
                                                 </span>
                                             </div>
 
-                                            @php $additionalDetails = \Webkul\Payment\Payment::getAdditionalDetails($order->payment->method); @endphp
+                                            @php
+                                                $additionalDetails = [];
+                                                $paymentMethodClass = config('paymentmethods.' . $order->payment->method . '.class');
+
+                                                if ($paymentMethodClass) {
+                                                    $additionalDetails = \Webkul\Payment\Payment::getAdditionalDetails($order->payment->method);
+                                                }
+                                            @endphp
 
                                             @if (! empty($additionalDetails))
                                                 <div class="row">
@@ -252,6 +264,7 @@
                                             @endif
 
                                             {!! view_render_event('sales.order.payment-method.after', ['order' => $order]) !!}
+
                                         </div>
                                     </div>
 
@@ -623,6 +636,43 @@
 
                 <tab name="{{ __('admin::app.sales.orders.transactions') }}">
 
+                    <div style="margin:20px 0;padding:18px;border:1px solid #dbe3ef;border-radius:10px;background:#fff;">
+                        <h3 style="margin:0 0 14px;font-size:16px;color:#1f2937;">Add Manual Payment</h3>
+
+                        <form method="POST" action="{{ route('hws.admin.orders.manual-payment', $order->id) }}">
+                            @csrf
+
+                            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;">
+                                <div class="control-group">
+                                    <label for="hws-payment-method">Payment Method</label>
+                                    <select id="hws-payment-method" name="payment_method" class="control" required>
+                                        <option value="cash">Cash</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                        <option value="cheque">Cheque</option>
+                                        <option value="upi_manual">Manual UPI</option>
+                                    </select>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="hws-payment-amount">Amount</label>
+                                    <input id="hws-payment-amount" type="number" name="amount" class="control" value="{{ (float) $order->grand_total }}" min="0.01" step="0.01" required>
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="hws-payment-reference">Receipt / Reference</label>
+                                    <input id="hws-payment-reference" type="text" name="reference" class="control" maxlength="100" placeholder="Optional reference number">
+                                </div>
+
+                                <div class="control-group">
+                                    <label for="hws-payment-notes">Notes</label>
+                                    <input id="hws-payment-notes" type="text" name="notes" class="control" maxlength="500" placeholder="Optional payment note">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-lg btn-primary" style="margin-top:14px;">Save Manual Payment</button>
+                        </form>
+                    </div>
+
                     <div class="table" style="padding: 20px 0">
                         <table>
                             <thead>
@@ -630,6 +680,8 @@
                                     <th>{{ __('admin::app.sales.transactions.transaction-id') }}</th>
                                     <th>{{ __('admin::app.sales.invoices.order-id') }}</th>
                                     <th>{{ __('admin::app.sales.transactions.payment-method') }}</th>
+                                    <th>Amount</th>
+                                    <th>Reference</th>
                                     <th>{{ __('admin::app.sales.transactions.action') }}</th>
                                 </tr>
                             </thead>
@@ -637,12 +689,15 @@
                             <tbody>
 
                                 @foreach ($order->transactions as $transaction)
+                                    @php($hwsTransactionData = is_array($transaction->data) ? $transaction->data : json_decode($transaction->data ?: '{}', true))
                                     <tr>
                                         <td>#{{ $transaction->transaction_id }}</td>
                                         <td>{{ $transaction->order_id }}</td>
                                         <td>
-                                            {{ core()->getConfigData('sales.paymentmethods.' . $transaction->payment_method . '.title') }}
+                                             {{ core()->getConfigData('sales.paymentmethods.' . $transaction->payment_method . '.title') ?: ucwords(str_replace('_', ' ', $transaction->payment_method)) }}
                                         </td>
+                                        <td>{{ isset($hwsTransactionData['amount']) ? core()->formatPrice($hwsTransactionData['amount'], $order->order_currency_code) : '—' }}</td>
+                                        <td>{{ $hwsTransactionData['reference'] ?? '—' }}</td>
                                         <td class="action">
                                             <a href="{{ route('admin.sales.transactions.view', $transaction->id) }}">
                                                 <i class="icon eye-icon"></i>
@@ -653,7 +708,7 @@
 
                                 @if (! $order->transactions->count())
                                     <tr>
-                                        <td class="empty" colspan="7">{{ __('admin::app.common.no-result-found') }}</td>
+                                        <td class="empty" colspan="6">{{ __('admin::app.common.no-result-found') }}</td>
                                     <tr>
                                 @endif
 

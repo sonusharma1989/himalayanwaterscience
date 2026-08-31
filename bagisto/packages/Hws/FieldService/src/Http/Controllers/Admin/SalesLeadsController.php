@@ -31,10 +31,29 @@ class SalesLeadsController extends Controller
             $query->where('temperature', $request->temperature);
         }
 
+        if ($request->filled('sales_type')) {
+            $query->where('sales_type', $request->sales_type);
+        }
+
         $leads = $query->get();
         $employees = Admin::all();
 
         return view('hws::admin.sales-leads.index', compact('leads', 'employees'));
+    }
+
+    public function show($id)
+    {
+        $lead = SiteSurvey::with(['task', 'inquiryTypes'])->findOrFail($id);
+        $employees = Admin::all();
+        $activities = DB::table('hws_lead_activities')
+            ->leftJoin('admins', 'hws_lead_activities.action_by', '=', 'admins.id')
+            ->where('hws_lead_activities.survey_id', $lead->id)
+            ->select('hws_lead_activities.*', 'admins.name as admin_name')
+            ->orderByDesc('hws_lead_activities.created_at')
+            ->get();
+        $quotation = DB::table('hws_quotations')->where('lead_id', $lead->id)->latest('id')->first();
+
+        return view('hws::admin.sales-leads.show', compact('lead', 'employees', 'activities', 'quotation'));
     }
 
     /**
@@ -52,6 +71,7 @@ class SalesLeadsController extends Controller
             'assigned_to'      => 'nullable|exists:admins,id',
             'source'           => 'nullable|string|max:100',
             'next_follow_up_at'=> 'nullable|date',
+            'sales_type'       => 'required|in:trading,projects,services',
         ]);
 
         SiteSurvey::create([
@@ -64,6 +84,7 @@ class SalesLeadsController extends Controller
             'assigned_to'      => $request->assigned_to ?: null,
             'source'           => $request->source ?: 'Field Survey',
             'next_follow_up_at'=> $request->next_follow_up_at ?: null,
+            'sales_type'       => $request->sales_type,
             'status'           => 'new',
         ]);
 
@@ -87,6 +108,7 @@ class SalesLeadsController extends Controller
             'assigned_to'      => 'nullable|exists:admins,id',
             'source'           => 'nullable|string|max:100',
             'next_follow_up_at'=> 'nullable|date',
+            'sales_type'       => 'required|in:trading,projects,services',
         ]);
 
         $lead = SiteSurvey::findOrFail($id);
@@ -100,7 +122,8 @@ class SalesLeadsController extends Controller
             'temperature',
             'assigned_to',
             'source',
-            'next_follow_up_at'
+            'next_follow_up_at',
+            'sales_type'
         ]);
 
         // Won/checkout leads remain won, but contact details and ownership stay manageable.
@@ -131,6 +154,10 @@ class SalesLeadsController extends Controller
 
 
         $lead->update($data);
+
+        if ($lead->order_id) {
+            DB::table('orders')->where('id', $lead->order_id)->update(['sales_type' => $data['sales_type']]);
+        }
 
         // Write change logs
         foreach ($changes as $change) {
@@ -253,7 +280,7 @@ class SalesLeadsController extends Controller
     public function patchField(Request $request, $id)
     {
         $request->validate([
-            'field' => 'required|in:status,temperature,next_follow_up_at,assigned_to',
+            'field' => 'required|in:status,temperature,next_follow_up_at,assigned_to,sales_type',
             'value' => 'nullable',
         ]);
 
@@ -299,9 +326,17 @@ class SalesLeadsController extends Controller
             $newAgentName = $value ? Admin::find($value)->name : 'Unassigned';
             $note = "Lead assignee changed from '{$oldAgentName}' to '{$newAgentName}'";
             $lead->assigned_to = $value;
+        } elseif ($field === 'sales_type') {
+            abort_unless(in_array($value, ['trading', 'projects', 'services'], true), 422);
+            $note = "Sales type updated from '" . strtoupper($oldValue ?: 'TRADING') . "' to '" . strtoupper($value) . "'";
+            $lead->sales_type = $value;
         }
 
         $lead->save();
+
+        if ($field === 'sales_type' && $lead->order_id) {
+            DB::table('orders')->where('id', $lead->order_id)->update(['sales_type' => $value]);
+        }
 
         if ($note) {
             LeadActivity::create([

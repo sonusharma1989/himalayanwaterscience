@@ -16,6 +16,10 @@
 
         <link rel="stylesheet" href="{{ asset('vendor/webkul/ui/assets/css/ui.css') }}">
         <link rel="stylesheet" href="{{ asset('vendor/webkul/admin/assets/css/admin.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-field-service.css') }}?v=20260901-2">
+        <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-menu-fixes.css') }}?v=20260901-2">
+        <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-unified-theme.css') }}?v=20260901-1">
+        <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-dashboard-modern.css') }}?v=20260901-1">
 
         @yield('head')
 

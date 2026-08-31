@@ -25,6 +25,7 @@ export default function SurveyPage() {
   const surveyTask = taskId ? tasks.find((t) => t.id === Number(taskId)) : undefined;
 
   const [propertyType, setPropertyType] = useState(["Hotel"]);
+  const [salesType, setSalesType] = useState(["Trading"]);
   const [waterSource, setWaterSource] = useState(["Municipal"]);
   const [wastewaterDisposal, setWastewaterDisposal] = useState(["Septic tank"]);
   const [inquiryTypes, setInquiryTypes] = useState(["STP"]);
@@ -115,6 +116,7 @@ export default function SurveyPage() {
     // 1. Save to database as draft status
     const resultSurveyId = await submitSurvey(surveyTask?.id || surveyId, {
       propertyType,
+      salesType,
       waterSource,
       wastewaterDisposal,
       inquiryTypes,
@@ -143,6 +145,7 @@ export default function SurveyPage() {
       phone,
       address,
       propertyType,
+      salesType,
       waterSource,
       wastewaterDisposal,
       inquiryTypes,
@@ -167,6 +170,7 @@ export default function SurveyPage() {
     setLoading(true);
     const successId = await submitSurvey(surveyTask?.id || surveyId, {
       propertyType,
+      salesType,
       waterSource,
       wastewaterDisposal,
       inquiryTypes,
@@ -216,6 +220,15 @@ export default function SurveyPage() {
             options={["Hotel", "Hospital", "Bungalow", "Other"]}
             value={propertyType}
             onChange={setPropertyType}
+          />
+        </div>
+
+        <div className="mb-5">
+          <FieldLabel>Sales type</FieldLabel>
+          <ChipGroup
+            options={["Trading", "Projects", "Services"]}
+            value={salesType}
+            onChange={setSalesType}
           />
         </div>
 

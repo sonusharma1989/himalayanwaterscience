@@ -38,7 +38,7 @@ class OrderDataGrid extends DataGrid
                 $leftJoin->on('order_address_billing.order_id', '=', 'orders.id')
                     ->where('order_address_billing.address_type', OrderAddress::ADDRESS_TYPE_BILLING);
             })
-            ->addSelect('orders.id', 'orders.increment_id', 'orders.base_sub_total', 'orders.base_grand_total', 'orders.created_at', 'channel_name', 'status')
+            ->addSelect('orders.id', 'orders.increment_id', 'orders.base_sub_total', 'orders.base_grand_total', 'orders.created_at', 'channel_name', 'status', 'orders.sales_type')
             ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_billing.first_name, " ", ' . DB::getTablePrefix() . 'order_address_billing.last_name) as billed_to'))
             ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name) as shipped_to'));
 
@@ -46,6 +46,7 @@ class OrderDataGrid extends DataGrid
         $this->addFilter('shipped_to', DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name)'));
         $this->addFilter('increment_id', 'orders.increment_id');
         $this->addFilter('created_at', 'orders.created_at');
+        $this->addFilter('sales_type', 'orders.sales_type');
 
         $this->setQueryBuilder($queryBuilder);
     }
@@ -134,6 +135,31 @@ class OrderDataGrid extends DataGrid
                 } elseif ($value->status == 'fraud') {
                     return '<span class="badge badge-md badge-danger">' . trans('admin::app.sales.orders.order-status-fraud') . '</span>';
                 }
+            },
+        ]);
+
+        $this->addColumn([
+            'index'      => 'sales_type',
+            'label'      => 'Sales Type',
+            'type'       => 'checkbox',
+            'options'    => [
+                'trading'  => 'Trading',
+                'projects' => 'Projects',
+                'services' => 'Services',
+            ],
+            'sortable'   => true,
+            'searchable' => false,
+            'filterable' => true,
+            'closure'    => function ($value) {
+                $type = $value->sales_type ?: 'trading';
+                $styles = [
+                    'trading'  => ['#eff6ff', '#1d4ed8', '#bfdbfe'],
+                    'projects' => ['#f5f3ff', '#7c3aed', '#ddd6fe'],
+                    'services' => ['#ecfdf5', '#047857', '#a7f3d0'],
+                ];
+                [$background, $color, $border] = $styles[$type];
+
+                return '<span style="display:inline-flex;align-items:center;border-radius:100px;padding:5px 10px;font-size:11px;font-weight:800;background:' . $background . ';color:' . $color . ';border:1px solid ' . $border . ';">' . ucfirst($type) . '</span>';
             },
         ]);
 

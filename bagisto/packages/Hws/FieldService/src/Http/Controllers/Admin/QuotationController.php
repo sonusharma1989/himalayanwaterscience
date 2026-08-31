@@ -11,11 +11,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Webkul\Customer\Models\Customer;
+use Webkul\Sales\Models\Order;
+use Webkul\Sales\Models\OrderTransaction;
+use Webkul\Sales\Repositories\OrderRepository;
 
 use Illuminate\Support\Facades\Schema;
 
 class QuotationController extends Controller
 {
+    public function __construct(protected OrderRepository $orderRepository)
+    {
+    }
     /**
      * Show the form to construct a quotation from a Lead.
      */
@@ -184,5 +191,147 @@ class QuotationController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    public function convertToOrder($id)
+    {
+        $quotation = Quotation::with(['items', 'lead'])->findOrFail($id);
+
+        if ($quotation->order_id) {
+            return redirect()->route('admin.sales.orders.view', $quotation->order_id);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $lead = $quotation->lead;
+            $customer = $lead?->customer_id ? Customer::find($lead->customer_id) : Customer::where('email', $quotation->customer_email)->first();
+            $channel = core()->getCurrentChannel();
+            $currency = core()->getBaseCurrencyCode();
+            $nameParts = preg_split('/\s+/', trim($quotation->customer_name), 2);
+            $firstName = $nameParts[0] ?: 'Customer';
+            $lastName = $nameParts[1] ?? 'Account';
+
+            $order = Order::create([
+                'increment_id'               => $this->orderRepository->generateIncrementId(),
+                'status'                     => Order::STATUS_PENDING_PAYMENT,
+                'sales_type'                 => $lead?->sales_type ?: 'trading',
+                'channel_name'               => $channel?->name,
+                'channel_id'                 => $channel?->id,
+                'channel_type'               => $channel ? get_class($channel) : null,
+                'customer_id'                => $customer?->id,
+                'customer_type'              => $customer ? Customer::class : null,
+                'is_guest'                   => $customer ? 0 : 1,
+                'customer_email'             => $quotation->customer_email ?: 'customer@hws.local',
+                'customer_first_name'        => $firstName,
+                'customer_last_name'         => $lastName,
+                'total_item_count'           => $quotation->items->count(),
+                'total_qty_ordered'          => $quotation->items->sum('quantity'),
+                'base_currency_code'         => $currency,
+                'channel_currency_code'      => $currency,
+                'order_currency_code'        => $currency,
+                'sub_total'                  => $quotation->subtotal,
+                'base_sub_total'             => $quotation->subtotal,
+                'discount_amount'            => $quotation->discount,
+                'base_discount_amount'       => $quotation->discount,
+                'tax_amount'                 => $quotation->tax_amount,
+                'base_tax_amount'            => $quotation->tax_amount,
+                'grand_total'                => $quotation->grand_total,
+                'base_grand_total'           => $quotation->grand_total,
+                'shipping_amount'            => 0,
+                'base_shipping_amount'       => 0,
+            ]);
+
+            $order->payment()->create([
+                'method'       => 'manual_pending',
+                'method_title' => 'Payment Pending',
+                'additional'   => ['quotation_no' => $quotation->quote_no],
+            ]);
+
+            $address = [
+                'first_name'  => $firstName,
+                'last_name'   => $lastName,
+                'email'       => $quotation->customer_email ?: 'customer@hws.local',
+                'address1'    => $quotation->customer_address ?: 'Address not provided',
+                'country'     => 'IN',
+                'state'       => 'N/A',
+                'city'        => 'N/A',
+                'postcode'    => 0,
+                'phone'       => $quotation->customer_phone ?: 'N/A',
+                'customer_id' => $customer?->id,
+            ];
+            $order->addresses()->create($address + ['address_type' => 'order_billing']);
+            $order->addresses()->create($address + ['address_type' => 'order_shipping']);
+
+            foreach ($quotation->items as $item) {
+                $taxShare = $quotation->subtotal > 0 ? ($item->amount / $quotation->subtotal) * $quotation->tax_amount : 0;
+                $discountShare = $quotation->subtotal > 0 ? ($item->amount / $quotation->subtotal) * $quotation->discount : 0;
+                $order->all_items()->create([
+                    'sku'                  => 'QUOTE-' . $quotation->id . '-' . $item->id,
+                    'type'                 => 'simple',
+                    'name'                 => $item->item_name,
+                    'qty_ordered'          => $item->quantity,
+                    'price'                => $item->rate,
+                    'base_price'           => $item->rate,
+                    'total'                => $item->amount,
+                    'base_total'           => $item->amount,
+                    'discount_amount'      => $discountShare,
+                    'base_discount_amount' => $discountShare,
+                    'tax_amount'           => $taxShare,
+                    'base_tax_amount'      => $taxShare,
+                    'additional'           => ['quotation_id' => $quotation->id],
+                ]);
+            }
+
+            $quotation->update(['order_id' => $order->id, 'status' => 'accepted']);
+            $lead?->update(['order_id' => $order->id, 'status' => 'won']);
+
+            if ($lead) {
+                LeadActivity::create([
+                    'survey_id' => $lead->id,
+                    'action_by' => auth()->guard('admin')->id() ?? 1,
+                    'activity_type' => 'note',
+                    'notes' => "Quotation {$quotation->quote_no} converted to Order #{$order->increment_id}.",
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.sales.orders.view', $order->id)->with('success', 'Quotation converted to order successfully.');
+        } catch (\Throwable $exception) {
+            DB::rollBack();
+            return redirect()->back()->withErrors(['error' => 'Unable to convert quotation: ' . $exception->getMessage()]);
+        }
+    }
+
+    public function recordManualPayment(Request $request, $id)
+    {
+        $order = Order::with('payment')->findOrFail($id);
+        $data = $request->validate([
+            'payment_method' => 'required|in:cash,bank_transfer,cheque,upi_manual',
+            'amount'         => 'required|numeric|min:0.01',
+            'reference'      => 'nullable|string|max:100',
+            'notes'          => 'nullable|string|max:500',
+        ]);
+
+        $titles = ['cash' => 'Cash', 'bank_transfer' => 'Bank Transfer', 'cheque' => 'Cheque', 'upi_manual' => 'Manual UPI'];
+        $transaction = OrderTransaction::create([
+            'transaction_id' => 'MAN-' . now()->format('YmdHis') . '-' . $order->id,
+            'status'          => 'paid',
+            'type'            => 'manual',
+            'payment_method'  => $data['payment_method'],
+            'data'            => json_encode(['amount' => (float) $data['amount'], 'reference' => $data['reference'] ?? null, 'notes' => $data['notes'] ?? null, 'recorded_by' => auth()->guard('admin')->user()->name ?? 'Admin']),
+            'invoice_id'      => 0,
+            'order_id'        => $order->id,
+        ]);
+
+        $order->payment()->updateOrCreate(['order_id' => $order->id], [
+            'method' => $data['payment_method'],
+            'method_title' => $titles[$data['payment_method']],
+            'additional' => ['last_transaction_id' => $transaction->transaction_id, 'reference' => $data['reference'] ?? null],
+        ]);
+        $order->update(['status' => Order::STATUS_PROCESSING]);
+
+        return redirect()->back()->with('success', $titles[$data['payment_method']] . ' payment recorded successfully.');
     }
 }

@@ -34,6 +34,7 @@ class SiteSurvey extends Model
         'request_type',
         'reference_no',
         'request_details',
+        'sales_type',
         'assigned_to',
         'next_follow_up_at',
         'latitude',
@@ -48,6 +49,7 @@ class SiteSurvey extends Model
         'longitude'      => 'decimal:7',
         'photos'         => 'array',
         'request_details'=> 'array',
+        'next_follow_up_at' => 'datetime',
     ];
 
     public function task(): BelongsTo
