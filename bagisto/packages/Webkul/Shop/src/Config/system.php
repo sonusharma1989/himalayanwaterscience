@@ -19,6 +19,12 @@ return [
                 'locale_based'  => true,
                 'channel_based' => true,
             ], [
+                'name'          => 'review_option',
+                'title'         => 'shop::app.products.review-options',
+                'type'          => 'boolean',
+                'locale_based'  => true,
+                'channel_based' => true,
+            ], [
                 'name'          => 'image_search',
                 'title'         => 'shop::app.search.image-search-option',
                 'type'          => 'boolean',

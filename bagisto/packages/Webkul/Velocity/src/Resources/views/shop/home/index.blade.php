@@ -372,6 +372,47 @@
 @endpush
 
 @php
+    // Government-of-India patent grants held by the founders — source certificates:
+    // Patent No. 511937 (Application 202111024124) and Patent No. 382475 (Application 202011001209).
+    $patents = [
+        [
+            'title'          => 'Artificial Intelligence Based Water Filtration System',
+            'patent_no'      => '511937',
+            'application_no' => '202111024124',
+            'filed'          => '31 May 2021',
+            'granted'        => '19 Feb 2024',
+            'patentees'      => 'Nitesh Nebhnani, Kapil Nebhnani',
+        ],
+        [
+            'title'          => 'An Advanced Mineral Balancing Membrane Water Purifier',
+            'patent_no'      => '382475',
+            'application_no' => '202011001209',
+            'filed'          => '10 Jan 2020',
+            'granted'        => '24 Nov 2021',
+            'patentees'      => 'Nitesh Nebhnani',
+        ],
+    ];
+@endphp
+<section class="hws-patents"><div class="hws-container">
+    <div class="hws-section__head"><div><span class="hws-eyebrow">Protected innovation</span><h2>Patented water treatment technology</h2></div></div>
+    <div class="hws-patents__grid">
+        @foreach ($patents as $patent)
+            <div class="hws-patent-card">
+                <span class="hws-patent-card__badge">Patent granted · Govt. of India</span>
+                <h3>{{ $patent['title'] }}</h3>
+                <dl class="hws-patent-card__meta">
+                    <div><dt>Patent No.</dt><dd>{{ $patent['patent_no'] }}</dd></div>
+                    <div><dt>Application No.</dt><dd>{{ $patent['application_no'] }}</dd></div>
+                    <div><dt>Filed</dt><dd>{{ $patent['filed'] }}</dd></div>
+                    <div><dt>Granted</dt><dd>{{ $patent['granted'] }}</dd></div>
+                </dl>
+                <p class="hws-patent-card__by">Patentee — {{ $patent['patentees'] }}</p>
+            </div>
+        @endforeach
+    </div>
+</div></section>
+
+@php
     // Placeholder client list — Udaipur hotel names are unconfirmed, replace once client approves.
     $trustedClients = [
         'ITC Hotels',

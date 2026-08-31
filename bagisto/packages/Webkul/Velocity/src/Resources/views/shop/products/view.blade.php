@@ -197,7 +197,9 @@
                                     @include ('shop::products.view.description')
 
                                     {{-- reviews count --}}
-                                    @include ('shop::products.view.reviews', ['accordian' => true])
+                                    @if (core()->getConfigData('general.content.shop.review_option'))
+                                        @include ('shop::products.view.reviews', ['accordian' => true])
+                                    @endif
                                 </div>
                             </div>
                         </div>

@@ -67,7 +67,7 @@
 
                     <p class="hws-list-note">Commercial grade · Technical support included</p>
 
-                    @if( $totalReviews )
+                    @if (core()->getConfigData('general.content.shop.review_option') && $totalReviews)
                         <div class="product-rating">
                             <star-ratings ratings="{{ $avgRatings }}"></star-ratings>
 
@@ -140,17 +140,19 @@
                     @include ('shop::products.price', ['product' => $product])
                 </div>
 
-                @if ($totalReviews)
-                    <div class="product-rating col-12 no-padding">
-                        <star-ratings ratings="{{ $avgRatings }}"></star-ratings>
-                        <span class="align-top">
-                            {{ __('velocity::app.products.ratings', ['totalRatings' => $totalReviews ]) }}
-                        </span>
-                    </div>
-                @else
-                    <div class="product-rating col-12 no-padding">
-                        <span class="fs14">{{ __('velocity::app.products.be-first-review') }}</span>
-                    </div>
+                @if (core()->getConfigData('general.content.shop.review_option'))
+                    @if ($totalReviews)
+                        <div class="product-rating col-12 no-padding">
+                            <star-ratings ratings="{{ $avgRatings }}"></star-ratings>
+                            <span class="align-top">
+                                {{ __('velocity::app.products.ratings', ['totalRatings' => $totalReviews ]) }}
+                            </span>
+                        </div>
+                    @else
+                        <div class="product-rating col-12 no-padding">
+                            <span class="fs14">{{ __('velocity::app.products.be-first-review') }}</span>
+                        </div>
+                    @endif
                 @endif
 
                 <div class="cart-wish-wrap no-padding ml0">

@@ -37,7 +37,6 @@
                         $subMenuCollection['compare'] = $menuItem['children']['compare'];
                     }
 
-                    $subMenuCollection['reviews'] = $menuItem['children']['reviews'];
                     $subMenuCollection['address'] = $menuItem['children']['address'];
 
                     unset(

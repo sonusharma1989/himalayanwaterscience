@@ -17,7 +17,7 @@
         {!! view_render_event('bagisto.shop.customers.account.profile.edit.before', ['customer' => $customer]) !!}
 
         <form method="post" action="{{ route('customer.profile.store') }}" @submit.prevent="onSubmit">
-            <div class="edit-form">
+            <div class="edit-form hws-profile-form">
                 @csrf
 
                 {!! view_render_event('bagisto.shop.customers.account.profile.edit_form_controls.before', ['customer' => $customer]) !!}
@@ -89,7 +89,7 @@
 
                 {!! view_render_event('bagisto.shop.customers.account.profile.edit.phone.after') !!}
 
-                <div class="control-group" :class="[errors.has('oldpassword') ? 'has-error' : '']">
+                <div class="control-group control-group--full" :class="[errors.has('oldpassword') ? 'has-error' : '']">
                     <label for="password">{{ __('shop::app.customer.account.profile.opassword') }}</label>
 
                     <input type="password" class="control" name="oldpassword" data-vv-as="&quot;{{ __('shop::app.customer.account.profile.opassword') }}&quot;" v-validate="'min:6'">
@@ -118,7 +118,7 @@
                 </div>
 
                 @if (core()->getConfigData('customer.settings.newsletter.subscription'))
-                    <div class="control-group">
+                    <div class="control-group control-group--full hws-profile-checkbox">
                         <input type="checkbox" id="checkbox2" name="subscribed_to_news_letter"@if (isset($customer->subscription)) value="{{ $customer->subscription->is_subscribed }}" {{ $customer->subscription->is_subscribed ? 'checked' : ''}} @endif>
 
                         <span>{{ __('shop::app.customer.signup-form.subscribe-to-newsletter') }}</span>

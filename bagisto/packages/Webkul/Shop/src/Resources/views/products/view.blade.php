@@ -59,7 +59,9 @@
                             <span>{{ $product->name }}</span>
                         </div>
 
-                        @include ('shop::products.review', ['product' => $product])
+                        @if (core()->getConfigData('general.content.shop.review_option'))
+                            @include ('shop::products.review', ['product' => $product])
+                        @endif
 
                         @include ('shop::products.price', ['product' => $product])
 
@@ -128,7 +130,9 @@
 
                         @include ('shop::products.view.attributes')
 
-                        @include ('shop::products.view.reviews')
+                        @if (core()->getConfigData('general.content.shop.review_option'))
+                            @include ('shop::products.view.reviews')
+                        @endif
                     </div>
                 </div>
             </product-view>

@@ -27,6 +27,10 @@
                         @endphp
                     @endif
 
+                    @php
+                        unset($menuItem['children']['reviews']);
+                    @endphp
+
                     @foreach ($menuItem['children'] as $subMenuItem)
                         <li class="menu-item {{ $menu->getActive($subMenuItem) }}">
                             <a href="{{ $subMenuItem['url'] }}">
