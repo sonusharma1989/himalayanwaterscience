@@ -13,8 +13,7 @@ class FieldServiceServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Menu will be added directly in Webkul Admin config
-        // $this->mergeConfigFrom(dirname(__DIR__).'/Config/admin-menu.php', 'menu.admin');
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/admin-menu.php', 'menu.admin');
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/acl.php', 'acl');
     }
 

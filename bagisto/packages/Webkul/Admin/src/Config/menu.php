@@ -10,13 +10,6 @@ return [
         'icon-class' => 'dashboard-icon',
     ],
      [
-        'key'        => 'Field Service',
-        'name'       => 'admin::app.layouts.dashboard',
-        'route'      => 'hws.admin.dashboard.index',
-        'sort'       => 1,
-        'icon-class' => 'dashboard-icon',
-    ],
-     [
         'key'        => 'sales',
         'name'       => 'admin::app.layouts.sales',
         'route'      => 'admin.sales.orders.index',

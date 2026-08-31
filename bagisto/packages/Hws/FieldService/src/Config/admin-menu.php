@@ -2,10 +2,10 @@
 return [
     [
         'key'        => 'field-service',
-        'name'       => 'Field Service',
+        'name'       => 'Service Operation',
         'route'      => 'hws.admin.dashboard.index',
         'sort'       => 15,
-        'icon-class' => 'icon-dashboard',
+        'icon-class' => 'icon-service',
     ],
     [
         'key'        => 'field-service.dashboard',
