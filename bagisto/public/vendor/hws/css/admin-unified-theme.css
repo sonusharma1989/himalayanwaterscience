@@ -1,0 +1,33 @@
+/* Unified Bagisto admin skin — visual overrides only; no structural changes. */
+:root{--hws-primary:#3c50e0;--hws-primary-dark:#263bd4;--hws-bg:#f8fafc;--hws-card:#fff;--hws-border:#e2e8f0;--hws-text:#1e293b;--hws-muted:#64748b;--hws-soft:#f1f5f9}
+body:not(.dark-mode){background:var(--hws-bg);color:var(--hws-text)}
+body:not(.dark-mode) .content-container{background:var(--hws-bg)}
+body:not(.dark-mode) .content-container .content .page-header{padding:18px 22px;border-bottom:1px solid var(--hws-border);box-shadow:0 3px 12px rgba(15,23,42,.04)}
+body:not(.dark-mode) .content-container .content .page-header .page-title h1{font-size:24px;font-weight:700;color:var(--hws-text);letter-spacing:-.02em}
+body:not(.dark-mode) .content-container .content .page-content{padding:22px}
+body:not(.dark-mode) .btn{border-radius:8px;box-shadow:none;font-weight:600}
+body:not(.dark-mode) .btn.btn-primary{background:var(--hws-primary)}
+body:not(.dark-mode) .btn.btn-primary:hover,body:not(.dark-mode) .btn.btn-primary:focus{background:var(--hws-primary-dark);opacity:1}
+body:not(.dark-mode) .control-group .control,body:not(.dark-mode) .search-filter .control,body:not(.dark-mode) .dropdown-btn,body:not(.dark-mode) .grid-dropdown-header{border:1px solid #cbd5e1;border-radius:8px;background:#fff;box-shadow:none}
+body:not(.dark-mode) .control-group .control:focus,body:not(.dark-mode) .search-filter:hover{border-color:var(--hws-primary);box-shadow:0 0 0 3px rgba(60,80,224,.1)}
+body:not(.dark-mode) .panel,body:not(.dark-mode) .accordian,body:not(.dark-mode) accordian{border:1px solid var(--hws-border);border-radius:14px;background:var(--hws-card);box-shadow:0 4px 14px rgba(15,23,42,.04);overflow:hidden}
+body:not(.dark-mode) .accordian .accordian-header,body:not(.dark-mode) accordian .accordian-header,body:not(.dark-mode) .accordian div[slot*=header],body:not(.dark-mode) accordian div[slot*=header]{border-color:var(--hws-border);background:#fff}
+body:not(.dark-mode) .grid-container{background:#fff;border:1px solid var(--hws-border);border-radius:14px;padding:16px;box-shadow:0 4px 14px rgba(15,23,42,.04)}
+body:not(.dark-mode) .grid-container .table{overflow:hidden;border-radius:10px;border:1px solid var(--hws-border)}
+body:not(.dark-mode) .table table thead th{background:var(--hws-soft);color:var(--hws-muted);font-size:12px;text-transform:uppercase;letter-spacing:.02em;border-bottom:1px solid var(--hws-border)}
+body:not(.dark-mode) .table table tbody td{border-color:#edf2f7;color:#334155;padding:13px 10px}
+body:not(.dark-mode) .table table tbody tr:hover{background:#f8faff}
+body:not(.dark-mode) .tabs ul{border-color:var(--hws-border);background:#fff;border-radius:12px 12px 0 0}
+body:not(.dark-mode) .tabs ul li.active a{border-color:var(--hws-primary);color:var(--hws-primary);font-weight:700}
+body:not(.dark-mode) .sale-container .sale{gap:18px}
+body:not(.dark-mode) .sale-container .sale .sale-section{background:#fff;border:1px solid var(--hws-border);border-radius:14px;padding:18px;box-shadow:0 4px 14px rgba(15,23,42,.04)}
+body:not(.dark-mode) .sale-container .sale .sale-section .secton-title{padding:0 0 13px;color:var(--hws-text);font-weight:700}
+body:not(.dark-mode) .sale-container .sale .sale-section .section-content{padding:12px 0 0}
+body:not(.dark-mode) .sale-container .sale .sale-section .section-content .row{border-bottom:1px solid #f1f5f9;padding:10px 0}
+body:not(.dark-mode) .sale-container .sale .sale-section .section-content .row:last-child{border-bottom:0}
+body:not(.dark-mode) .label{border-radius:999px;background:var(--hws-soft);color:#475569}
+body:not(.dark-mode) .pagination .page-item{border:1px solid var(--hws-border);border-radius:8px;color:#475569}
+body:not(.dark-mode) .pagination .page-item.active{background:var(--hws-primary);border-color:var(--hws-primary);color:#fff}
+body:not(.dark-mode) .modal-container{border-radius:16px;border:1px solid var(--hws-border);box-shadow:0 24px 60px rgba(15,23,42,.2)}
+body:not(.dark-mode) .alert-wrapper .alert{border-radius:10px}
+@media(max-width:770px){body:not(.dark-mode) .content-container .content .page-header{padding:14px 16px}body:not(.dark-mode) .content-container .content .page-content{padding:16px}body:not(.dark-mode) .sale-container .sale{display:block}body:not(.dark-mode) .sale-container .sale .sale-section{width:100%;margin-bottom:16px}}
