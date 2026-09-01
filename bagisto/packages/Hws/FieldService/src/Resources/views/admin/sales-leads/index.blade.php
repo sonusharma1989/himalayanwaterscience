@@ -69,7 +69,7 @@
                             <input type="email" name="customer_email" placeholder="client@example.com" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 14px;"/>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Temperature</label>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Lead Type</label>
                             <select name="temperature" required style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 14px; background: #fff;">
                                 <option value="warm">Warm</option>
                                 <option value="hot">Hot</option>

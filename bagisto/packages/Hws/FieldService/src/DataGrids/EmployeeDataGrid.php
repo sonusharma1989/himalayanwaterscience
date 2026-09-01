@@ -22,6 +22,7 @@ class EmployeeDataGrid extends DataGrid
                     ->where('hws_attendance.date', '=', $today);
             })
             ->addSelect(
+                DB::raw('ROW_NUMBER() OVER (ORDER BY admins.id ASC) as sn'),
                 'admins.id',
                 'admins.name',
                 'admins.email',
@@ -42,6 +43,15 @@ class EmployeeDataGrid extends DataGrid
 
     public function addColumns()
     {
+        $this->addColumn([
+            'index'      => 'sn',
+            'label'      => 'S.No',
+            'type'       => 'number',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+        ]);
+
         $this->addColumn([
             'index'      => 'name',
             'label'      => 'Technician',

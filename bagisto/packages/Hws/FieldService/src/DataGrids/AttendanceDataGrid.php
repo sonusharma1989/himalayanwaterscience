@@ -16,6 +16,7 @@ class AttendanceDataGrid extends DataGrid
         $queryBuilder = DB::table('hws_attendance')
             ->leftJoin('admins', 'admins.id', '=', 'hws_attendance.employee_id')
             ->addSelect(
+                DB::raw('ROW_NUMBER() OVER (ORDER BY hws_attendance.id DESC) as sn'),
                 'hws_attendance.id',
                 'hws_attendance.date',
                 'hws_attendance.check_in_time',
@@ -31,6 +32,15 @@ class AttendanceDataGrid extends DataGrid
 
     public function addColumns()
     {
+        $this->addColumn([
+            'index'      => 'sn',
+            'label'      => 'S.No',
+            'type'       => 'number',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+        ]);
+
         $this->addColumn([
             'index'      => 'employee_name',
             'label'      => 'Technician',
