@@ -13,10 +13,13 @@ class SiteSurveyDataGrid extends DataGrid
 
     protected $employees;
 
-    public function __construct()
+    protected $salesType;
+
+    public function __construct($salesType = null)
     {
         parent::__construct();
 
+        $this->salesType = $salesType;
         $this->employees = DB::table('admins')->select('id', 'name')->get();
     }
 
@@ -41,6 +44,10 @@ class SiteSurveyDataGrid extends DataGrid
                 'hws_site_surveys.created_at',
                 'hws_tasks.task_no'
             );
+
+        if ($this->salesType) {
+            $queryBuilder->where('hws_site_surveys.sales_type', $this->salesType);
+        }
 
         $this->addFilter('customer_name', 'hws_site_surveys.customer_name');
         $this->addFilter('status', 'hws_site_surveys.status');

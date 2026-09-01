@@ -220,6 +220,10 @@
                                 @if ($invoice->order->billing_address)
                                     <td>
                                         <p>{{ $invoice->order->billing_address->company_name ?? '' }}</p>
+                                        @if($invoice->order->is_gst_invoice)
+                                            <p><strong>GSTIN: {{ $invoice->order->gstin }}</strong></p>
+                                            <p>GST Tax Invoice</p>
+                                        @endif
                                         <p>{{ $invoice->order->billing_address->name }}</p>
                                         <p>{{ $invoice->order->billing_address->address1 }}</p>
                                         <p>{{ $invoice->order->billing_address->postcode . ' ' .$invoice->order->billing_address->city }} </p>

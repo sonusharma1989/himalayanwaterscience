@@ -5,7 +5,7 @@
 
     <form class="hws-service-quote__form" action="{{ route('hws.customer-requests.store') }}" method="POST" data-hws-inline-quote>
         @csrf
-        <input type="hidden" name="request_type" value="bulk_quote">
+        <input type="hidden" name="request_type" value="service">
         <input type="hidden" name="product" value="{{ $service['title'] }}">
 
         <div class="hws-service-form-grid">

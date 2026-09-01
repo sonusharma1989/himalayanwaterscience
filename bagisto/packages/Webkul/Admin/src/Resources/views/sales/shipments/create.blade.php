@@ -6,7 +6,7 @@
 
 @section('content-wrapper')
 <div class="content full-page">
-    <form method="POST" action="{{ route('admin.sales.shipments.store', $order->id) }}" @submit.prevent="onSubmit">
+    <form method="POST" action="{{ $order->sales_type === 'projects' ? route('hws.admin.projects.shipments.store', $order->id) : route('admin.sales.shipments.store', $order->id) }}" @submit.prevent="onSubmit">
         @csrf()
 
         <div class="page-header">
@@ -275,10 +275,10 @@
                             @foreach ($order->items as $item)
                                 @if (
                                     $item->qty_to_ship > 0
-                                    && $item->product
+                                    && ($item->product || $order->sales_type === 'projects')
                                 )
                                     <tr>
-                                        <td>{{ $item->getTypeInstance()->getOrderedItem($item)->sku }}</td>
+                                        <td>{{ $item->product ? $item->getTypeInstance()->getOrderedItem($item)->sku : $item->sku }}</td>
                                         <td>
                                             {{ $item->name }}
 
@@ -315,9 +315,9 @@
 
                                                             <td>
                                                                 @php
-                                                                    $product = $item->getTypeInstance()->getOrderedItem($item)->product;
+                                                                    $product = $item->product ? $item->getTypeInstance()->getOrderedItem($item)->product : null;
 
-                                                                    $sourceQty = $product->type == 'bundle' ? $item->qty_ordered : $product->inventory_source_qty($inventorySource->id);
+                                                                    $sourceQty = $product ? ($product->type == 'bundle' ? $item->qty_ordered : $product->inventory_source_qty($inventorySource->id)) : $item->qty_to_ship;
                                                                 @endphp
 
                                                                 {{ $sourceQty }}
@@ -330,7 +330,7 @@
 
                                                                 <div class="control-group" :class="[errors.has('{{ $inputName }}') ? 'has-error' : '']">
 
-                                                                    <input type="text" v-validate="'required|numeric|min_value:0|max_value:{{$item->qty_ordered}}'" class="control" id="{{ $inputName }}" name="{{ $inputName }}" value="{{ $item->qty_to_ship }}" data-vv-as="&quot;{{ __('admin::app.sales.shipments.qty-to-ship') }}&quot;" :disabled="source != '{{ $inventorySource->id }}'"/>
+                                                                    <input type="text" v-validate="'required|numeric|min_value:0|max_value:{{$item->qty_to_ship}}'" class="control" id="{{ $inputName }}" name="{{ $inputName }}" value="{{ $item->qty_to_ship }}" data-vv-as="&quot;{{ __('admin::app.sales.shipments.qty-to-ship') }}&quot;" :disabled="source != '{{ $inventorySource->id }}'"/>
 
                                                                     <span class="control-error" v-if="errors.has('{{ $inputName }}')">
                                                                         @verbatim

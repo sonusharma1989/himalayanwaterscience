@@ -1,5 +1,9 @@
 .field-service-menu-icon{width:48px;height:48px;display:inline-block;background-size:cover;background-image:url(../images/field-service.svg)}
 .active .field-service-menu-icon{background-image:url(../images/field-service-active.svg)}
+.project-menu-icon{width:48px;height:48px;display:inline-block;background-size:cover;background-image:url(../images/projects.svg)}
+.active .project-menu-icon{background-image:url(../images/projects-active.svg)}
+.sales-leads-menu-icon{width:48px;height:48px;display:inline-block;background-size:cover;background-image:url(../images/sales-leads.svg)}
+.active .sales-leads-menu-icon{background-image:url(../images/sales-leads-active.svg)}
 .hws-lead-page a.hws-btn,.hws-lead-page a.hws-btn:link,.hws-lead-page a.hws-btn:visited,.hws-lead-page a.hws-btn:hover,.hws-lead-page a.hws-btn:focus{color:#fff!important;text-decoration:none!important}
 .hws-lead-page a.hws-btn:hover,.hws-lead-page a.hws-btn:focus{background:#263bd4!important}
 .hws-lead-page a.hws-btn.alt,.hws-lead-page a.hws-btn.alt:link,.hws-lead-page a.hws-btn.alt:visited{color:#334155!important;background:#e2e8f0!important}

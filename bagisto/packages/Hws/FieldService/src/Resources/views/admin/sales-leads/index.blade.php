@@ -1,14 +1,20 @@
 @extends('hws::admin.layouts.menu')
 
+@php
+    $leadType = $leadType ?? null;
+    $leadPageTitle = $leadPageTitle ?? 'Sales CRM & Leads';
+    $leadIndexRoute = $leadIndexRoute ?? 'hws.admin.sales-leads.index';
+@endphp
+
 @section('page_title')
-    Sales CRM & Leads
+    {{ $leadPageTitle }}
 @stop
 
 @section('page-content')
     <div class="content">
         <div class="page-header">
             <div class="page-title">
-                <h1>Sales CRM & Leads</h1>
+                <h1>{{ $leadPageTitle }}</h1>
             </div>
 
             <div class="page-action">
@@ -72,11 +78,16 @@
                         </div>
                         <div>
                             <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Sales Type</label>
-                            <select name="sales_type" required style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 14px; background: #fff;">
-                                <option value="trading">Trading</option>
-                                <option value="projects">Projects</option>
-                                <option value="services">Services</option>
-                            </select>
+                            @if ($leadType)
+                                <input type="hidden" name="sales_type" value="{{ $leadType }}">
+                                <input type="text" value="{{ ucfirst($leadType) }}" disabled style="width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;background:#f8fafc;"/>
+                            @else
+                                <select name="sales_type" required style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 14px; background: #fff;">
+                                    <option value="trading">Trading</option>
+                                    <option value="projects">Projects</option>
+                                    <option value="services">Services</option>
+                                </select>
+                            @endif
                         </div>
                         <div>
                             <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Assign Agent</label>
@@ -112,7 +123,7 @@
                 </form>
             </div>
 
-            <datagrid-plus src="{{ route('hws.admin.sales-leads.index') }}"></datagrid-plus>
+            <datagrid-plus src="{{ route($leadIndexRoute) }}"></datagrid-plus>
         </div>
     </div>
 

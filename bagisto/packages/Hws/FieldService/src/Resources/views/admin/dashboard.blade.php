@@ -40,7 +40,7 @@
             <p style="font-size:11px;font-weight:600;color:#94a3b8;margin:2px 0 0;">Completed today</p>
         </a>
 
-        <a href="{{ route('hws.admin.sales-leads.index') }}" style="flex:1;min-width:150px;text-decoration:none;border:1px solid #e2e8f0;background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);transition:transform 0.2s;display:block;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        <a href="{{ route('hws.admin.service-requests.index') }}" style="flex:1;min-width:150px;text-decoration:none;border:1px solid #e2e8f0;background:#fff;border-radius:16px;padding:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);transition:transform 0.2s;display:block;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
             <div style="width:32px;height:32px;border-radius:8px;background:#eff6ff;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:14px;">📈</div>
             <p style="font-size:20px;font-weight:700;color:#1e293b;margin:0;">₹{{ number_format($salesThisMonth / 100000, 1) }}L</p>
             <p style="font-size:11px;font-weight:600;color:#94a3b8;margin:2px 0 0;">Sales this month</p>
