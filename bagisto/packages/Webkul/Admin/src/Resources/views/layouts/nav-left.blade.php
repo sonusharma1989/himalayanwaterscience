@@ -57,7 +57,7 @@
     }
 
     .navbar-left.open ul.menubar li.menu-item.active {
-        background: #3c50e0 !important;
+        background: var(--hws-primary) !important;
         border-radius: 10px;
     }
 
@@ -66,7 +66,7 @@
     }
 
     .navbar-left:not(.open) ul.menubar li.menu-item.active {
-        background: #eef1ff !important;
+        background: var(--hws-primary-soft) !important;
         border-radius: 10px;
     }
 
@@ -99,7 +99,7 @@
 
     .navbar-left.open ul.menubar li.menu-item.active ul.sub-menubar li.sub-menu-item.active .menu-label,
     .navbar-left.open ul.menubar li.menu-item.active ul.sub-menubar li.sub-menu-item:hover .menu-label {
-        color: #3c50e0 !important;
+        color: var(--hws-primary) !important;
     }
 
     /* Field Service menu icons render as real inline <svg> elements (see the
@@ -112,11 +112,11 @@
     }
 
     .navbar-left ul.menubar li.menu-item:hover .field-service-icon {
-        color: #3c50e0;
+        color: var(--hws-primary);
     }
 
     .navbar-left ul.menubar li.menu-item.active .field-service-icon {
-        color: #3c50e0;
+        color: var(--hws-primary);
     }
 
     .navbar-left.open ul.menubar li.menu-item.active .field-service-icon {
@@ -196,13 +196,23 @@
 
         $(document).ready(function () {
             $(".menubar-anchor").click(function(event) {
-                if ( $(this).parent().attr('class') == 'menu-item active' ) {
-                    $(this).parent().removeClass('active');
-                    $('.arrow-icon-left').removeClass('rotate-arrow-icon');
-                    $('.arrow-icon-right').removeClass('rotate-arrow-icon');
-                    $(".sub-menubar").hide();
-                    event.preventDefault();
+                var $item = $(this).parent();
+                var $submenu = $item.children('ul.sub-menubar');
+
+                // Items with a submenu should expand/collapse on click instead
+                // of redirecting, so users can see the sub-links first. Items
+                // without children (leaf links) keep navigating normally.
+                if (! $submenu.length) {
+                    return;
                 }
+
+                event.preventDefault();
+
+                var isOpen = $item.hasClass('active');
+
+                $item.toggleClass('active', ! isOpen);
+                $(this).find('.arrow-icon').toggleClass('rotate-arrow-icon', ! isOpen);
+                $submenu.toggle(! isOpen);
             });
         });
 

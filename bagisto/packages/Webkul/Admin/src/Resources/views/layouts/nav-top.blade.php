@@ -22,7 +22,7 @@
                     <default-image
                         light-theme-image-url="{{ asset('vendor/webkul/ui/assets/images/logo.png') }}?v=2"
                         dark-theme-image-url="{{ asset('vendor/webkul/ui/assets/images/logo_light.png') }}?v=2"
-                        style="width: 305px;"
+                        style="height: 40px; width: auto; max-width: 180px; object-fit: contain;"
                     ></default-image>
                 @endif
             </a>
