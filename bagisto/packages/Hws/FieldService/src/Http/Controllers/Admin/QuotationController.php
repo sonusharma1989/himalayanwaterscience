@@ -334,4 +334,5 @@ class QuotationController extends Controller
 
         return redirect()->back()->with('success', $titles[$data['payment_method']] . ' payment recorded successfully.');
     }
+
 }

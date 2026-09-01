@@ -15,7 +15,7 @@
     @if(session('success'))<div class="hws-card" style="background:#ecfdf5;color:#065f46">{{ session('success') }}</div>@endif
     @if($errors->any())<div class="hws-card" style="background:#fef2f2;color:#991b1b">{{ $errors->first() }}</div>@endif
     <div class="hws-head">
-        <div><a href="{{ $lead->sales_type === 'projects' ? route('hws.admin.projects.leads') : route('hws.admin.sales-leads.index') }}" class="hws-muted" style="text-decoration:none">← {{ $lead->sales_type === 'projects' ? 'Project Leads' : 'Sales &amp; Leads' }}</a><h1>{{ $reference }} · {{ $lead->customer_name }}</h1><span class="hws-muted">Created {{ optional($lead->created_at)->format('d M Y, h:i A') }}</span></div>
+        <div><a href="{{ $lead->sales_type === 'projects' ? route('hws.admin.leads.projects') : route('hws.admin.leads.trading') }}" class="hws-muted" style="text-decoration:none">← {{ $lead->sales_type === 'projects' ? 'Project Leads' : 'Trading Leads' }}</a><h1>{{ $reference }} · {{ $lead->customer_name }}</h1><span class="hws-muted">Created {{ optional($lead->created_at)->format('d M Y, h:i A') }}</span></div>
         <div class="hws-actions"><a class="hws-btn" href="{{ route('hws.admin.quotations.create',$lead->id) }}">Create Quotation</a>@if($quotation)<a class="hws-btn alt" href="{{ route('hws.admin.quotations.pdf',$quotation->id) }}">Download Quote</a>@if($quotation->order_id)<a class="hws-btn" href="{{ route('admin.sales.orders.view',$quotation->order_id) }}">View Order</a>@else<form method="POST" action="{{ route('hws.admin.quotations.convert-to-order',$quotation->id) }}">@csrf<button class="hws-btn" type="submit">Convert to Order</button></form>@endif @endif</div>
     </div>
     <div class="hws-grid">

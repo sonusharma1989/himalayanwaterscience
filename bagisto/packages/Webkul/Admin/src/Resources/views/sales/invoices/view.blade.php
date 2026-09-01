@@ -153,7 +153,10 @@
                                                 </div>
 
                                                 <div class="section-content">
-                                                    @include ('admin::sales.address', ['address' => $order->billing_address])
+                                                @include ('admin::sales.address', ['address' => $order->billing_address])
+                                                @if($order->is_gst_invoice)
+                                                    <div style="margin-top:10px"><strong>{{ $order->billing_company_name }}</strong><br>GSTIN: {{ $order->gstin }}<br>GST Tax Invoice</div>
+                                                @endif
 
                                                     {!! view_render_event('sales.invoice.billing_address.after', ['order' => $order]) !!}
                                                 </div>

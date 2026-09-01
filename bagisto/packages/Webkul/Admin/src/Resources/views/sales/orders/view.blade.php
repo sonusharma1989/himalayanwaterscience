@@ -25,6 +25,8 @@
             <div class="page-action">
                 {!! view_render_event('sales.order.page_action.before', ['order' => $order]) !!}
 
+                <a href="{{ route('hws.admin.orders.edit', $order->id) }}" class="btn btn-lg btn-primary">Edit Order</a>
+
                 @if (
                     $order->canCancel()
                     && bouncer()->hasPermission('sales.orders.cancel')

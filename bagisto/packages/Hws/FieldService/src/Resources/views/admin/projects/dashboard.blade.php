@@ -10,7 +10,7 @@
     <div class="page-content">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
             @foreach([
-                ['Project Leads', $stats['leads'], route('hws.admin.projects.leads')],
+                ['Project Leads', $stats['leads'], route('hws.admin.leads.projects')],
                 ['Project Orders', $stats['orders'], route('hws.admin.projects.orders')],
                 ['Project Revenue', core()->formatBasePrice($stats['revenue']), route('hws.admin.projects.orders')],
                 ['Shipments', $stats['shipments'], route('hws.admin.projects.shipments')],

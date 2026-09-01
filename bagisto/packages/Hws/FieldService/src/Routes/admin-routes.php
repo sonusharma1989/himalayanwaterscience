@@ -9,6 +9,7 @@ use Hws\FieldService\Http\Controllers\Admin\SalesLeadsController;
 use Hws\FieldService\Http\Controllers\Admin\QuotationController;
 use Hws\FieldService\Http\Controllers\Admin\ProjectsController;
 use Hws\FieldService\Http\Controllers\Admin\ProjectShipmentController;
+use Hws\FieldService\Http\Controllers\Admin\OrderEditController;
 use Webkul\Admin\Http\Controllers\Sales\OrderController;
 use Webkul\Admin\Http\Controllers\Sales\InvoiceController;
 use Webkul\Admin\Http\Controllers\Sales\ShipmentController;
@@ -16,6 +17,11 @@ use Webkul\Admin\Http\Controllers\Sales\RefundController;
 use Webkul\Admin\Http\Controllers\Sales\TransactionController;
 
 Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_url', 'admin')], function () {
+
+    Route::prefix('leads')->group(function () {
+        Route::get('trading', [SalesLeadsController::class, 'index'])->name('hws.admin.leads.trading');
+        Route::get('projects', [SalesLeadsController::class, 'index'])->name('hws.admin.leads.projects');
+    });
 
     Route::prefix('projects')->group(function () {
         Route::get('dashboard', [ProjectsController::class, 'dashboard'])->name('hws.admin.projects.dashboard');
@@ -90,6 +96,8 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
             ->name('hws.admin.quotations.convert-to-order');
         Route::post('orders/{id}/manual-payment', [QuotationController::class, 'recordManualPayment'])
             ->name('hws.admin.orders.manual-payment');
+        Route::get('orders/{id}/edit', [OrderEditController::class, 'edit'])->name('hws.admin.orders.edit');
+        Route::post('orders/{id}/edit', [OrderEditController::class, 'update'])->name('hws.admin.orders.update');
 
     });
 

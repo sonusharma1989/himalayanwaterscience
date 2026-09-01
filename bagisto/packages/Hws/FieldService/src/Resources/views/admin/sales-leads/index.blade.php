@@ -1,9 +1,13 @@
 @extends('hws::admin.layouts.menu')
 
-@php($projectMode = $projectMode ?? false)
+@php
+    $leadType = $leadType ?? 'trading';
+    $leadPageTitle = $leadPageTitle ?? ucfirst($leadType) . ' Leads';
+    $leadIndexRoute = $leadIndexRoute ?? 'hws.admin.leads.trading';
+@endphp
 
 @section('page_title')
-    {{ $projectMode ? 'Project Leads' : 'Sales CRM & Leads' }}
+    {{ $leadPageTitle }}
 @stop
 
 @section('page-content')
@@ -23,7 +27,7 @@
 
     <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
         <div>
-            <h1 style="font-size: 24px; font-weight: 700; color: #1e293b; margin: 0 0 4px;">{{ $projectMode ? 'Project Leads' : 'Sales CRM & Leads' }}</h1>
+            <h1 style="font-size: 24px; font-weight: 700; color: #1e293b; margin: 0 0 4px;">{{ $leadPageTitle }}</h1>
             <p style="font-size: 14px; color: #64748b; margin: 0;">Manage your sales pipeline, log customer activities, send quotations, and convert won deals to tasks.</p>
         </div>
         <div>
@@ -74,15 +78,8 @@
                 </div>
                 <div>
                     <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Sales Type</label>
-                    @if($projectMode)
-                        <input type="hidden" name="sales_type" value="projects">
-                        <input type="text" value="Projects" disabled style="width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;background:#f8fafc;">
-                    @else
-                        <select name="sales_type" required style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 14px; background: #fff;">
-                            <option value="trading">Trading</option>
-                            <option value="services">Services</option>
-                        </select>
-                    @endif
+                    <input type="hidden" name="sales_type" value="{{ $leadType }}">
+                    <input type="text" value="{{ ucfirst($leadType) }}" disabled style="width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:8px 12px;background:#f8fafc;">
                 </div>
                 <div>
                     <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Assign Agent</label>
@@ -120,7 +117,7 @@
 
     <!-- Filters Section -->
     <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
-        <form method="GET" action="{{ $projectMode ? route('hws.admin.projects.leads') : route('hws.admin.sales-leads.index') }}" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+        <form method="GET" action="{{ route($leadIndexRoute) }}" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
             <div>
                 <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px;">Pipeline Stage</label>
                 <select name="status" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 12px; font-size: 13.5px; background: #fff; min-width: 140px;">
@@ -142,20 +139,11 @@
                     <option value="cold" {{ request('temperature') === 'cold' ? 'selected' : '' }}>Cold</option>
                 </select>
             </div>
-            @unless($projectMode)<div>
-                <label style="display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px;">Sales Type</label>
-                <select name="sales_type" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 12px; font-size: 13.5px; background: #fff; min-width: 140px;">
-                    <option value="">All Sales Types</option>
-                    <option value="trading" {{ request('sales_type') === 'trading' ? 'selected' : '' }}>Trading</option>
-                    <option value="projects" {{ request('sales_type') === 'projects' ? 'selected' : '' }}>Projects</option>
-                    <option value="services" {{ request('sales_type') === 'services' ? 'selected' : '' }}>Services</option>
-                </select>
-            </div>@endunless
             <div style="display: flex; gap: 8px;">
                 <button type="submit" style="background: #3c50e0; color: #fff; border: 0; border-radius: 8px; padding: 7px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer;">
                     Filter
                 </button>
-                <a href="{{ $projectMode ? route('hws.admin.projects.leads') : route('hws.admin.sales-leads.index') }}" style="background: #f1f5f9; color: #475569; text-decoration: none; border-radius: 8px; padding: 7px 16px; font-size: 13.5px; font-weight: 600; text-align: center;">
+                <a href="{{ route($leadIndexRoute) }}" style="background: #f1f5f9; color: #475569; text-decoration: none; border-radius: 8px; padding: 7px 16px; font-size: 13.5px; font-weight: 600; text-align: center;">
                     Reset
                 </a>
             </div>
@@ -341,7 +329,7 @@
                                             <form method="POST" action="{{ route('hws.admin.sales-leads.convert-to-task', $lead->id) }}" style="display: inline;">
                                                 @csrf
                                                 <button type="submit" style="background: #f59e0b; color: #fff; border: 0; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer;">
-                                                    ⚙ Convert to Service Task
+                                                    ⚙ {{ $lead->sales_type === 'services' ? 'Convert to Service Request' : 'Convert to Service Task' }}
                                                 </button>
                                             </form>
                                         @elseif ($lead->task_id)

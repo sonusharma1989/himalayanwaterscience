@@ -12,12 +12,8 @@ return [
         'route' => 'hws.admin.projects.dashboard', 'sort' => 1, 'icon-class' => '',
     ],
     [
-        'key' => 'projects.leads', 'name' => 'Project Leads',
-        'route' => 'hws.admin.projects.leads', 'sort' => 2, 'icon-class' => '',
-    ],
-    [
         'key' => 'projects.orders', 'name' => 'Orders',
-        'route' => 'hws.admin.projects.orders', 'sort' => 3, 'icon-class' => '',
+        'route' => 'hws.admin.projects.orders', 'sort' => 2, 'icon-class' => '',
     ],
     [
         'key' => 'projects.invoices', 'name' => 'Invoices',
@@ -71,10 +67,18 @@ return [
         'icon-class' => '',
     ],
     [
-        'key'        => 'field-service.sales_leads',
-        'name'       => 'Sales & Leads',
-        'route'      => 'hws.admin.sales-leads.index',
-        'sort'       => 5,
-        'icon-class' => '',
+        'key'        => 'sales-leads',
+        'name'       => 'Sales Leads',
+        'route'      => 'hws.admin.leads.trading',
+        'sort'       => 2.25,
+        'icon-class' => 'sales-leads-menu-icon',
+    ],
+    [
+        'key' => 'sales-leads.trading', 'name' => 'Trading Leads',
+        'route' => 'hws.admin.leads.trading', 'sort' => 1, 'icon-class' => '',
+    ],
+    [
+        'key' => 'sales-leads.projects', 'name' => 'Project Leads',
+        'route' => 'hws.admin.leads.projects', 'sort' => 2, 'icon-class' => '',
     ],
 ];

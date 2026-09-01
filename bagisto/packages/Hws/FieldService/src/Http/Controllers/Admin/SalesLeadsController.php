@@ -20,9 +20,17 @@ class SalesLeadsController extends Controller
      */
     public function index(Request $request)
     {
-        $projectMode = $request->routeIs('hws.admin.projects.leads');
+        $leadType = match ($request->route()->getName()) {
+            'hws.admin.leads.projects', 'hws.admin.projects.leads' => 'projects',
+            default => 'trading',
+        };
+        $leadPageTitle = match ($leadType) {
+            'projects' => 'Project Leads',
+            default => 'Trading Leads',
+        };
+        $leadIndexRoute = 'hws.admin.leads.' . $leadType;
         $query = SiteSurvey::with(['task', 'inquiryTypes'])
-            ->where('sales_type', $projectMode ? '=' : '!=', 'projects')
+            ->where('sales_type', $leadType)
             ->orderByDesc('created_at');
 
         // Apply filters
@@ -34,14 +42,10 @@ class SalesLeadsController extends Controller
             $query->where('temperature', $request->temperature);
         }
 
-        if ($request->filled('sales_type')) {
-            $query->where('sales_type', $request->sales_type);
-        }
-
         $leads = $query->get();
         $employees = Admin::all();
 
-        return view('hws::admin.sales-leads.index', compact('leads', 'employees', 'projectMode'));
+        return view('hws::admin.sales-leads.index', compact('leads', 'employees', 'leadType', 'leadPageTitle', 'leadIndexRoute'));
     }
 
     public function show($id)
@@ -251,9 +255,10 @@ class SalesLeadsController extends Controller
                 return redirect()->back()->withErrors(['error' => 'Lead is already converted/linked to a task.']);
             }
 
+            $isServiceLead = $lead->sales_type === 'services';
             $task = Task::create([
-                'task_no'          => 'TSK-' . rand(1000, 9999),
-                'type'             => 'installation',
+                'task_no'          => ($isServiceLead ? 'SR-' : 'TSK-') . strtoupper(bin2hex(random_bytes(3))),
+                'type'             => $isServiceLead ? 'service' : 'installation',
                 'customer_name'    => $lead->customer_name,
                 'customer_phone'   => $lead->customer_phone,
                 'customer_address' => $lead->customer_address,
@@ -267,14 +272,18 @@ class SalesLeadsController extends Controller
 
             DB::commit();
 
-            session()->flash('success', 'Lead successfully converted to Active Service Task #' . $task->task_no);
+            session()->flash('success', $isServiceLead
+                ? 'Service request created successfully: ' . $task->task_no
+                : 'Lead successfully converted to Active Service Task #' . $task->task_no);
 
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors(['error' => 'Failed to convert lead to task.']);
         }
 
-        return redirect()->back();
+        return $lead->sales_type === 'services'
+            ? redirect()->route('hws.admin.service-requests.index')
+            : redirect()->back();
     }
 
     /**
