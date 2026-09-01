@@ -150,6 +150,68 @@
                         </accordian>
                     @endif
 
+                    <accordian title="GST Invoice Details" :active="true">
+                        <div slot="body">
+                            @php
+                                $supplierState = trim((string) core()->getConfigData('sales.shipping.origin.state'));
+                                $placeOfSupply = trim((string) optional($order->shipping_address ?: $order->billing_address)->state);
+                                $selectedGstTaxType = old('gst_tax_type', $order->gst_tax_type ?: ($supplierState && $placeOfSupply && strcasecmp($supplierState, $placeOfSupply) !== 0 ? 'inter_state' : 'intra_state'));
+                                $isInterStateGst = $selectedGstTaxType === 'inter_state';
+                            @endphp
+                            <div style="padding:20px;background:#fff;border:1px solid #e2e8f0;border-radius:12px">
+                                <input type="hidden" name="is_gst_invoice" value="0">
+                                <label style="display:flex;align-items:center;gap:9px;margin-bottom:16px;font-size:14px;font-weight:700;color:#334155">
+                                    <input type="checkbox" name="is_gst_invoice" value="1" {{ old('is_gst_invoice', $order->is_gst_invoice) ? 'checked' : '' }}>
+                                    Generate GST Tax Invoice
+                                </label>
+
+                                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+                                    <div class="control-group">
+                                        <label>Legal Company Name</label>
+                                        <input class="control" name="billing_company_name" value="{{ old('billing_company_name', $order->billing_company_name) }}" placeholder="Company name on GST certificate">
+                                    </div>
+
+                                    <div class="control-group">
+                                        <label>GSTIN</label>
+                                        <input class="control" name="gstin" value="{{ old('gstin', $order->gstin) }}" maxlength="15" style="text-transform:uppercase" placeholder="22AAAAA0000A1Z5">
+                                    </div>
+
+                                    <div class="control-group">
+                                        <label>Place of Supply (State)</label>
+                                        <input class="control" name="gst_place_of_supply" value="{{ old('gst_place_of_supply', $order->gst_place_of_supply ?: $placeOfSupply) }}" placeholder="e.g. Rajasthan">
+                                    </div>
+
+                                    <div class="control-group">
+                                        <label>GST Tax Type</label>
+                                        <select class="control" name="gst_tax_type">
+                                            <option value="intra_state" {{ $selectedGstTaxType === 'intra_state' ? 'selected' : '' }}>Intra-State — CGST + SGST</option>
+                                            <option value="inter_state" {{ $selectedGstTaxType === 'inter_state' ? 'selected' : '' }}>Inter-State — IGST</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <label>{{ $isInterStateGst ? 'IGST' : 'CGST + SGST' }}</label>
+                                        <div class="control" style="display:flex;align-items:center;background:#f8fafc;font-weight:700">
+                                            @if($isInterStateGst)
+                                                {{ core()->formatPrice($order->tax_amount, $order->order_currency_code) }}
+                                            @else
+                                                CGST {{ core()->formatPrice($order->tax_amount / 2, $order->order_currency_code) }} + SGST {{ core()->formatPrice($order->tax_amount / 2, $order->order_currency_code) }}
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top:10px;color:#64748b;font-size:12px">
+                                    Supplier State: <strong>{{ $supplierState ?: 'Not configured' }}</strong> &nbsp;•&nbsp;
+                                    Address State: <strong>{{ $placeOfSupply ?: 'Not available' }}</strong>
+                                </div>
+
+                                @error('gstin')<div style="margin-top:8px;color:#dc2626;font-size:12px">{{ $message }}</div>@enderror
+                                @error('billing_company_name')<div style="margin-top:8px;color:#dc2626;font-size:12px">{{ $message }}</div>@enderror
+                            </div>
+                        </div>
+                    </accordian>
+
                     <accordian title="{{ __('admin::app.sales.orders.payment-and-shipping') }}" :active="true">
                         <div slot="body">
                             <div class="sale">
@@ -239,6 +301,9 @@
                                                 <th>{{ __('admin::app.sales.orders.SKU') }}</th>
                                                 <th>{{ __('admin::app.sales.orders.product-name') }}</th>
                                                 <th>{{ __('admin::app.sales.invoices.qty-ordered') }}</th>
+                                                <th>CGST</th>
+                                                <th>SGST</th>
+                                                <th>IGST</th>
                                                 <th>{{ __('admin::app.sales.invoices.qty-to-invoice') }}</th>
                                             </tr>
                                         </thead>
@@ -263,6 +328,12 @@
                                                             @endif
                                                         </td>
                                                         <td>{{ $item->qty_ordered }}</td>
+                                                        @php
+                                                            $itemTax = $item->qty_ordered > 0 ? ((float) $item->base_tax_amount / $item->qty_ordered) * $item->qty_to_invoice : 0;
+                                                        @endphp
+                                                        <td>{{ core()->formatBasePrice($selectedGstTaxType === 'intra_state' ? $itemTax / 2 : 0) }}</td>
+                                                        <td>{{ core()->formatBasePrice($selectedGstTaxType === 'intra_state' ? $itemTax / 2 : 0) }}</td>
+                                                        <td>{{ core()->formatBasePrice($selectedGstTaxType === 'inter_state' ? $itemTax : 0) }}</td>
                                                         <td>
                                                             <div class="control-group" :class="[errors.has('invoice[items][{{ $item->id }}]') ? 'has-error' : '']">
                                                                 <input type="text" v-validate="'required|numeric|min:0'" class="control" id="invoice[items][{{ $item->id }}]" name="invoice[items][{{ $item->id }}]" value="{{ $item->qty_to_invoice }}" data-vv-as="&quot;{{ __('admin::app.sales.invoices.qty-to-invoice') }}&quot;"/>

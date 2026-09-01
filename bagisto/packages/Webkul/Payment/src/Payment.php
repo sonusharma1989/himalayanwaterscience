@@ -77,8 +77,18 @@ class Payment
      */
     public static function getAdditionalDetails($code)
     {
-        $paymentMethodClass =  app(Config::get('paymentmethods.' . $code . '.class'));
-        
+        $paymentMethod = Config::get('paymentmethods.' . $code . '.class');
+
+        if (! $paymentMethod) {
+            return [];
+        }
+
+        $paymentMethodClass = app($paymentMethod);
+
+        if (! method_exists($paymentMethodClass, 'getAdditionalDetails')) {
+            return [];
+        }
+
         return $paymentMethodClass->getAdditionalDetails();
     }
 }

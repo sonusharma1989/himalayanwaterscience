@@ -97,6 +97,11 @@ class InvoiceController extends Controller
 
         $this->validate(request(), [
             'invoice.items.*' => 'required|numeric|min:0',
+            'is_gst_invoice'  => 'nullable|boolean',
+            'billing_company_name' => 'nullable|required_if:is_gst_invoice,1|string|max:255',
+            'gstin'           => ['nullable', 'required_if:is_gst_invoice,1', 'regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9]Z[A-Z0-9]$/'],
+            'gst_place_of_supply' => 'nullable|required_if:is_gst_invoice,1|string|max:100',
+            'gst_tax_type'    => 'nullable|required_if:is_gst_invoice,1|in:intra_state,inter_state',
         ]);
 
         if (! $this->invoiceRepository->haveProductToInvoice(request()->all())) {
@@ -110,6 +115,13 @@ class InvoiceController extends Controller
 
             return redirect()->back();
         }
+
+        $order->is_gst_invoice = request()->boolean('is_gst_invoice');
+        $order->billing_company_name = $order->is_gst_invoice ? request('billing_company_name') : null;
+        $order->gstin = $order->is_gst_invoice ? strtoupper(request('gstin')) : null;
+        $order->gst_place_of_supply = $order->is_gst_invoice ? request('gst_place_of_supply') : null;
+        $order->gst_tax_type = $order->is_gst_invoice ? request('gst_tax_type') : null;
+        $order->save();
 
         $this->invoiceRepository->create(array_merge(request()->all(), [
             'order_id' => $orderId,

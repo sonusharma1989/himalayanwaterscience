@@ -155,7 +155,7 @@
                                                 <div class="section-content">
                                                 @include ('admin::sales.address', ['address' => $order->billing_address])
                                                 @if($order->is_gst_invoice)
-                                                    <div style="margin-top:10px"><strong>{{ $order->billing_company_name }}</strong><br>GSTIN: {{ $order->gstin }}<br>GST Tax Invoice</div>
+                                                    <div style="margin-top:10px"><strong>{{ $order->billing_company_name }}</strong><br>GSTIN: {{ $order->gstin }}<br>Place of Supply: {{ $order->gst_place_of_supply ?: optional($order->shipping_address ?: $order->billing_address)->state }}<br>GST Tax Invoice</div>
                                                 @endif
 
                                                     {!! view_render_event('sales.invoice.billing_address.after', ['order' => $order]) !!}
@@ -193,7 +193,9 @@
                                                     <th>{{ __('admin::app.sales.orders.price') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.qty') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.subtotal') }}</th>
-                                                    <th>{{ __('admin::app.sales.orders.tax-amount') }}</th>
+                                                    <th>CGST</th>
+                                                    <th>SGST</th>
+                                                    <th>IGST</th>
                                                     @if ($invoice->base_discount_amount > 0)
                                                         <th>{{ __('admin::app.sales.orders.discount-amount') }}</th>
                                                     @endif
@@ -226,7 +228,9 @@
 
                                                         <td>{{ core()->formatBasePrice($item->base_total) }}</td>
 
-                                                        <td>{{ core()->formatBasePrice($item->base_tax_amount) }}</td>
+                                                        <td>{{ core()->formatBasePrice($order->is_gst_invoice && $order->gst_tax_type !== 'inter_state' ? $item->base_tax_amount / 2 : 0) }}</td>
+                                                        <td>{{ core()->formatBasePrice($order->is_gst_invoice && $order->gst_tax_type !== 'inter_state' ? $item->base_tax_amount / 2 : 0) }}</td>
+                                                        <td>{{ core()->formatBasePrice($order->is_gst_invoice && $order->gst_tax_type === 'inter_state' ? $item->base_tax_amount : 0) }}</td>
 
                                                         @if ($invoice->base_discount_amount > 0)
                                                             <td>{{ core()->formatBasePrice($item->base_discount_amount) }}</td>
@@ -253,11 +257,14 @@
                                         <td>{{ core()->formatBasePrice($invoice->base_shipping_amount) }}</td>
                                     </tr>
 
-                                    <tr>
-                                        <td>{{ __('admin::app.sales.orders.tax') }}</td>
-                                        <td>-</td>
-                                        <td>{{ core()->formatBasePrice($invoice->base_tax_amount) }}</td>
-                                    </tr>
+                                    @if($order->is_gst_invoice && $order->gst_tax_type === 'inter_state')
+                                        <tr><td>IGST</td><td>-</td><td>{{ core()->formatBasePrice($invoice->base_tax_amount) }}</td></tr>
+                                    @elseif($order->is_gst_invoice)
+                                        <tr><td>CGST</td><td>-</td><td>{{ core()->formatBasePrice($invoice->base_tax_amount / 2) }}</td></tr>
+                                        <tr><td>SGST</td><td>-</td><td>{{ core()->formatBasePrice($invoice->base_tax_amount / 2) }}</td></tr>
+                                    @else
+                                        <tr><td>{{ __('admin::app.sales.orders.tax') }}</td><td>-</td><td>{{ core()->formatBasePrice($invoice->base_tax_amount) }}</td></tr>
+                                    @endif
 
                                     @if ($invoice->base_discount_amount > 0)
                                         <tr>
