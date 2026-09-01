@@ -23,6 +23,8 @@ class OrderRefundDataGrid extends DataGrid
             })
             ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_billing.first_name, " ", ' . DB::getTablePrefix() . 'order_address_billing.last_name) as billed_to'));
 
+        $queryBuilder->where('orders.sales_type', request()->routeIs('hws.admin.projects.*') ? 'projects' : 'trading');
+
         $this->addFilter('billed_to', DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_billing.first_name, " ", ' . DB::getTablePrefix() . 'order_address_billing.last_name)'));
         $this->addFilter('id', 'refunds.id');
         $this->addFilter('increment_id', 'orders.increment_id');

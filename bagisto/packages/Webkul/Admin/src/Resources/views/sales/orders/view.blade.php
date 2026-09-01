@@ -14,7 +14,7 @@
                 <h1>
                     {!! view_render_event('sales.order.title.before', ['order' => $order]) !!}
 
-                    <i class="icon angle-left-icon back-link" onclick="window.location = '{{ route('admin.sales.orders.index') }}'"></i>
+                    <i class="icon angle-left-icon back-link" onclick="window.location = '{{ $order->sales_type === 'projects' ? route('hws.admin.projects.orders') : route('admin.sales.orders.index') }}'"></i>
 
                     {{ __('admin::app.sales.orders.view-title', ['order_id' => $order->increment_id]) }}
 
@@ -50,7 +50,7 @@
                 @endif
 
                 @if ($order->canShip())
-                    <a href="{{ route('admin.sales.shipments.create', $order->id) }}" class="btn btn-lg btn-primary">
+                    <a href="{{ $order->sales_type === 'projects' ? route('hws.admin.projects.shipments.create', $order->id) : route('admin.sales.shipments.create', $order->id) }}" class="btn btn-lg btn-primary">
                         {{ __('admin::app.sales.orders.shipment-btn-title') }}
                     </a>
                 @endif

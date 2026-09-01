@@ -20,7 +20,10 @@ class SalesLeadsController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SiteSurvey::with(['task', 'inquiryTypes'])->orderByDesc('created_at');
+        $projectMode = $request->routeIs('hws.admin.projects.leads');
+        $query = SiteSurvey::with(['task', 'inquiryTypes'])
+            ->where('sales_type', $projectMode ? '=' : '!=', 'projects')
+            ->orderByDesc('created_at');
 
         // Apply filters
         if ($request->filled('status')) {
@@ -38,7 +41,7 @@ class SalesLeadsController extends Controller
         $leads = $query->get();
         $employees = Admin::all();
 
-        return view('hws::admin.sales-leads.index', compact('leads', 'employees'));
+        return view('hws::admin.sales-leads.index', compact('leads', 'employees', 'projectMode'));
     }
 
     public function show($id)

@@ -10,8 +10,42 @@ use Hws\FieldService\Http\Controllers\Admin\InventoryController;
 use Hws\FieldService\Http\Controllers\Admin\ExpensesController;
 use Hws\FieldService\Http\Controllers\Admin\ReportsController;
 use Hws\FieldService\Http\Controllers\Admin\QuotationController;
+use Hws\FieldService\Http\Controllers\Admin\ProjectsController;
+use Hws\FieldService\Http\Controllers\Admin\ProjectShipmentController;
+use Webkul\Admin\Http\Controllers\Sales\OrderController;
+use Webkul\Admin\Http\Controllers\Sales\InvoiceController;
+use Webkul\Admin\Http\Controllers\Sales\ShipmentController;
+use Webkul\Admin\Http\Controllers\Sales\RefundController;
+use Webkul\Admin\Http\Controllers\Sales\TransactionController;
 
 Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_url', 'admin')], function () {
+
+    Route::prefix('projects')->group(function () {
+        Route::get('dashboard', [ProjectsController::class, 'dashboard'])->name('hws.admin.projects.dashboard');
+        Route::get('leads', [SalesLeadsController::class, 'index'])->name('hws.admin.projects.leads');
+
+        Route::get('orders', [OrderController::class, 'index'])->defaults('_config', [
+            'view' => 'hws::admin.projects.index', 'title' => 'Project Orders',
+        ])->name('hws.admin.projects.orders');
+
+        Route::get('invoices', [InvoiceController::class, 'index'])->defaults('_config', [
+            'view' => 'hws::admin.projects.index', 'title' => 'Project Invoices',
+        ])->name('hws.admin.projects.invoices');
+
+        Route::get('shipments', [ShipmentController::class, 'index'])->defaults('_config', [
+            'view' => 'hws::admin.projects.index', 'title' => 'Project Shipments',
+        ])->name('hws.admin.projects.shipments');
+        Route::get('shipments/create/{order_id}', [ProjectShipmentController::class, 'create'])->name('hws.admin.projects.shipments.create');
+        Route::post('shipments/create/{order_id}', [ProjectShipmentController::class, 'store'])->name('hws.admin.projects.shipments.store');
+
+        Route::get('refunds', [RefundController::class, 'index'])->defaults('_config', [
+            'view' => 'hws::admin.projects.index', 'title' => 'Project Refunds',
+        ])->name('hws.admin.projects.refunds');
+
+        Route::get('transactions', [TransactionController::class, 'index'])->defaults('_config', [
+            'view' => 'hws::admin.projects.index', 'title' => 'Project Transactions',
+        ])->name('hws.admin.projects.transactions');
+    });
 
     Route::prefix('field-service')->group(function () {
 
