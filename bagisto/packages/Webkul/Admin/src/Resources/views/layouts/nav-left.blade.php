@@ -14,7 +14,7 @@
 
 @endphp
 
-<div class="navbar-left" v-bind:class="{'open': isLeftSideBar}">
+<div class="navbar-left" v-bind:class="{'open': isMenuOpen}">
     <ul class="menubar">
         @foreach ($menu->items as $menuItem)
             <li class="menu-item {{ $menu->getActive($menuItem) }}">

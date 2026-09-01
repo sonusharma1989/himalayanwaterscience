@@ -171,7 +171,9 @@
                                 @foreach ($statistics['top_selling_categories'] as $item)
 
                                     <li>
-                                        <a href="{{ route('admin.catalog.categories.edit', $item->category_id) }}">
+                                        @if (!empty($item->category_id))
+                                            <a href="{{ route('admin.catalog.categories.edit', $item->category_id) }}">
+                                        @endif
                                             <div class="description">
                                                 <div class="name">
                                                     {{ $item->name }}
@@ -185,7 +187,9 @@
                                             </div>
 
                                             <span class="icon angle-right-icon"></span>
-                                        </a>
+                                        @if (!empty($item->category_id))
+                                            </a>
+                                        @endif
                                     </li>
 
                                 @endforeach
@@ -220,9 +224,11 @@
                             @foreach ($statistics['top_selling_products'] as $item)
 
                                 <li>
-                                    <a href="{{ route('admin.catalog.products.edit', $item->product_id) }}">
+                                    @if (!empty($item->product_id))
+                                        <a href="{{ route('admin.catalog.products.edit', $item->product_id) }}">
+                                    @endif
                                         <div class="product image">
-                                            <?php $productBaseImage = productimage()->getProductBaseImage($item->product); ?>
+                                            <?php $productBaseImage = productimage()->getProductBaseImage($item->product ?? null); ?>
 
                                             <img class="item-image" src="{{ $productBaseImage['small_image_url'] ?? asset('vendor/webkul/ui/assets/images/product/small-product-placeholder.webp') }}" />
                                         </div>
@@ -235,12 +241,14 @@
                                             </div>
 
                                             <div class="info">
-                                                {{ __('admin::app.dashboard.sale-count', ['count' => $item->total_qty_invoiced]) }}
+                                                {{ __('admin::app.dashboard.sale-count', ['count' => $item->total_qty_invoiced ?? 0]) }}
                                             </div>
                                         </div>
 
                                         <span class="icon angle-right-icon"></span>
-                                    </a>
+                                    @if (!empty($item->product_id))
+                                        </a>
+                                    @endif
                                 </li>
 
                             @endforeach
@@ -271,7 +279,7 @@
                             @foreach ($statistics['customer_with_most_sales'] as $item)
 
                                 <li>
-                                    @if ($item->customer_id)
+                                    @if (!empty($item->customer_id))
                                         <a href="{{ route('admin.customer.edit', $item->customer_id) }}">
                                     @endif
 
@@ -296,7 +304,7 @@
 
                                         <span class="icon angle-right-icon"></span>
 
-                                    @if ($item->customer_id)
+                                    @if (!empty($item->customer_id))
                                         </a>
                                     @endif
                                 </li>
@@ -330,11 +338,13 @@
                             @foreach ($statistics['stock_threshold'] as $item)
 
                                 <li>
-                                    <a href="{{ route('admin.catalog.products.edit', $item->product_id) }}">
+                                    @if (!empty($item->product_id))
+                                        <a href="{{ route('admin.catalog.products.edit', $item->product_id) }}">
+                                    @endif
                                         <div class="image">
-                                            <?php $productBaseImage = productimage()->getProductBaseImage($item->product); ?>
+                                            <?php $productBaseImage = productimage()->getProductBaseImage($item->product ?? null); ?>
 
-                                            <img class="item-image" src="{{ $productBaseImage['small_image_url'] }}" />
+                                            <img class="item-image" src="{{ $productBaseImage['small_image_url'] ?? asset('vendor/webkul/ui/assets/images/product/small-product-placeholder.webp') }}" />
                                         </div>
 
                                         <div class="description do-not-cross-arrow">
@@ -345,12 +355,14 @@
                                             </div>
 
                                             <div class="info">
-                                                {{ __('admin::app.dashboard.qty-left', ['qty' => $item->total_qty]) }}
+                                                {{ __('admin::app.dashboard.qty-left', ['qty' => $item->total_qty ?? 0]) }}
                                             </div>
                                         </div>
 
                                         <span class="icon angle-right-icon"></span>
-                                    </a>
+                                    @if (!empty($item->product_id))
+                                        </a>
+                                    @endif
                                 </li>
 
                             @endforeach
@@ -480,8 +492,12 @@
         });
 
         $(document).ready(function () {
+            var chartElement = document.getElementById("myChart");
+            if (!chartElement) {
+                return;
+            }
 
-            var ctx = document.getElementById("myChart").getContext('2d');
+            var ctx = chartElement.getContext('2d');
 
             var data = @json($statistics['sale_graph']);
 
