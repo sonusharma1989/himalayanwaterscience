@@ -10,6 +10,7 @@ use Webkul\Admin\Traits\Mails;
 use Webkul\Core\Traits\PDFHandler;
 use Webkul\Sales\Repositories\InvoiceRepository;
 use Webkul\Sales\Repositories\OrderRepository;
+use Hws\FieldService\Helpers\BranchScopeHelper;
 
 class InvoiceController extends Controller
 {
@@ -71,6 +72,7 @@ class InvoiceController extends Controller
     public function create($orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
+        BranchScopeHelper::authorizeBranch($order->branch_id);
 
         if ($order->payment->method === 'paypal_standard') {
             abort(404);
@@ -88,6 +90,7 @@ class InvoiceController extends Controller
     public function store($orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
+        BranchScopeHelper::authorizeBranch($order->branch_id);
 
         if (! $order->canInvoice()) {
             session()->flash('error', trans('admin::app.sales.invoices.creation-error'));
@@ -124,7 +127,8 @@ class InvoiceController extends Controller
         $order->save();
 
         $this->invoiceRepository->create(array_merge(request()->all(), [
-            'order_id' => $orderId,
+            'order_id'  => $orderId,
+            'branch_id' => $order->branch_id,
         ]));
 
         session()->flash('success', trans('admin::app.response.create-success', ['name' => 'Invoice']));
@@ -141,6 +145,7 @@ class InvoiceController extends Controller
     public function view($id)
     {
         $invoice = $this->invoiceRepository->findOrFail($id);
+        BranchScopeHelper::authorizeBranch($invoice->branch_id ?: $invoice->order?->branch_id);
 
         return view($this->_config['view'], compact('invoice'));
     }
@@ -159,6 +164,7 @@ class InvoiceController extends Controller
         ]);
 
         $invoice = $this->invoiceRepository->findOrFail($id);
+        BranchScopeHelper::authorizeBranch($invoice->branch_id ?: $invoice->order?->branch_id);
 
         $this->sendDuplicateInvoiceMail($invoice, $request->email);
 
@@ -176,6 +182,7 @@ class InvoiceController extends Controller
     public function printInvoice($id)
     {
         $invoice = $this->invoiceRepository->findOrFail($id);
+        BranchScopeHelper::authorizeBranch($invoice->branch_id ?: $invoice->order?->branch_id);
 
         return $this->downloadPDF(
             view('admin::sales.invoices.pdf', compact('invoice'))->render(),

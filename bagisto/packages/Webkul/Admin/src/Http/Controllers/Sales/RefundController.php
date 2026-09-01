@@ -57,6 +57,7 @@ class RefundController extends Controller
     public function create($orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($order->branch_id);
 
         return view($this->_config['view'], compact('order'));
     }
@@ -70,6 +71,7 @@ class RefundController extends Controller
     public function store($orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($order->branch_id);
 
         if (! $order->canRefund()) {
             session()->flash('error', trans('admin::app.sales.refunds.creation-error'));
@@ -144,6 +146,7 @@ class RefundController extends Controller
     public function view($id)
     {
         $refund = $this->refundRepository->findOrFail($id);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($refund->order?->branch_id);
 
         return view($this->_config['view'], compact('refund'));
     }

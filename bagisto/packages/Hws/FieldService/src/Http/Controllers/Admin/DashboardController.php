@@ -30,33 +30,38 @@ class DashboardController extends Controller
         $monthStart = Carbon::now()->startOfMonth();
         $monthEnd   = Carbon::now()->endOfMonth();
 
-        $totalEmployees = Admin::count();
+        $totalEmployees = \Hws\FieldService\Helpers\BranchScopeHelper::applyScope(Admin::query())->count();
 
         // ── Employees online: checked in today, not yet checked out ──
-        $employeesOnline = Attendance::whereDate('date', $today)
+        $attendanceQuery = Attendance::whereDate('date', $today)
             ->whereNotNull('check_in_time')
-            ->whereNull('check_out_time')
+            ->whereNull('check_out_time');
+        $employeesOnline = \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($attendanceQuery, 'hws_attendance')
             ->distinct('employee_id')
             ->count('employee_id');
 
         // ── Pending jobs: not yet completed (step 0-3), excludes surveys ──
-        $pendingJobs = Task::where('step', '<', 4)
-            ->where('type', '!=', 'site_survey')
+        $pendingQuery = Task::where('step', '<', 4)
+            ->where('type', '!=', 'site_survey');
+        $pendingJobs = \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($pendingQuery, 'hws_tasks')
             ->count();
 
         // ── Completed today ──
-        $completedToday = Task::where('step', 4)
-            ->whereDate('updated_at', $today)
+        $completedQuery = Task::where('step', 4)
+            ->whereDate('updated_at', $today);
+        $completedToday = \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($completedQuery, 'hws_tasks')
             ->count();
 
-        // ── Sales this month: sum of sale_amount closed this month ──
-        $salesThisMonth = Task::whereBetween('updated_at', [$monthStart, $monthEnd])
-            ->whereNotNull('sale_amount')
-            ->sum('sale_amount');
+        // ── In-Progress jobs: currently active on field (step 1 to 3) ──
+        $inProgQuery = Task::whereIn('type', ['installation', 'amc_service', 'complaint', 'service'])
+            ->whereIn('step', [1, 2, 3]);
+        $inProgressJobs = \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($inProgQuery, 'hws_tasks')
+            ->count();
 
-        // ── Open requests: unresolved complaints ──
-        $openRequests = Task::where('type', 'complaint')
-            ->where('step', '<', 4)
+        // ── Open requests: unresolved complaints & services ──
+        $openReqQuery = Task::whereIn('type', ['complaint', 'service'])
+            ->where('step', '<', 4);
+        $openRequests = \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($openReqQuery, 'hws_tasks')
             ->count();
 
         // ── AMC renewals due in the next 30 days ──
@@ -114,8 +119,8 @@ class DashboardController extends Controller
             'employeesOnline'  => $employeesOnline,
             'totalEmployees'   => $totalEmployees,
             'pendingJobs'      => $pendingJobs,
+            'inProgressJobs'   => $inProgressJobs,
             'completedToday'   => $completedToday,
-            'salesThisMonth'   => $salesThisMonth,
             'openRequests'     => $openRequests,
             'amcRenewalsDue'   => $amcRenewalsDue,
             'weekChart'        => $weekChart,

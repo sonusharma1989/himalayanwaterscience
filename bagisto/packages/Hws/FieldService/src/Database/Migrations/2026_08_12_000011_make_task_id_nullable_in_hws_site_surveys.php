@@ -12,20 +12,34 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // 1. Drop foreign key constraint first
-        Schema::table('hws_site_surveys', function (Blueprint $table) {
-            $table->dropForeign(['task_id']);
-            $table->dropUnique(['task_id']);
-        });
+        // 1. Drop foreign key constraint safely if exists
+        try {
+            Schema::table('hws_site_surveys', function (Blueprint $table) {
+                $table->dropForeign(['task_id']);
+                $table->dropUnique(['task_id']);
+            });
+        } catch (\Throwable $e) {
+            // Ignore if foreign key was already dropped
+        }
 
         // 2. Make the column nullable and add customer details directly to surveys table
-        DB::statement('ALTER TABLE hws_site_surveys MODIFY task_id BIGINT UNSIGNED NULL');
+        try {
+            DB::statement('ALTER TABLE hws_site_surveys MODIFY task_id BIGINT UNSIGNED NULL');
+        } catch (\Throwable $e) {}
 
         Schema::table('hws_site_surveys', function (Blueprint $table) {
-            $table->string('customer_name')->nullable()->after('task_id');
-            $table->string('customer_phone')->nullable()->after('customer_name');
-            $table->text('customer_address')->nullable()->after('customer_phone');
-            $table->json('photos')->nullable()->after('follow_up_date');
+            if (!Schema::hasColumn('hws_site_surveys', 'customer_name')) {
+                $table->string('customer_name')->nullable()->after('task_id');
+            }
+            if (!Schema::hasColumn('hws_site_surveys', 'customer_phone')) {
+                $table->string('customer_phone')->nullable()->after('customer_name');
+            }
+            if (!Schema::hasColumn('hws_site_surveys', 'customer_address')) {
+                $table->text('customer_address')->nullable()->after('customer_phone');
+            }
+            if (!Schema::hasColumn('hws_site_surveys', 'photos')) {
+                $table->json('photos')->nullable()->after('follow_up_date');
+            }
         });
     }
 

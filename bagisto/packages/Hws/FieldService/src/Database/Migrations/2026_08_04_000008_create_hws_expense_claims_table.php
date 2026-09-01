@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hws_expense_claims', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('admins')->cascadeOnDelete();
-            $table->string('category');
-            $table->decimal('amount', 10, 2);
-            $table->text('description')->nullable();
-            $table->string('receipt_path')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->foreignId('reviewed_by')->nullable()->constrained('admins')->nullOnDelete();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('hws_expense_claims')) {
+            Schema::create('hws_expense_claims', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedInteger('employee_id');
+                $table->string('category');
+                $table->decimal('amount', 10, 2);
+                $table->text('description')->nullable();
+                $table->string('receipt_path')->nullable();
+                $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+                $table->unsignedInteger('reviewed_by')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

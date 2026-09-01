@@ -5,6 +5,29 @@
 @stop
 
 @section('content-wrapper')
+    @php
+        $actualPaidAmount = 0;
+        $orderInvoiceIds = $order->invoices->pluck('id')->toArray();
+
+        $transactionsList = \Webkul\Sales\Models\OrderTransaction::where('order_id', $order->id)
+            ->when(!empty($orderInvoiceIds), function ($q) use ($orderInvoiceIds) {
+                $q->orWhereIn('invoice_id', $orderInvoiceIds);
+            })
+            ->get();
+
+        foreach ($transactionsList as $t) {
+            $tAmt = (float) $t->amount;
+            if ($tAmt <= 0 && $t->data) {
+                $tData = is_array($t->data) ? $t->data : json_decode($t->data ?: '{}', true);
+                if (is_array($tData)) {
+                    $tAmt = (float) ($tData['amount'] ?? ($tData['payment_amount'] ?? ($tData['grand_total'] ?? 0)));
+                }
+            }
+            $actualPaidAmount += $tAmt;
+        }
+
+        $actualDueAmount = max(0, (float) $order->base_grand_total - $actualPaidAmount);
+    @endphp
 
     <div class="content full-page">
 
@@ -313,6 +336,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>{{ __('admin::app.sales.orders.SKU') }}</th>
+                                                    <th>HSN</th>
                                                     <th>{{ __('admin::app.sales.orders.product-name') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.price') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.item-status') }}</th>
@@ -333,6 +357,10 @@
                                                     <tr>
                                                         <td>
                                                             {{ $item->getTypeInstance()->getOrderedItem($item)->sku }}
+                                                        </td>
+
+                                                        <td>
+                                                            {{ $item->hsn_code }}
                                                         </td>
 
                                                         <td>
@@ -386,6 +414,7 @@
                                                         <td>{{ core()->formatBasePrice($item->base_total + $item->base_tax_amount - $item->base_discount_amount) }}</td>
                                                     </tr>
                                                 @endforeach
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -476,7 +505,7 @@
                                         <tr class="bold">
                                             <td>{{ __('admin::app.sales.orders.total-paid') }}</td>
                                             <td>-</td>
-                                            <td>{{ core()->formatBasePrice($order->base_grand_total_invoiced) }}</td>
+                                            <td style="color:#16a34a;">{{ core()->formatBasePrice($actualPaidAmount) }}</td>
                                         </tr>
 
                                         <tr class="bold">
@@ -491,7 +520,7 @@
                                             <td>-</td>
 
                                             @if($order->status !== 'canceled')
-                                                <td>{{ core()->formatBasePrice($order->base_total_due) }}</td>
+                                                <td style="color:{{ $actualDueAmount > 0 ? '#dc2626' : '#16a34a' }};">{{ core()->formatBasePrice($actualDueAmount) }}</td>
                                             @else
                                                 <td id="due-amount-on-cancelled">{{ core()->formatBasePrice(0.00) }}</td>
                                             @endif
@@ -656,8 +685,8 @@
                                 </div>
 
                                 <div class="control-group">
-                                    <label for="hws-payment-amount">Amount</label>
-                                    <input id="hws-payment-amount" type="number" name="amount" class="control" value="{{ (float) $order->grand_total }}" min="0.01" step="0.01" required>
+                                    <label for="hws-payment-amount">Amount (Remaining Due: ₹{{ number_format($actualDueAmount, 2) }})</label>
+                                    <input id="hws-payment-amount" type="number" name="amount" class="control" value="{{ round($actualDueAmount, 2) }}" min="0.01" max="{{ round($actualDueAmount > 0 ? $actualDueAmount : (float) $order->grand_total, 2) }}" step="0.01" required>
                                 </div>
 
                                 <div class="control-group">
@@ -690,15 +719,16 @@
 
                             <tbody>
 
-                                @foreach ($order->transactions as $transaction)
+                                @foreach ($transactionsList as $transaction)
                                     @php($hwsTransactionData = is_array($transaction->data) ? $transaction->data : json_decode($transaction->data ?: '{}', true))
+                                    @php($tRowAmount = (float) ($transaction->amount ?: ($hwsTransactionData['amount'] ?? 0)))
                                     <tr>
                                         <td>#{{ $transaction->transaction_id }}</td>
                                         <td>{{ $transaction->order_id }}</td>
                                         <td>
                                              {{ core()->getConfigData('sales.paymentmethods.' . $transaction->payment_method . '.title') ?: ucwords(str_replace('_', ' ', $transaction->payment_method)) }}
                                         </td>
-                                        <td>{{ isset($hwsTransactionData['amount']) ? core()->formatPrice($hwsTransactionData['amount'], $order->order_currency_code) : '—' }}</td>
+                                        <td>{{ $tRowAmount > 0 ? core()->formatPrice($tRowAmount, $order->order_currency_code) : '—' }}</td>
                                         <td>{{ $hwsTransactionData['reference'] ?? '—' }}</td>
                                         <td class="action">
                                             <a href="{{ route('admin.sales.transactions.view', $transaction->id) }}">
@@ -708,10 +738,10 @@
                                     </tr>
                                 @endforeach
 
-                                @if (! $order->transactions->count())
+                                @if (! $transactionsList->count())
                                     <tr>
                                         <td class="empty" colspan="6">{{ __('admin::app.common.no-result-found') }}</td>
-                                    <tr>
+                                    </tr>
                                 @endif
 
                             </tbody>

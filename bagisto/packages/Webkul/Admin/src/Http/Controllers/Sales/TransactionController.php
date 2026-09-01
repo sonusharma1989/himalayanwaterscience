@@ -108,6 +108,8 @@ class TransactionController extends Controller
             return redirect(route('admin.sales.transactions.create'));
         }
 
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($invoice->branch_id ?: $invoice->order?->branch_id);
+
         $order = $this->orderRepository->find($invoice->order_id);
 
         $randomId = random_bytes(20);
@@ -153,6 +155,7 @@ class TransactionController extends Controller
     public function view($id)
     {
         $transaction = $this->orderTransactionRepository->findOrFail($id);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($transaction->order?->branch_id ?: $transaction->invoice?->branch_id);
 
         $transData = json_decode(json_encode(json_decode($transaction['data'])), true);
 

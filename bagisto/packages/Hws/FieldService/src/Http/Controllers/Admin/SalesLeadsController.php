@@ -44,6 +44,8 @@ class SalesLeadsController extends Controller
     public function show($id)
     {
         $lead = SiteSurvey::with(['task', 'inquiryTypes'])->findOrFail($id);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($lead->branch_id);
+
         $employees = Admin::all();
         $activities = DB::table('hws_lead_activities')
             ->leftJoin('admins', 'hws_lead_activities.action_by', '=', 'admins.id')
@@ -56,41 +58,81 @@ class SalesLeadsController extends Controller
         return view('hws::admin.sales-leads.show', compact('lead', 'employees', 'activities', 'quotation'));
     }
 
+    public function create(Request $request)
+    {
+        $leadType = $request->query('type', 'trading');
+        $employees = Admin::all();
+        $allBranches = \Hws\FieldService\Models\Branch::where('status', 1)->get();
+
+        return view('hws::admin.sales-leads.create', compact('employees', 'leadType', 'allBranches'));
+    }
+
     /**
      * Create a new independent sales lead.
      */
     public function store(Request $request)
     {
         $request->validate([
-            'customer_name'    => 'required|string|max:255',
-            'customer_phone'   => 'required|string|max:20',
-            'customer_email'   => 'nullable|email|max:255',
-            'customer_address' => 'required|string',
-            'property_type'    => 'required|in:hotel,hospital,bungalow,other',
-            'temperature'      => 'required|in:hot,warm,cold',
-            'assigned_to'      => 'nullable|exists:admins,id',
-            'source'           => 'nullable|string|max:100',
-            'next_follow_up_at'=> 'nullable|date',
-            'sales_type'       => 'required|in:trading,projects,services',
+            'customer_name'        => 'required|string|max:255',
+            'customer_phone'       => 'required|string|max:20',
+            'customer_email'       => 'nullable|email|max:255',
+            'customer_address'     => 'required|string',
+            'property_type'        => 'required|string|max:100',
+            'floors'               => 'nullable|integer',
+            'built_up_area_sqft'   => 'nullable|numeric',
+            'rooms_units'          => 'nullable|integer',
+            'water_use_kld'        => 'nullable|numeric',
+            'water_source'         => 'nullable|string|max:100',
+            'wastewater_disposal'  => 'nullable|string|max:100',
+            'space_available'      => 'nullable|string|max:100',
+            'temperature'          => 'required|in:hot,warm,cold',
+            'assigned_to'          => 'nullable|exists:admins,id',
+            'source'               => 'nullable|string|max:100',
+            'next_follow_up_at'    => 'nullable|date',
+            'sales_type'           => 'required|in:trading,projects,services',
+            'inquiry_types'        => 'nullable|array',
+            'notes'                => 'nullable|string',
         ]);
 
-        SiteSurvey::create([
-            'customer_name'    => $request->customer_name,
-            'customer_phone'   => $request->customer_phone,
-            'customer_email'   => $request->customer_email,
-            'customer_address' => $request->customer_address,
-            'property_type'    => $request->property_type,
-            'temperature'      => $request->temperature,
-            'assigned_to'      => $request->assigned_to ?: null,
-            'source'           => $request->source ?: 'Field Survey',
-            'next_follow_up_at'=> $request->next_follow_up_at ?: null,
-            'sales_type'       => $request->sales_type,
-            'status'           => 'new',
+        $lead = SiteSurvey::create([
+            'customer_name'       => $request->customer_name,
+            'customer_phone'      => $request->customer_phone,
+            'customer_email'      => $request->customer_email,
+            'customer_address'    => $request->customer_address,
+            'property_type'       => $request->property_type,
+            'floors'              => $request->floors ?: null,
+            'built_up_area_sqft'  => $request->built_up_area_sqft ?: null,
+            'rooms_units'         => $request->rooms_units ?: null,
+            'water_use_kld'       => $request->water_use_kld ?: null,
+            'water_source'        => $request->water_source ?: null,
+            'wastewater_disposal' => $request->wastewater_disposal ?: null,
+            'space_available'     => $request->space_available ?: null,
+            'temperature'         => $request->temperature,
+            'assigned_to'         => $request->assigned_to ?: null,
+            'source'              => $request->source ?: 'Field Survey',
+            'next_follow_up_at'   => $request->next_follow_up_at ?: null,
+            'sales_type'          => $request->sales_type,
+            'notes'               => $request->notes ?: null,
+            'status'              => 'new',
+            'branch_id'           => \Hws\FieldService\Helpers\BranchScopeHelper::getBranchIdForNewRecord($request->branch_id),
         ]);
+
+        if (!empty($request->inquiry_types)) {
+            foreach ($request->inquiry_types as $type) {
+                \Hws\FieldService\Models\SurveyInquiryType::create([
+                    'survey_id'    => $lead->id,
+                    'inquiry_type' => $type,
+                ]);
+            }
+        }
 
         session()->flash('success', 'Lead created successfully.');
 
-        return redirect()->back();
+        if ($request->sales_type === 'projects') {
+            return redirect()->route('hws.admin.leads.projects');
+        }
+
+        return redirect()->route('hws.admin.leads.trading');
     }
 
     /**
@@ -98,6 +140,9 @@ class SalesLeadsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $lead = SiteSurvey::findOrFail($id);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($lead->branch_id);
+
         $request->validate([
             'customer_name'    => 'required|string|max:255',
             'customer_phone'   => 'required|string|max:20',

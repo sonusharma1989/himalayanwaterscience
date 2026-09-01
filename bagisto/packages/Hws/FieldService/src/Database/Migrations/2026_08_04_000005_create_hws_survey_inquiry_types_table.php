@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hws_survey_inquiry_types', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('survey_id')->constrained('hws_site_surveys')->cascadeOnDelete();
-            $table->enum('inquiry_type', ['stp', 'wtp', 'etp', 'ro_plant', 'softener', 'amc_only']);
-            $table->timestamps();
+        if (!Schema::hasTable('hws_survey_inquiry_types')) {
+            Schema::create('hws_survey_inquiry_types', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('survey_id')->constrained('hws_site_surveys')->cascadeOnDelete();
+                $table->enum('inquiry_type', ['stp', 'wtp', 'etp', 'ro_plant', 'softener', 'amc_only']);
+                $table->timestamps();
 
-            $table->unique(['survey_id', 'inquiry_type']);
-        });
+                $table->unique(['survey_id', 'inquiry_type']);
+            });
+        }
     }
 
     /**

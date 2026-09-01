@@ -7,6 +7,36 @@
 @section('content-wrapper')
     @php
         $order = $invoice->order;
+        $actualPaidAmount = 0;
+
+        $invoiceTransactions = \Webkul\Sales\Models\OrderTransaction::where('invoice_id', $invoice->id)
+            ->when($order, function ($q) use ($order) {
+                $q->orWhere('order_id', $order->id);
+            })
+            ->get();
+
+        foreach ($invoiceTransactions as $t) {
+            $tAmt = (float) $t->amount;
+            if ($tAmt <= 0 && $t->data) {
+                $tData = is_array($t->data) ? $t->data : json_decode($t->data ?: '{}', true);
+                if (is_array($tData)) {
+                    $tAmt = (float) ($tData['amount'] ?? ($tData['payment_amount'] ?? ($tData['grand_total'] ?? 0)));
+                }
+            }
+            $actualPaidAmount += $tAmt;
+        }
+
+        $actualDueAmount = max(0, (float) $invoice->base_grand_total - $actualPaidAmount);
+        
+        $paymentStatusLabel = 'Unpaid';
+        $paymentStatusClass = 'badge-danger';
+        if ($actualPaidAmount >= (float) $invoice->base_grand_total && (float) $invoice->base_grand_total > 0) {
+            $paymentStatusLabel = 'Paid';
+            $paymentStatusClass = 'badge-success';
+        } elseif ($actualPaidAmount > 0) {
+            $paymentStatusLabel = 'Partially Paid';
+            $paymentStatusClass = 'badge-warning';
+        }
     @endphp
 
     <div class="content full-page">
@@ -96,7 +126,7 @@
                                                 </span>
 
                                                 <span class="value">
-                                                    {{ $invoice->status_label }}
+                                                    <span class="badge badge-md {{ $paymentStatusClass }}">{{ $paymentStatusLabel }}</span>
                                                 </span>
                                             </div>
 
@@ -189,6 +219,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>{{ __('admin::app.sales.orders.SKU') }}</th>
+                                                    <th>HSN</th>
                                                     <th>{{ __('admin::app.sales.orders.product-name') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.price') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.qty') }}</th>
@@ -207,6 +238,8 @@
                                                 @foreach ($invoice->items as $item)
                                                     <tr>
                                                         <td>{{ $item->getTypeInstance()->getOrderedItem($item)->sku }}</td>
+
+                                                        <td>{{ $item->hsn_code }}</td>
 
                                                         <td>
                                                             {{ $item->name }}
@@ -278,6 +311,18 @@
                                         <td>{{ __('admin::app.sales.orders.grand-total') }}</td>
                                         <td>-</td>
                                         <td>{{ core()->formatBasePrice($invoice->base_grand_total) }}</td>
+                                    </tr>
+
+                                    <tr class="bold">
+                                        <td>{{ __('admin::app.sales.orders.total-paid') }}</td>
+                                        <td>-</td>
+                                        <td style="color:#16a34a;">{{ core()->formatBasePrice($actualPaidAmount) }}</td>
+                                    </tr>
+
+                                    <tr class="bold">
+                                        <td>{{ __('admin::app.sales.orders.total-due') }}</td>
+                                        <td>-</td>
+                                        <td style="color:{{ $actualDueAmount > 0 ? '#dc2626' : '#16a34a' }};">{{ core()->formatBasePrice($actualDueAmount) }}</td>
                                     </tr>
                                 </table>
                             </div>

@@ -30,6 +30,8 @@ class ExpenseClaimDataGrid extends DataGrid
         $this->addFilter('category', 'hws_expense_claims.category');
         $this->addFilter('status', 'hws_expense_claims.status');
 
+        \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($queryBuilder, 'admins');
+
         $this->setQueryBuilder($queryBuilder);
     }
 

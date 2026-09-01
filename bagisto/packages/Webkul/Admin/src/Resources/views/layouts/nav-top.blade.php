@@ -8,6 +8,10 @@
         'pending_payment' => trans('admin::app.notification.order-status-messages.pending_payment')
     ];
     $allLocales = core()->getAllLocales()->pluck('name', 'code');
+    $currentAdmin = auth()->guard('admin')->user();
+    $isSuperAdmin = \Hws\FieldService\Helpers\BranchScopeHelper::isSuperAdmin();
+    $allBranches = \Hws\FieldService\Models\Branch::where('status', 1)->get();
+    $activeBranchId = \Hws\FieldService\Helpers\BranchScopeHelper::getActiveBranchId();
 @endphp
 
 <div class="navbar-top">
@@ -36,13 +40,34 @@
     </div>
 
     <div class="navbar-top-right">
-        <div class="profile">
-            <span class="avatar">
-            </span>
+        <div class="profile" style="display:flex;align-items:center;gap:12px;">
+            @if ($isSuperAdmin)
+                <form method="POST" action="{{ route('hws.admin.branches.switch') }}" style="margin:0;display:flex;align-items:center;">
+                    @csrf
+                    <div style="display:flex;align-items:center;gap:6px;background:#f8fafc;border:1px solid #cbd5e1;padding:4px 10px;border-radius:8px;">
+                        <span style="font-size:14px;">🏢</span>
+                        <select name="branch_id" onchange="this.form.submit()" style="border:none;background:transparent;font-weight:700;font-size:12px;color:#1e293b;cursor:pointer;outline:none;">
+                            <option value="all" {{ empty($activeBranchId) ? 'selected' : '' }}>All Branches (HQ View)</option>
+                            @foreach ($allBranches as $b)
+                                <option value="{{ $b->id }}" {{ $activeBranchId == $b->id ? 'selected' : '' }}>
+                                    {{ $b->name }} ({{ $b->code }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </form>
+            @elseif ($currentAdmin && $currentAdmin->branch_id)
+                @php($userBranch = $allBranches->firstWhere('id', $currentAdmin->branch_id))
+                @if ($userBranch)
+                    <div style="display:flex;align-items:center;gap:6px;background:#e0e7ff;border:1px solid #c7d2fe;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;color:#3730a3;">
+                        <span>🏢</span> {{ $userBranch->name }}
+                    </div>
+                @endif
+            @endif
 
             <div class="store">
                 <div>
-                    <a  href="{{ route('shop.home.index') }}" target="_blank" style="display: inline-block; vertical-align: middle;">
+                    <a href="{{ route('shop.home.index') }}" target="_blank" style="display: inline-block; vertical-align: middle;">
                         <span class="icon store-icon" data-toggle="tooltip" data-placement="bottom" title="{{ __('admin::app.layouts.visit-shop') }}"></span>
                     </a>
                 </div>
@@ -83,7 +108,6 @@
                                     <span>{{ substr(auth()->guard('admin')->user()->name, 0, 1) }}</span>
                                 </div>
                             @endif
-
 
                             <div class="profile-info-desc">
                                 <span class="name">

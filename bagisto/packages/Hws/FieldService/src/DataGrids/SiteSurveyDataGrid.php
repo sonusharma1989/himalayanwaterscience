@@ -45,9 +45,15 @@ class SiteSurveyDataGrid extends DataGrid
                 'hws_tasks.task_no'
             );
 
-        if ($this->salesType) {
+        if ($this->salesType === 'projects') {
+            $queryBuilder->where('hws_site_surveys.sales_type', 'projects');
+        } elseif ($this->salesType === 'trading') {
+            $queryBuilder->where('hws_site_surveys.sales_type', 'trading');
+        } elseif ($this->salesType) {
             $queryBuilder->where('hws_site_surveys.sales_type', $this->salesType);
         }
+
+        \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($queryBuilder, 'hws_site_surveys');
 
         $this->addFilter('customer_name', 'hws_site_surveys.customer_name');
         $this->addFilter('status', 'hws_site_surveys.status');

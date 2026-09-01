@@ -57,6 +57,7 @@ class ShipmentController extends Controller
     public function create($orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($order->branch_id);
 
         if (! $order->channel || ! $order->canShip()) {
             session()->flash('error', trans('admin::app.sales.shipments.creation-error'));
@@ -76,6 +77,7 @@ class ShipmentController extends Controller
     public function store($orderId)
     {
         $order = $this->orderRepository->findOrFail($orderId);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($order->branch_id);
 
         if (! $order->canShip()) {
             session()->flash('error', trans('admin::app.sales.shipments.order-error'));
@@ -181,6 +183,7 @@ class ShipmentController extends Controller
     public function view($id)
     {
         $shipment = $this->shipmentRepository->findOrFail($id);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($shipment->order?->branch_id);
 
         return view($this->_config['view'], compact('shipment'));
     }

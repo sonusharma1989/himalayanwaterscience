@@ -224,6 +224,28 @@ class OrderItem extends Model implements OrderItemContract
     }
 
     /**
+     * Get HSN code from item, product or flat.
+     */
+    public function getHsnCodeAttribute()
+    {
+        if (! empty($this->attributes['hsn_code'])) {
+            return $this->attributes['hsn_code'];
+        }
+
+        if ($this->product) {
+            if (! empty($this->product->hsn_code)) {
+                return $this->product->hsn_code;
+            }
+
+            if (! empty($this->product->product_number)) {
+                return $this->product->product_number;
+            }
+        }
+
+        return '-';
+    }
+
+    /**
      * Create a new factory instance for the model.
      *
      * @return Factory

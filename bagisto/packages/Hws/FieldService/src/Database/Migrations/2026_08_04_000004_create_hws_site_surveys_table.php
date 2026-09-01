@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hws_site_surveys', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('task_id')->unique()->constrained('hws_tasks')->cascadeOnDelete();
-            $table->enum('property_type', ['hotel', 'hospital', 'bungalow', 'other'])->default('other');
+        if (!Schema::hasTable('hws_site_surveys')) {
+            Schema::create('hws_site_surveys', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('task_id')->unique()->constrained('hws_tasks')->cascadeOnDelete();
+                $table->enum('property_type', ['hotel', 'hospital', 'bungalow', 'other'])->default('other');
             $table->unsignedInteger('floors')->nullable();
             $table->unsignedInteger('built_up_area_sqft')->nullable();
             $table->unsignedInteger('rooms_units')->nullable();
@@ -38,7 +39,8 @@ return new class extends Migration
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
             $table->timestamps();
-        });
+            });
+        }
     }
 
     /**

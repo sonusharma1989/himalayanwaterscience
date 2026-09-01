@@ -56,6 +56,8 @@ class OrderController extends Controller
     {
         $order = $this->orderRepository->findOrFail($id);
 
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($order->branch_id);
+
         return view($this->_config['view'], compact('order'));
     }
 
@@ -67,6 +69,9 @@ class OrderController extends Controller
      */
     public function cancel($id)
     {
+        $order = $this->orderRepository->findOrFail($id);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($order->branch_id);
+
         $result = $this->orderRepository->cancel($id);
 
         if ($result) {
@@ -86,6 +91,9 @@ class OrderController extends Controller
      */
     public function comment($id)
     {
+        $order = $this->orderRepository->findOrFail($id);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($order->branch_id);
+
         Event::dispatch('sales.order.comment.create.before');
 
         $comment = $this->orderCommentRepository->create(array_merge(request()->all(), [

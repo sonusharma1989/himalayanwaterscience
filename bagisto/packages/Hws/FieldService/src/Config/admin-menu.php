@@ -81,4 +81,25 @@ return [
         'key' => 'sales-leads.projects', 'name' => 'Project Leads',
         'route' => 'hws.admin.leads.projects', 'sort' => 2, 'icon-class' => '',
     ],
+    [
+        'key'        => 'branches',
+        'name'       => 'Branches',
+        'route'      => 'hws.admin.branches.index',
+        'sort'       => 2.75,
+        'icon-class' => 'settings-icon',
+    ],
+    [
+        'key'        => 'branches.list',
+        'name'       => 'Branch Master',
+        'route'      => 'hws.admin.branches.index',
+        'sort'       => 1,
+        'icon-class' => '',
+    ],
+    [
+        'key'        => 'branches.reports',
+        'name'       => 'Performance Reports',
+        'route'      => 'hws.admin.branches.reports',
+        'sort'       => 2,
+        'icon-class' => '',
+    ],
 ];

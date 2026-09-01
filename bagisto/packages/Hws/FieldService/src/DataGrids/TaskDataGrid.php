@@ -58,14 +58,19 @@ class TaskDataGrid extends DataGrid
                 'assigned_to',
                 'priority',
                 'step',
-                'created_at'
+                'created_at',
+                'scheduled_at'
             );
 
+        $this->addFilter('id', 'id');
         $this->addFilter('task_no', 'task_no');
         $this->addFilter('customer_name', 'customer_name');
+        $this->addFilter('type', 'type');
         $this->addFilter('step', 'step');
         $this->addFilter('priority', 'priority');
-        $this->addFilter('type', 'type');
+        $this->addFilter('scheduled_at', 'scheduled_at');
+
+        \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($queryBuilder, 'hws_tasks');
 
         $this->setQueryBuilder($queryBuilder);
     }

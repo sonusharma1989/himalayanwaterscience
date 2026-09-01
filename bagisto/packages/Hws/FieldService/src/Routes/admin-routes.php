@@ -23,6 +23,7 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
     Route::prefix('leads')->group(function () {
         Route::get('trading', [SalesLeadsController::class, 'index'])->name('hws.admin.leads.trading');
         Route::get('projects', [SalesLeadsController::class, 'index'])->name('hws.admin.leads.projects');
+        Route::get('create', [SalesLeadsController::class, 'create'])->name('hws.admin.sales-leads.create');
     });
 
     Route::prefix('projects')->group(function () {
@@ -117,6 +118,16 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
         Route::get('orders/{id}/edit', [OrderEditController::class, 'edit'])->name('hws.admin.orders.edit');
         Route::post('orders/{id}/edit', [OrderEditController::class, 'update'])->name('hws.admin.orders.update');
 
+    });
+
+    Route::prefix('branches')->group(function () {
+        Route::get('/', [\Hws\FieldService\Http\Controllers\Admin\BranchController::class, 'index'])->name('hws.admin.branches.index');
+        Route::get('create', [\Hws\FieldService\Http\Controllers\Admin\BranchController::class, 'create'])->name('hws.admin.branches.create');
+        Route::post('store', [\Hws\FieldService\Http\Controllers\Admin\BranchController::class, 'store'])->name('hws.admin.branches.store');
+        Route::get('edit/{id}', [\Hws\FieldService\Http\Controllers\Admin\BranchController::class, 'edit'])->name('hws.admin.branches.edit');
+        Route::post('update/{id}', [\Hws\FieldService\Http\Controllers\Admin\BranchController::class, 'update'])->name('hws.admin.branches.update');
+        Route::post('switch', [\Hws\FieldService\Http\Controllers\Admin\BranchController::class, 'switchBranch'])->name('hws.admin.branches.switch');
+        Route::get('reports', [\Hws\FieldService\Http\Controllers\Admin\BranchReportController::class, 'index'])->name('hws.admin.branches.reports');
     });
 
 });

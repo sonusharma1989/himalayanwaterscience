@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hws_leave_requests', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('admins')->cascadeOnDelete();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->string('reason')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->foreignId('reviewed_by')->nullable()->constrained('admins')->nullOnDelete();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('hws_leave_requests')) {
+            Schema::create('hws_leave_requests', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedInteger('employee_id');
+                $table->date('start_date');
+                $table->date('end_date');
+                $table->string('reason')->nullable();
+                $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+                $table->unsignedInteger('reviewed_by')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

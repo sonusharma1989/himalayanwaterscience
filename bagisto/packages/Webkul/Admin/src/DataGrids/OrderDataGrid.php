@@ -29,6 +29,8 @@ class OrderDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
+        $dbPrefix = DB::getTablePrefix();
+
         $queryBuilder = DB::table('orders')
             ->leftJoin('addresses as order_address_shipping', function ($leftJoin) {
                 $leftJoin->on('order_address_shipping.order_id', '=', 'orders.id')
@@ -40,9 +42,18 @@ class OrderDataGrid extends DataGrid
             })
             ->addSelect('orders.id', 'orders.increment_id', 'orders.base_sub_total', 'orders.base_grand_total', 'orders.created_at', 'channel_name', 'status', 'orders.sales_type')
             ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_billing.first_name, " ", ' . DB::getTablePrefix() . 'order_address_billing.last_name) as billed_to'))
-            ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name) as shipped_to'));
+            ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name) as shipped_to'))
+            ->selectRaw("(SELECT COALESCE(SUM(CASE WHEN ot.amount > 0 THEN ot.amount ELSE CAST(JSON_UNQUOTE(JSON_EXTRACT(ot.data, '$.amount')) AS DECIMAL(12,2)) END), 0) FROM {$dbPrefix}order_transactions as ot WHERE ot.order_id = {$dbPrefix}orders.id) as paid_amount")
+            ->selectRaw("GREATEST(0, {$dbPrefix}orders.base_grand_total - (SELECT COALESCE(SUM(CASE WHEN ot.amount > 0 THEN ot.amount ELSE CAST(JSON_UNQUOTE(JSON_EXTRACT(ot.data, '$.amount')) AS DECIMAL(12,2)) END), 0) FROM {$dbPrefix}order_transactions as ot WHERE ot.order_id = {$dbPrefix}orders.id)) as due_amount");
 
-        $queryBuilder->where('orders.sales_type', request()->routeIs('hws.admin.projects.*') ? 'projects' : 'trading');
+        $isProjects = request()->routeIs('hws.admin.projects.*') || str_contains(request()->path(), 'projects');
+        if ($isProjects) {
+            $queryBuilder->where('orders.sales_type', 'projects');
+        } else {
+            $queryBuilder->where('orders.sales_type', 'trading');
+        }
+
+        \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($queryBuilder, 'orders');
 
         $this->addFilter('billed_to', DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_billing.first_name, " ", ' . DB::getTablePrefix() . 'order_address_billing.last_name)'));
         $this->addFilter('shipped_to', DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name)'));
@@ -88,12 +99,41 @@ class OrderDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
+            'index'      => 'paid_amount',
+            'label'      => 'Paid Amount',
+            'type'       => 'string',
+            'searchable' => false,
+            'sortable'   => true,
+            'filterable' => false,
+            'closure'    => function ($value) {
+                return '<span style="color:#16a34a;font-weight:700;">' . core()->formatBasePrice((float) $value->paid_amount, true) . '</span>';
+            },
+        ]);
+
+        $this->addColumn([
+            'index'      => 'due_amount',
+            'label'      => 'Due Amount',
+            'type'       => 'string',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+            'closure'    => function ($value) {
+                $due = isset($value->due_amount) ? (float) $value->due_amount : max(0, (float) $value->base_grand_total - (float) $value->paid_amount);
+                $color = $due > 0 ? '#dc2626' : '#16a34a';
+                return '<span style="color:' . $color . ';font-weight:700;">' . core()->formatBasePrice($due, true) . '</span>';
+            },
+        ]);
+
+        $this->addColumn([
             'index'      => 'created_at',
             'label'      => trans('admin::app.datagrid.order-date'),
-            'type'       => 'datetime',
+            'type'       => 'string',
             'sortable'   => true,
             'searchable' => false,
             'filterable' => true,
+            'closure'    => function ($value) {
+                return $value->created_at ? \Carbon\Carbon::parse($value->created_at)->format('d M Y, h:i A') : '—';
+            },
         ]);
 
         $this->addColumn([

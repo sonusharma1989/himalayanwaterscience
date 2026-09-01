@@ -25,7 +25,14 @@ class OrderShipmentsDataGrid extends DataGrid
             ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name) as shipped_to'))
             ->selectRaw('IF(' . DB::getTablePrefix() . 'shipments.inventory_source_id IS NOT NULL,' . DB::getTablePrefix() . 'is.name, ' . DB::getTablePrefix() . 'shipments.inventory_source_name) as inventory_source_name');
 
-        $queryBuilder->where('ors.sales_type', request()->routeIs('hws.admin.projects.*') ? 'projects' : 'trading');
+        $isProjects = request()->routeIs('hws.admin.projects.*') || str_contains(request()->path(), 'projects');
+        if ($isProjects) {
+            $queryBuilder->where('ors.sales_type', 'projects');
+        } else {
+            $queryBuilder->where('ors.sales_type', 'trading');
+        }
+
+        \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($queryBuilder, 'ors');
 
         $this->addFilter('shipment_id', 'shipments.id');
         $this->addFilter('shipment_order_id', 'ors.increment_id');

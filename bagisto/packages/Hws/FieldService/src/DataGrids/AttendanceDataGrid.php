@@ -26,6 +26,8 @@ class AttendanceDataGrid extends DataGrid
         $this->addFilter('employee_name', 'admins.name');
         $this->addFilter('date', 'hws_attendance.date');
 
+        \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($queryBuilder, 'admins');
+
         $this->setQueryBuilder($queryBuilder);
     }
 

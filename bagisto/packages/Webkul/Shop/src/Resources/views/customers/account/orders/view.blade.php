@@ -58,6 +58,7 @@
                                         <thead>
                                             <tr>
                                                 <th>{{ __('shop::app.customer.account.order.view.SKU') }}</th>
+                                                <th>HSN</th>
                                                 <th>{{ __('shop::app.customer.account.order.view.product-name') }}</th>
                                                 <th>{{ __('shop::app.customer.account.order.view.price') }}</th>
                                                 <th>{{ __('shop::app.customer.account.order.view.item-status') }}</th>
@@ -73,6 +74,10 @@
                                                 <tr>
                                                     <td data-value="{{ __('shop::app.customer.account.order.view.SKU') }}">
                                                         {{ $item->getTypeInstance()->getOrderedItem($item)->sku }}
+                                                    </td>
+
+                                                    <td data-value="HSN">
+                                                        {{ $item->hsn_code }}
                                                     </td>
 
                                                     <td data-value="{{ __('shop::app.customer.account.order.view.product-name') }}">
@@ -228,6 +233,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>{{ __('shop::app.customer.account.order.view.SKU') }}</th>
+                                                        <th>HSN</th>
                                                         <th>{{ __('shop::app.customer.account.order.view.product-name') }}</th>
                                                         <th>{{ __('shop::app.customer.account.order.view.price') }}</th>
                                                         <th>{{ __('shop::app.customer.account.order.view.qty') }}</th>
@@ -242,6 +248,10 @@
                                                         <tr>
                                                             <td data-value="{{ __('shop::app.customer.account.order.view.SKU') }}">
                                                                 {{ $item->getTypeInstance()->getOrderedItem($item)->sku }}
+                                                            </td>
+
+                                                            <td data-value="HSN">
+                                                                {{ $item->hsn_code }}
                                                             </td>
 
                                                             <td data-value="{{ __('shop::app.customer.account.order.view.product-name') }}">

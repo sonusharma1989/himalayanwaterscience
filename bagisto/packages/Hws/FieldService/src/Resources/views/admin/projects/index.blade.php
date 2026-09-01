@@ -1,11 +1,11 @@
-@extends('admin::layouts.master')
+@extends('admin::layouts.content')
 
 @section('page_title')
     {{ request('_config.title', 'Projects') }}
 @stop
 
-@section('content-wrapper')
-    <div class="content full-page">
+@section('content')
+    <div class="content">
         <div class="page-header">
             <div class="page-title">
                 <h1>{{ request('_config.title', 'Projects') }}</h1>

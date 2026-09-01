@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hws_attendance', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('admins')->cascadeOnDelete();
-            $table->date('date');
+        if (!Schema::hasTable('hws_attendance')) {
+            Schema::create('hws_attendance', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('employee_id')->constrained('admins')->cascadeOnDelete();
+                $table->date('date');
             $table->dateTime('check_in_time')->nullable();
             $table->decimal('check_in_lat', 10, 7)->nullable();
             $table->decimal('check_in_lng', 10, 7)->nullable();
@@ -26,7 +27,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['employee_id', 'date']);
-        });
+            });
+        }
     }
 
     /**

@@ -23,7 +23,14 @@ class OrderRefundDataGrid extends DataGrid
             })
             ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_billing.first_name, " ", ' . DB::getTablePrefix() . 'order_address_billing.last_name) as billed_to'));
 
-        $queryBuilder->where('orders.sales_type', request()->routeIs('hws.admin.projects.*') ? 'projects' : 'trading');
+        $isProjects = request()->routeIs('hws.admin.projects.*') || str_contains(request()->path(), 'projects');
+        if ($isProjects) {
+            $queryBuilder->where('orders.sales_type', 'projects');
+        } else {
+            $queryBuilder->where('orders.sales_type', 'trading');
+        }
+
+        \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($queryBuilder, 'orders');
 
         $this->addFilter('billed_to', DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_billing.first_name, " ", ' . DB::getTablePrefix() . 'order_address_billing.last_name)'));
         $this->addFilter('id', 'refunds.id');

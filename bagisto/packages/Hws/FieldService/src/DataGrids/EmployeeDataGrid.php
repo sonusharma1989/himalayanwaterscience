@@ -37,6 +37,8 @@ class EmployeeDataGrid extends DataGrid
         $this->addFilter('role_name', 'roles.name');
         $this->addFilter('status', 'admins.status');
 
+        \Hws\FieldService\Helpers\BranchScopeHelper::applyScope($queryBuilder, 'admins');
+
         $this->setQueryBuilder($queryBuilder);
     }
 

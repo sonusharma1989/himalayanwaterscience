@@ -12,16 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('hws_tasks', function (Blueprint $table) {
-            // Filled in when a Sales Visit / Installation task closes with a sale.
-            // Powers the "Sales this month" dashboard card.
-            $table->decimal('sale_amount', 12, 2)->nullable()->after('rating');
+            if (!Schema::hasColumn('hws_tasks', 'sale_amount')) {
+                $table->decimal('sale_amount', 12, 2)->nullable()->after('rating');
+            }
 
-            // Only meaningful for type = 'amc_service'. Powers the
-            // "AMC renewals due" dashboard card (renewal date within
-            // the next 30 days).
-            $table->date('amc_renewal_date')->nullable()->after('sale_amount');
-
-            $table->index('amc_renewal_date');
+            if (!Schema::hasColumn('hws_tasks', 'amc_renewal_date')) {
+                $table->date('amc_renewal_date')->nullable()->after('sale_amount');
+                $table->index('amc_renewal_date');
+            }
         });
     }
 

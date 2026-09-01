@@ -299,6 +299,7 @@
                                         <thead>
                                             <tr>
                                                 <th>{{ __('admin::app.sales.orders.SKU') }}</th>
+                                                <th>HSN</th>
                                                 <th>{{ __('admin::app.sales.orders.product-name') }}</th>
                                                 <th>{{ __('admin::app.sales.invoices.qty-ordered') }}</th>
                                                 <th>CGST</th>
@@ -314,6 +315,7 @@
                                                 @if ($item->qty_to_invoice > 0)
                                                     <tr>
                                                         <td>{{ $item->getTypeInstance()->getOrderedItem($item)->sku }}</td>
+                                                        <td>{{ $item->hsn_code }}</td>
                                                         <td>
                                                             {{ $item->name }}
 

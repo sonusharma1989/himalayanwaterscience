@@ -29,6 +29,7 @@ class QuotationController extends Controller
     public function create($leadId)
     {
         $lead = SiteSurvey::findOrFail($leadId);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($lead->branch_id);
 
         $products = [];
         if (Schema::hasTable('product_flat')) {
@@ -42,13 +43,13 @@ class QuotationController extends Controller
         return view('hws::admin.quotations.create', compact('lead', 'products'));
     }
 
-
-
     /**
      * Store the quotation.
      */
     public function store(Request $request)
     {
+        $lead = SiteSurvey::findOrFail($request->lead_id);
+        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($lead->branch_id);
         $request->validate([
             'lead_id'          => 'required|exists:hws_site_surveys,id',
             'customer_name'    => 'required|string',
@@ -216,6 +217,7 @@ class QuotationController extends Controller
                 'increment_id'               => $this->orderRepository->generateIncrementId(),
                 'status'                     => Order::STATUS_PENDING_PAYMENT,
                 'sales_type'                 => $lead?->sales_type ?: 'trading',
+                'branch_id'                  => $lead?->branch_id ?: \Hws\FieldService\Helpers\BranchScopeHelper::getBranchIdForNewRecord(),
                 'channel_name'               => $channel?->name,
                 'channel_id'                 => $channel?->id,
                 'channel_type'               => $channel ? get_class($channel) : null,
@@ -306,7 +308,7 @@ class QuotationController extends Controller
 
     public function recordManualPayment(Request $request, $id)
     {
-        $order = Order::with('payment')->findOrFail($id);
+        $order = Order::with(['payment', 'invoices'])->findOrFail($id);
         $data = $request->validate([
             'payment_method' => 'required|in:cash,bank_transfer,cheque,upi_manual',
             'amount'         => 'required|numeric|min:0.01',
@@ -315,13 +317,17 @@ class QuotationController extends Controller
         ]);
 
         $titles = ['cash' => 'Cash', 'bank_transfer' => 'Bank Transfer', 'cheque' => 'Cheque', 'upi_manual' => 'Manual UPI'];
+        $invoice = $order->invoices()->first();
+        $payAmount = (float) $data['amount'];
+
         $transaction = OrderTransaction::create([
             'transaction_id' => 'MAN-' . now()->format('YmdHis') . '-' . $order->id,
             'status'          => 'paid',
             'type'            => 'manual',
             'payment_method'  => $data['payment_method'],
-            'data'            => json_encode(['amount' => (float) $data['amount'], 'reference' => $data['reference'] ?? null, 'notes' => $data['notes'] ?? null, 'recorded_by' => auth()->guard('admin')->user()->name ?? 'Admin']),
-            'invoice_id'      => 0,
+            'amount'          => $payAmount,
+            'data'            => json_encode(['amount' => $payAmount, 'reference' => $data['reference'] ?? null, 'notes' => $data['notes'] ?? null, 'recorded_by' => auth()->guard('admin')->user()->name ?? 'Admin']),
+            'invoice_id'      => $invoice ? $invoice->id : 0,
             'order_id'        => $order->id,
         ]);
 
