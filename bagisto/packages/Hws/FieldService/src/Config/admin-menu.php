@@ -77,25 +77,4 @@ return [
         'sort'       => 5,
         'icon-class' => '',
     ],
-    [
-        'key'        => 'field-service.inventory',
-        'name'       => 'Inventory',
-        'route'      => 'hws.admin.inventory.index',
-        'sort'       => 6,
-        'icon-class' => '',
-    ],
-    [
-        'key'        => 'field-service.expenses',
-        'name'       => 'Expenses',
-        'route'      => 'hws.admin.expenses.index',
-        'sort'       => 7,
-        'icon-class' => '',
-    ],
-    [
-        'key'        => 'field-service.reports',
-        'name'       => 'Reports',
-        'route'      => 'hws.admin.reports.index',
-        'sort'       => 8,
-        'icon-class' => '',
-    ],
 ];

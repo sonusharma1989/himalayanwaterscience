@@ -6,9 +6,6 @@ use Hws\FieldService\Http\Controllers\Admin\EmployeesController;
 use Hws\FieldService\Http\Controllers\Admin\AttendanceController;
 use Hws\FieldService\Http\Controllers\Admin\ServiceRequestsController;
 use Hws\FieldService\Http\Controllers\Admin\SalesLeadsController;
-use Hws\FieldService\Http\Controllers\Admin\InventoryController;
-use Hws\FieldService\Http\Controllers\Admin\ExpensesController;
-use Hws\FieldService\Http\Controllers\Admin\ReportsController;
 use Hws\FieldService\Http\Controllers\Admin\QuotationController;
 use Hws\FieldService\Http\Controllers\Admin\ProjectsController;
 use Hws\FieldService\Http\Controllers\Admin\ProjectShipmentController;
@@ -93,18 +90,6 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
             ->name('hws.admin.quotations.convert-to-order');
         Route::post('orders/{id}/manual-payment', [QuotationController::class, 'recordManualPayment'])
             ->name('hws.admin.orders.manual-payment');
-
-        Route::get('inventory', [InventoryController::class, 'index'])
-            ->name('hws.admin.inventory.index');
-
-        Route::get('expenses', [ExpensesController::class, 'index'])
-            ->name('hws.admin.expenses.index');
-            
-        Route::post('expenses/{id}/status', [ExpensesController::class, 'updateStatus'])
-            ->name('hws.admin.expenses.status');
-
-        Route::get('reports', [ReportsController::class, 'index'])
-            ->name('hws.admin.reports.index');
 
     });
 
