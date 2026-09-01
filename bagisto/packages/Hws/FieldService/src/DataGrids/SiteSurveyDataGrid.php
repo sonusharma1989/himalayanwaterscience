@@ -28,6 +28,7 @@ class SiteSurveyDataGrid extends DataGrid
         $queryBuilder = DB::table('hws_site_surveys')
             ->leftJoin('hws_tasks', 'hws_tasks.id', '=', 'hws_site_surveys.task_id')
             ->addSelect(
+                DB::raw('ROW_NUMBER() OVER (ORDER BY hws_site_surveys.id DESC) as sn'),
                 'hws_site_surveys.id',
                 'hws_site_surveys.customer_name',
                 'hws_site_surveys.customer_phone',
@@ -66,12 +67,24 @@ class SiteSurveyDataGrid extends DataGrid
     public function addColumns()
     {
         $this->addColumn([
+            'index'      => 'sn',
+            'label'      => 'S.No',
+            'type'       => 'number',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+        ]);
+
+        $this->addColumn([
             'index'      => 'created_at',
             'label'      => 'Created',
-            'type'       => 'datetime',
+            'type'       => 'string',
             'searchable' => false,
             'sortable'   => true,
             'filterable' => true,
+            'closure'    => function ($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d M Y, h:i A') : '—';
+            },
         ]);
 
         $this->addColumn([
@@ -188,7 +201,7 @@ class SiteSurveyDataGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'temperature',
-            'label'      => 'Temp',
+            'label'      => 'Lead Type',
             'type'       => 'checkbox',
             'options'    => [
                 'hot'  => 'Hot',

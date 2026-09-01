@@ -1,5 +1,5 @@
 /* Unified Bagisto admin skin — visual overrides only; no structural changes. */
-:root{--hws-primary:#3c50e0;--hws-primary-dark:#263bd4;--hws-bg:#f8fafc;--hws-card:#fff;--hws-border:#e2e8f0;--hws-text:#1e293b;--hws-muted:#64748b;--hws-soft:#f1f5f9}
+:root{--hws-primary:#6366f1;--hws-primary-dark:#4f46e5;--hws-primary-soft:#eef2ff;--hws-bg:#f8fafc;--hws-card:#fff;--hws-border:#e2e8f0;--hws-text:#1e293b;--hws-muted:#64748b;--hws-soft:#f1f5f9}
 body:not(.dark-mode){background:var(--hws-bg);color:var(--hws-text)}
 body:not(.dark-mode) .content-container{background:var(--hws-bg)}
 body:not(.dark-mode) .content-container .content .page-header{padding:18px 22px;border-bottom:1px solid var(--hws-border);box-shadow:0 3px 12px rgba(15,23,42,.04)}
@@ -9,7 +9,7 @@ body:not(.dark-mode) .btn{border-radius:8px;box-shadow:none;font-weight:600}
 body:not(.dark-mode) .btn.btn-primary{background:var(--hws-primary)}
 body:not(.dark-mode) .btn.btn-primary:hover,body:not(.dark-mode) .btn.btn-primary:focus{background:var(--hws-primary-dark);opacity:1}
 body:not(.dark-mode) .control-group .control,body:not(.dark-mode) .search-filter .control,body:not(.dark-mode) .dropdown-btn,body:not(.dark-mode) .grid-dropdown-header{border:1px solid #cbd5e1;border-radius:8px;background:#fff;box-shadow:none}
-body:not(.dark-mode) .control-group .control:focus,body:not(.dark-mode) .search-filter:hover{border-color:var(--hws-primary);box-shadow:0 0 0 3px rgba(60,80,224,.1)}
+body:not(.dark-mode) .control-group .control:focus,body:not(.dark-mode) .search-filter:hover{border-color:var(--hws-primary);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
 body:not(.dark-mode) .panel,body:not(.dark-mode) .accordian,body:not(.dark-mode) accordian{border:1px solid var(--hws-border);border-radius:14px;background:var(--hws-card);box-shadow:0 4px 14px rgba(15,23,42,.04);overflow:hidden}
 body:not(.dark-mode) .accordian .accordian-header,body:not(.dark-mode) accordian .accordian-header,body:not(.dark-mode) .accordian div[slot*=header],body:not(.dark-mode) accordian div[slot*=header]{border-color:var(--hws-border);background:#fff}
 body:not(.dark-mode) .grid-container{background:#fff;border:1px solid var(--hws-border);border-radius:14px;padding:16px;box-shadow:0 4px 14px rgba(15,23,42,.04)}

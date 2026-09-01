@@ -47,6 +47,7 @@ class TaskDataGrid extends DataGrid
         $queryBuilder = DB::table('hws_tasks')
             ->whereIn('type', ['installation', 'amc_service', 'complaint', 'service'])
             ->addSelect(
+                DB::raw('ROW_NUMBER() OVER (ORDER BY hws_tasks.id DESC) as sn'),
                 'id',
                 'task_no',
                 'type',
@@ -78,12 +79,24 @@ class TaskDataGrid extends DataGrid
     public function addColumns()
     {
         $this->addColumn([
+            'index'      => 'sn',
+            'label'      => 'S.No',
+            'type'       => 'number',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+        ]);
+
+        $this->addColumn([
             'index'      => 'created_at',
             'label'      => 'Date',
-            'type'       => 'datetime',
+            'type'       => 'string',
             'searchable' => false,
             'sortable'   => true,
             'filterable' => true,
+            'closure'    => function ($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d M Y, h:i A') : '—';
+            },
         ]);
 
         $this->addColumn([

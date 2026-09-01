@@ -18,13 +18,6 @@
     <div class="navbar-top-left">
         @include ('admin::layouts.mobile-nav')
 
-        <style>
-            .brand-logo img {
-                width: 30%;
-                /* margin-top: 2%; */
-            }
-        </style>
-
         <div class="brand-logo">
             <a href="{{ route('admin.dashboard.index') }}">
                 @if (core()->getConfigData('general.design.admin_logo.logo_image', core()->getCurrentChannelCode()))
@@ -33,6 +26,7 @@
                     <default-image
                         light-theme-image-url="{{ asset('vendor/webkul/ui/assets/images/logo.png') }}?v=2"
                         dark-theme-image-url="{{ asset('vendor/webkul/ui/assets/images/logo_light.png') }}?v=2"
+                        style="height: 40px; width: auto; max-width: 180px; object-fit: contain;"
                     ></default-image>
                 @endif
             </a>

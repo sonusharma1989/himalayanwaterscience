@@ -16,6 +16,7 @@ class ExpenseClaimDataGrid extends DataGrid
         $queryBuilder = DB::table('hws_expense_claims')
             ->leftJoin('admins', 'admins.id', '=', 'hws_expense_claims.employee_id')
             ->addSelect(
+                DB::raw('ROW_NUMBER() OVER (ORDER BY hws_expense_claims.id DESC) as sn'),
                 'hws_expense_claims.id',
                 'hws_expense_claims.category',
                 'hws_expense_claims.amount',
@@ -37,6 +38,15 @@ class ExpenseClaimDataGrid extends DataGrid
 
     public function addColumns()
     {
+        $this->addColumn([
+            'index'      => 'sn',
+            'label'      => 'S.No',
+            'type'       => 'number',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+        ]);
+
         $this->addColumn([
             'index'      => 'employee_name',
             'label'      => 'Technician',
@@ -79,10 +89,13 @@ class ExpenseClaimDataGrid extends DataGrid
         $this->addColumn([
             'index'      => 'created_at',
             'label'      => 'Submitted',
-            'type'       => 'datetime',
+            'type'       => 'string',
             'searchable' => false,
             'sortable'   => true,
             'filterable' => true,
+            'closure'    => function ($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d M Y, h:i A') : '—';
+            },
         ]);
 
         $this->addColumn([

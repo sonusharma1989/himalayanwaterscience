@@ -16,6 +16,7 @@ class TaskMaterialDataGrid extends DataGrid
         $queryBuilder = DB::table('hws_task_materials')
             ->leftJoin('hws_tasks', 'hws_tasks.id', '=', 'hws_task_materials.task_id')
             ->addSelect(
+                DB::raw('ROW_NUMBER() OVER (ORDER BY hws_task_materials.id DESC) as sn'),
                 'hws_task_materials.id',
                 'hws_task_materials.name',
                 'hws_task_materials.quantity',
@@ -32,6 +33,15 @@ class TaskMaterialDataGrid extends DataGrid
 
     public function addColumns()
     {
+        $this->addColumn([
+            'index'      => 'sn',
+            'label'      => 'S.No',
+            'type'       => 'number',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+        ]);
+
         $this->addColumn([
             'index'      => 'name',
             'label'      => 'Material',
@@ -74,10 +84,13 @@ class TaskMaterialDataGrid extends DataGrid
         $this->addColumn([
             'index'      => 'created_at',
             'label'      => 'Logged On',
-            'type'       => 'datetime',
+            'type'       => 'string',
             'searchable' => false,
             'sortable'   => true,
             'filterable' => true,
+            'closure'    => function ($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d M Y, h:i A') : '—';
+            },
         ]);
     }
 
