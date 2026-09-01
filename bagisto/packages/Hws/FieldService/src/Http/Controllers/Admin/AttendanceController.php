@@ -3,17 +3,16 @@
 namespace Hws\FieldService\Http\Controllers\Admin;
 
 use Illuminate\Routing\Controller;
-use Hws\FieldService\Models\Attendance;
+use Hws\FieldService\DataGrids\AttendanceDataGrid;
 
 class AttendanceController extends Controller
 {
     public function index()
     {
-        $attendanceRecords = Attendance::with('employee')
-            ->orderByDesc('date')
-            ->orderByDesc('check_in_time')
-            ->get();
+        if (request()->ajax()) {
+            return app(AttendanceDataGrid::class)->toJson();
+        }
 
-        return view('hws::admin.attendance.index', compact('attendanceRecords'));
+        return view('hws::admin.attendance.index');
     }
 }

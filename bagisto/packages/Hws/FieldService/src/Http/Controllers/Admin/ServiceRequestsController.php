@@ -11,23 +11,13 @@ class ServiceRequestsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Task::whereIn('type', ['installation', 'amc_service', 'complaint', 'service'])
-            ->with(['assignee', 'materials', 'photos'])
-            ->orderByDesc('created_at');
-
-        // Apply filters
-        if ($request->filled('step')) {
-            $query->where('step', $request->step);
+        if ($request->ajax()) {
+            return app(\Hws\FieldService\DataGrids\TaskDataGrid::class)->toJson();
         }
 
-        if ($request->filled('priority')) {
-            $query->where('priority', $request->priority);
-        }
-
-        $requests = $query->get();
         $employees = Admin::all();
 
-        return view('hws::admin.service-requests.index', compact('requests', 'employees'));
+        return view('hws::admin.service-requests.index', compact('employees'));
     }
 
     public function store(Request $request)

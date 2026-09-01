@@ -40,7 +40,6 @@
     "react-redux": "^9.3.0"
   },
   "devDependencies": {
-    "@tailwindcss/oxide-darwin-arm64": "^4.3.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^26.0.0",
     "@types/react": "^19",

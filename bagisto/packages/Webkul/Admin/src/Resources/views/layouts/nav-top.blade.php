@@ -14,14 +14,21 @@
     <div class="navbar-top-left">
         @include ('admin::layouts.mobile-nav')
 
+        <style>
+            .brand-logo img {
+                width: 30%;
+                /* margin-top: 2%; */
+            }
+        </style>
+
         <div class="brand-logo">
             <a href="{{ route('admin.dashboard.index') }}">
                 @if (core()->getConfigData('general.design.admin_logo.logo_image', core()->getCurrentChannelCode()))
                     <img src="{{ \Illuminate\Support\Facades\Storage::url(core()->getConfigData('general.design.admin_logo.logo_image', core()->getCurrentChannelCode())) }}" alt="{{ config('app.name') }}" style="height: 40px; width: 110px;"/>
                 @else
                     <default-image
-                        light-theme-image-url="{{ asset('vendor/webkul/ui/assets/images/logo.png') }}"
-                        dark-theme-image-url="{{ asset('vendor/webkul/ui/assets/images/logo_light.png') }}"
+                        light-theme-image-url="{{ asset('vendor/webkul/ui/assets/images/logo.png') }}?v=2"
+                        dark-theme-image-url="{{ asset('vendor/webkul/ui/assets/images/logo_light.png') }}?v=2"
                     ></default-image>
                 @endif
             </a>

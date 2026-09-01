@@ -69,6 +69,12 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
         Route::post('expenses/{id}/status', [ExpensesController::class, 'updateStatus'])
             ->name('hws.admin.expenses.status');
 
+        Route::post('expenses/{id}/approve', [ExpensesController::class, 'approve'])
+            ->name('hws.admin.expenses.approve');
+
+        Route::post('expenses/{id}/reject', [ExpensesController::class, 'reject'])
+            ->name('hws.admin.expenses.reject');
+
         Route::get('reports', [ReportsController::class, 'index'])
             ->name('hws.admin.reports.index');
 

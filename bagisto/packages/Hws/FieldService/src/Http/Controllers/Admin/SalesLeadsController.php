@@ -20,25 +20,13 @@ class SalesLeadsController extends Controller
      */
     public function index(Request $request)
     {
-        $query = SiteSurvey::with(['task', 'inquiryTypes'])->orderByDesc('created_at');
-
-        // Apply filters
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if ($request->ajax()) {
+            return app(\Hws\FieldService\DataGrids\SiteSurveyDataGrid::class)->toJson();
         }
 
-        if ($request->filled('temperature')) {
-            $query->where('temperature', $request->temperature);
-        }
-
-        if ($request->filled('sales_type')) {
-            $query->where('sales_type', $request->sales_type);
-        }
-
-        $leads = $query->get();
         $employees = Admin::all();
 
-        return view('hws::admin.sales-leads.index', compact('leads', 'employees'));
+        return view('hws::admin.sales-leads.index', compact('employees'));
     }
 
     public function show($id)
