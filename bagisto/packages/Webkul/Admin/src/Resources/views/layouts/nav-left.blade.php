@@ -21,7 +21,7 @@
                 <a class="menubar-anchor" href="{{ $menuItem['url'] }}">
                     <span class="icon-menu icon {{ $menuItem['icon-class'] }}"></span>
 
-                    <span class="menu-label">{{ trans($menuItem['name']) }}</span>
+                    <span class="menu-label">{{ $menuItem['key'] === 'sales' ? 'Trading Orders' : trans($menuItem['name']) }}</span>
 
                     @if(count($menuItem['children']) || $menuItem['key'] == 'configuration')
                         <span class="icon arrow-icon {{ $menu->getActive($menuItem) == 'active' ? 'rotate-arrow-icon' : '' }} {{ (core()->getCurrentLocale() && core()->getCurrentLocale()->direction == 'rtl') ? 'arrow-icon-right' : 'arrow-icon-left' }}"></span>

@@ -87,9 +87,9 @@ class ShipmentRepository extends Repository
                     'shipment_id'   => $shipment->id,
                     'order_item_id' => $orderItem->id,
                     'name'          => $orderItem->name,
-                    'sku'           => $orderItem->getTypeInstance()->getOrderedItem($orderItem)->sku,
+                    'sku'           => $orderItem->product ? $orderItem->getTypeInstance()->getOrderedItem($orderItem)->sku : $orderItem->sku,
                     'qty'           => $qty,
-                    'weight'        => $orderItem->weight * $qty,
+                    'weight'        => ($orderItem->weight ?? 0) * $qty,
                     'price'         => $orderItem->price,
                     'base_price'    => $orderItem->base_price,
                     'total'         => $orderItem->price * $qty,
@@ -107,22 +107,26 @@ class ShipmentRepository extends Repository
                             $finalQty = ($child->qty_ordered / $orderItem->qty_ordered) * $qty;
                         }
 
-                        $this->shipmentItemRepository->updateProductInventory([
-                            'shipment'  => $shipment,
-                            'product'   => $child->product,
-                            'qty'       => $finalQty,
-                            'vendor_id' => isset($data['vendor_id']) ? $data['vendor_id'] : 0,
-                        ]);
+                        if ($child->product) {
+                            $this->shipmentItemRepository->updateProductInventory([
+                                'shipment'  => $shipment,
+                                'product'   => $child->product,
+                                'qty'       => $finalQty,
+                                'vendor_id' => isset($data['vendor_id']) ? $data['vendor_id'] : 0,
+                            ]);
+                        }
 
                         $this->orderItemRepository->update(['qty_shipped' => $child->qty_shipped + $finalQty], $child->id);
                     }
                 } else {
-                    $this->shipmentItemRepository->updateProductInventory([
-                        'shipment'  => $shipment,
-                        'product'   => $orderItem->product,
-                        'qty'       => $qty,
-                        'vendor_id' => isset($data['vendor_id']) ? $data['vendor_id'] : 0,
-                    ]);
+                    if ($orderItem->product) {
+                        $this->shipmentItemRepository->updateProductInventory([
+                            'shipment'  => $shipment,
+                            'product'   => $orderItem->product,
+                            'qty'       => $qty,
+                            'vendor_id' => isset($data['vendor_id']) ? $data['vendor_id'] : 0,
+                        ]);
+                    }
                 }
 
                 $this->orderItemRepository->update(['qty_shipped' => $orderItem->qty_shipped + $qty], $orderItem->id);

@@ -53,9 +53,10 @@ class SalesLeadsController extends Controller
             ->select('hws_lead_activities.*', 'admins.name as admin_name')
             ->orderByDesc('hws_lead_activities.created_at')
             ->get();
-        $quotation = DB::table('hws_quotations')->where('lead_id', $lead->id)->latest('id')->first();
+        $quotations = DB::table('hws_quotations')->where('lead_id', $lead->id)->orderByDesc('id')->get();
+        $quotation = $quotations->first();
 
-        return view('hws::admin.sales-leads.show', compact('lead', 'employees', 'activities', 'quotation'));
+        return view('hws::admin.sales-leads.show', compact('lead', 'employees', 'activities', 'quotation', 'quotations'));
     }
 
     public function create(Request $request)

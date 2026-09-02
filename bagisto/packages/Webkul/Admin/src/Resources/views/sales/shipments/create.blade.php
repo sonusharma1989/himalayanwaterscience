@@ -273,10 +273,11 @@
                         <tbody>
 
                             @foreach ($order->items as $item)
-                                @if (
-                                    $item->qty_to_ship > 0
-                                    && ($item->product || $order->sales_type === 'projects')
-                                )
+                                @php
+                                    $isItemQcPassed = ($item->qc_status === 'passed');
+                                    $qtyToShip = $item->qty_to_ship > 0 ? $item->qty_to_ship : max(0, $item->qty_ordered - $item->qty_shipped);
+                                @endphp
+                                @if ($qtyToShip > 0 && $isItemQcPassed)
                                     <tr>
                                         <td>{{ $item->product ? $item->getTypeInstance()->getOrderedItem($item)->sku : $item->sku }}</td>
                                         <td>
@@ -286,7 +287,7 @@
                                                 <div class="item-options">
 
                                                     @foreach ($item->additional['attributes'] as $attribute)
-                                                        <b>{{ $attribute['attribute_name'] }} : </b>{{ $attribute['option_label'] }}</br>
+                                                        <b>{{ $attribute['attribute_name'] }} : </b>{{ $attribute['option_label'] }}<br>
                                                     @endforeach
 
                                                 </div>
@@ -294,7 +295,7 @@
                                         </td>
                                         <td>{{ $item->qty_ordered }}</td>
                                         <td>{{ $item->qty_invoiced }}</td>
-                                        <td>{{ $item->qty_to_ship }}</td>
+                                        <td>{{ $qtyToShip }}</td>
                                         <td>
 
                                             <table>
@@ -317,7 +318,7 @@
                                                                 @php
                                                                     $product = $item->product ? $item->getTypeInstance()->getOrderedItem($item)->product : null;
 
-                                                                    $sourceQty = $product ? ($product->type == 'bundle' ? $item->qty_ordered : $product->inventory_source_qty($inventorySource->id)) : $item->qty_to_ship;
+                                                                    $sourceQty = $product ? ($product->type == 'bundle' ? $item->qty_ordered : $product->inventory_source_qty($inventorySource->id)) : $qtyToShip;
                                                                 @endphp
 
                                                                 {{ $sourceQty }}
@@ -330,7 +331,7 @@
 
                                                                 <div class="control-group" :class="[errors.has('{{ $inputName }}') ? 'has-error' : '']">
 
-                                                                    <input type="text" v-validate="'required|numeric|min_value:0|max_value:{{$item->qty_to_ship}}'" class="control" id="{{ $inputName }}" name="{{ $inputName }}" value="{{ $item->qty_to_ship }}" data-vv-as="&quot;{{ __('admin::app.sales.shipments.qty-to-ship') }}&quot;" :disabled="source != '{{ $inventorySource->id }}'"/>
+                                                                    <input type="text" v-validate="'required|numeric|min_value:0|max_value:{{$qtyToShip}}'" class="control" id="{{ $inputName }}" name="{{ $inputName }}" value="{{ $qtyToShip }}" data-vv-as="&quot;{{ __('admin::app.sales.shipments.qty-to-ship') }}&quot;" :disabled="source != '{{ $inventorySource->id }}'"/>
 
                                                                     <span class="control-error" v-if="errors.has('{{ $inputName }}')">
                                                                         @verbatim
@@ -364,7 +365,7 @@
 
         data: function() {
             return {
-                source: ""
+                source: "{{ $order->channel->inventory_sources->first()?->id ?? '' }}"
             }
         }
     });

@@ -125,7 +125,7 @@ class QuotationController extends Controller
 
             session()->flash('success', "Quotation {$quoteNo} generated successfully!");
 
-            return redirect()->route('hws.admin.sales-leads.index');
+            return redirect()->route('hws.admin.sales-leads.show', $request->lead_id);
 
         } catch (\Exception $e) {
             DB::rollBack();

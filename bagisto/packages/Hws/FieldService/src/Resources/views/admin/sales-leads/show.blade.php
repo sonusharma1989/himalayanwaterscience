@@ -20,6 +20,94 @@
     </div>
     <div class="hws-grid">
         <main>
+            <!-- Quotations Section (Multiple Quotations Support) -->
+            <section class="hws-card" style="border-top: 4px solid #3c50e0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <div>
+                        <h2 style="margin: 0 0 4px; font-size: 16px; color: #0f172a;">📄 Quotations / Proposals ({{ $quotations->count() }})</h2>
+                        <span class="hws-muted">All quotation revisions generated for this customer lead</span>
+                    </div>
+                    <a class="hws-btn" href="{{ route('hws.admin.quotations.create', $lead->id) }}" style="font-size: 12px; padding: 7px 12px;">+ New Quotation / Revision</a>
+                </div>
+
+                @if($quotations->isNotEmpty())
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                            <thead>
+                                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569; font-weight: 700;">
+                                    <th style="padding: 10px 12px;">Quote No</th>
+                                    <th style="padding: 10px 12px;">Date</th>
+                                    <th style="padding: 10px 12px;">Subtotal</th>
+                                    <th style="padding: 10px 12px;">Discount</th>
+                                    <th style="padding: 10px 12px;">Tax</th>
+                                    <th style="padding: 10px 12px;">Grand Total</th>
+                                    <th style="padding: 10px 12px;">Status</th>
+                                    <th style="padding: 10px 12px; text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($quotations as $q)
+                                    <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;">
+                                        <td style="padding: 10px 12px; font-weight: 700; color: #1e3a8a;">
+                                            {{ $q->quote_no }}
+                                        </td>
+                                        <td style="padding: 10px 12px; color: #64748b;">
+                                            {{ date('d M Y', strtotime($q->created_at)) }}
+                                        </td>
+                                        <td style="padding: 10px 12px;">
+                                            ₹{{ number_format($q->subtotal, 2) }}
+                                        </td>
+                                        <td style="padding: 10px 12px; color: #ef4444;">
+                                            {{ $q->discount > 0 ? '-₹'.number_format($q->discount, 2) : '—' }}
+                                        </td>
+                                        <td style="padding: 10px 12px; color: #64748b;">
+                                            ₹{{ number_format($q->tax_amount, 2) }}
+                                        </td>
+                                        <td style="padding: 10px 12px; font-weight: 800; color: #0f172a;">
+                                            ₹{{ number_format($q->grand_total, 2) }}
+                                        </td>
+                                        <td style="padding: 10px 12px;">
+                                            @php
+                                                $badgeColor = match($q->status) {
+                                                    'accepted' => 'background:#d1fae5;color:#065f46;',
+                                                    'sent'     => 'background:#e0e7ff;color:#3730a3;',
+                                                    'rejected' => 'background:#fee2e2;color:#991b1b;',
+                                                    default    => 'background:#f1f5f9;color:#475569;',
+                                                };
+                                            @endphp
+                                            <span style="display:inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; {{ $badgeColor }}">
+                                                {{ ucfirst($q->status) }}
+                                            </span>
+                                        </td>
+                                        <td style="padding: 10px 12px; text-align: right;">
+                                            <div style="display: inline-flex; gap: 6px; align-items: center;">
+                                                <a href="{{ route('hws.admin.quotations.pdf', $q->id) }}" target="_blank" title="Download PDF" style="padding: 5px 9px; background: #f1f5f9; color: #334155; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600;">
+                                                    PDF
+                                                </a>
+                                                @if($q->order_id)
+                                                    <a href="{{ route('admin.sales.orders.view', $q->order_id) }}" style="padding: 5px 9px; background: #10b981; color: #fff; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 700;">
+                                                        Order #{{ $q->order_id }}
+                                                    </a>
+                                                @else
+                                                    <form method="POST" action="{{ route('hws.admin.quotations.convert-to-order', $q->id) }}" style="display:inline;" onsubmit="return confirm('Convert this quotation to confirmed sales order?');">
+                                                        @csrf
+                                                        <button type="submit" style="padding: 5px 9px; background: #3c50e0; color: #fff; border: 0; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 700;">
+                                                            Convert Order
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="hws-empty" style="padding: 16px 0;">No quotation created yet. Click "+ New Quotation" to create one.</div>
+                @endif
+            </section>
+
             <section class="hws-card"><h2>Customer &amp; Lead Information</h2><div class="hws-fields">
                 <div class="hws-field"><label>Name</label><div>{{ $lead->customer_name }}</div></div><div class="hws-field"><label>Phone</label><div>{{ $lead->customer_phone ?: '—' }}</div></div><div class="hws-field"><label>Email</label><div>{{ $lead->customer_email ?: '—' }}</div></div><div class="hws-field"><label>Sales Type</label><select class="hws-select" onchange="updateLeadField('{{ $lead->id }}','sales_type',this.value)">@foreach(['trading'=>'Trading','projects'=>'Projects','services'=>'Services'] as $value=>$label)<option value="{{ $value }}" {{ $lead->sales_type===$value?'selected':'' }}>{{ $label }}</option>@endforeach</select></div><div class="hws-field"><label>Source</label><div>{{ $lead->source ?: 'Field Survey' }}</div></div><div class="hws-field"><label>Request Type</label><div>{{ $format($lead->request_type) }}</div></div><div class="hws-field hws-wide"><label>Address</label><div>{{ $lead->customer_address ?: '—' }}</div></div>
             </div></section>

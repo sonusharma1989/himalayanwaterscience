@@ -49,7 +49,7 @@ return [
         'logout'                   => 'Logout',
         'visit-shop'               => 'Visit Shop',
         'dashboard'                => 'Dashboard',
-        'sales'                    => 'Sales',
+        'sales'                    => 'Trading Orders',
         'orders'                   => 'Orders',
         'shipments'                => 'Shipments',
         'invoices'                 => 'Invoices',

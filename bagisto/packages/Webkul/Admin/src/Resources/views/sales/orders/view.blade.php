@@ -74,10 +74,22 @@
                     </a>
                 @endif
 
+                @php
+                    $shippableItems = $order->items->filter(fn($i) => ($i->qty_to_ship > 0 || ($i->qty_ordered - $i->qty_shipped) > 0));
+                    $anyItemPassed = $order->items->contains(fn($i) => ($i->qc_status ?? 'pending') === 'passed');
+                    $isQcPassed = ($order->qc_status === 'passed') || ($shippableItems->isNotEmpty() && $shippableItems->contains(fn($i) => ($i->qc_status ?? 'pending') === 'passed')) || $anyItemPassed;
+                @endphp
+
                 @if ($order->canShip())
-                    <a href="{{ $order->sales_type === 'projects' ? route('hws.admin.projects.shipments.create', $order->id) : route('admin.sales.shipments.create', $order->id) }}" class="btn btn-lg btn-primary">
-                        {{ __('admin::app.sales.orders.shipment-btn-title') }}
-                    </a>
+                    @if ($isQcPassed)
+                        <a href="{{ $order->sales_type === 'projects' ? route('hws.admin.projects.shipments.create', $order->id) : route('admin.sales.shipments.create', $order->id) }}" class="btn btn-lg btn-primary">
+                            {{ __('admin::app.sales.orders.shipment-btn-title') }}
+                        </a>
+                    @else
+                        <button type="button" class="btn btn-lg" style="background: #94a3b8; color: #fff; cursor: not-allowed;" title="At least one ordered item must pass Quality Check (QC) before creating shipment" onclick="window.hwsShowToast ? window.hwsShowToast('Cannot ship order: Quality Check (QC) is pending. Please mark items as QC Passed first.', 'error') : alert('Cannot ship order: QC is pending.');">
+                            QC Pending (Cannot Ship)
+                        </button>
+                    @endif
                 @endif
 
                 {!! view_render_event('sales.order.page_action.after', ['order' => $order]) !!}
@@ -174,6 +186,26 @@
                                             </div>
 
                                             {!! view_render_event('sales.order.customer_email.after', ['order' => $order]) !!}
+
+                                            <div class="row" style="align-items: center;">
+                                                <span class="title">
+                                                    Account Manager
+                                                </span>
+
+                                                <span class="value">
+                                                    @php
+                                                        $allAdmins = \Illuminate\Support\Facades\DB::table('admins')->select('id', 'name')->get();
+                                                    @endphp
+                                                    <select onchange="hwsQuickAssignOrderManager({{ $order->id }}, this.value, this)" style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 13px; background: #f8fafc; font-weight: 600; color: #1e293b; cursor: pointer; outline: none;">
+                                                        <option value="">Unassigned</option>
+                                                        @foreach ($allAdmins as $adm)
+                                                            <option value="{{ $adm->id }}" {{ ((string)$order->account_manager_id === (string)$adm->id) ? 'selected' : '' }}>
+                                                                {{ $adm->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </span>
+                                            </div>
 
                                             @if (
                                                 ! is_null($order->customer)
@@ -340,6 +372,7 @@
                                                     <th>{{ __('admin::app.sales.orders.product-name') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.price') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.item-status') }}</th>
+                                                    <th>Quality Check (QC)</th>
                                                     <th>{{ __('admin::app.sales.orders.subtotal') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.tax-percent') }}</th>
                                                     <th>{{ __('admin::app.sales.orders.tax-amount') }}</th>
@@ -356,7 +389,7 @@
 
                                                     <tr>
                                                         <td>
-                                                            {{ $item->getTypeInstance()->getOrderedItem($item)->sku }}
+                                                            {{ $item->product ? $item->getTypeInstance()->getOrderedItem($item)->sku : $item->sku }}
                                                         </td>
 
                                                         <td>
@@ -370,7 +403,7 @@
                                                                 <div class="item-options">
 
                                                                     @foreach ($item->additional['attributes'] as $attribute)
-                                                                        <b>{{ $attribute['attribute_name'] }} : </b>{{ $attribute['option_label'] }}</br>
+                                                                        <b>{{ $attribute['attribute_name'] }} : </b>{{ $attribute['option_label'] }}<br>
                                                                     @endforeach
 
                                                                 </div>
@@ -399,6 +432,55 @@
                                                             <span class="qty-row">
                                                                 {{ $item->qty_canceled ? __('admin::app.sales.orders.item-canceled', ['qty_canceled' => $item->qty_canceled]) : '' }}
                                                             </span>
+                                                        </td>
+
+                                                        <!-- Item-Level QC Column -->
+                                                        <td style="min-width: 170px;">
+                                                            @php
+                                                                $qcItemStatus = $item->qc_status ?? 'pending';
+                                                                $qcBadgeStyle = match($qcItemStatus) {
+                                                                    'passed' => 'background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;',
+                                                                    'failed' => 'background:#fee2e2;color:#991b1b;border:1px solid #fecaca;',
+                                                                    default  => 'background:#fef3c7;color:#92400e;border:1px solid #fde68a;',
+                                                                };
+                                                            @endphp
+                                                            <div style="margin-bottom: 6px;">
+                                                                <span style="display:inline-block; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; {{ $qcBadgeStyle }}">
+                                                                    {{ $qcItemStatus === 'passed' ? '✓ Passed' : ($qcItemStatus === 'failed' ? '✕ Failed' : '⏳ Pending') }}
+                                                                </span>
+                                                                @if($item->qc_serial_no)
+                                                                    <div style="font-size: 11px; color: #64748b; margin-top: 3px;">
+                                                                        <b>S/N:</b> {{ $item->qc_serial_no }}
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+
+                                                            <details style="font-size: 12px; cursor: pointer;">
+                                                                <summary style="color: #3c50e0; font-weight: 600;">Update QC</summary>
+                                                                <form method="POST" action="{{ route('hws.admin.orders.item-qc', $order->id) }}" style="margin-top: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                                                    @csrf
+                                                                    <input type="hidden" name="item_id" value="{{ $item->id }}">
+                                                                    <div style="margin-bottom: 6px;">
+                                                                        <label style="font-size: 10px; font-weight: 700; color: #475569; display: block;">STATUS</label>
+                                                                        <select name="qc_status" style="width: 100%; font-size: 12px; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1;">
+                                                                            <option value="passed" {{ $qcItemStatus === 'passed' ? 'selected' : '' }}>✓ Pass QC</option>
+                                                                            <option value="failed" {{ $qcItemStatus === 'failed' ? 'selected' : '' }}>✕ Reject (Fail)</option>
+                                                                            <option value="pending" {{ $qcItemStatus === 'pending' ? 'selected' : '' }}>⏳ Pending</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div style="margin-bottom: 6px;">
+                                                                        <label style="font-size: 10px; font-weight: 700; color: #475569; display: block;">SERIAL/BATCH NO</label>
+                                                                        <input type="text" name="qc_serial_no" value="{{ $item->qc_serial_no }}" placeholder="e.g. SN-8921" style="width: 100%; font-size: 11px; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                                                                    </div>
+                                                                    <div style="margin-bottom: 8px;">
+                                                                        <label style="font-size: 10px; font-weight: 700; color: #475569; display: block;">REMARKS</label>
+                                                                        <input type="text" name="qc_notes" value="{{ $item->qc_notes }}" placeholder="QC inspection notes..." style="width: 100%; font-size: 11px; padding: 4px; border-radius: 4px; border: 1px solid #cbd5e1; box-sizing: border-box;">
+                                                                    </div>
+                                                                    <button type="submit" style="width: 100%; background: #3c50e0; color: #fff; border: 0; padding: 5px; border-radius: 4px; font-weight: 700; font-size: 11px; cursor: pointer;">
+                                                                        Save QC
+                                                                    </button>
+                                                                </form>
+                                                            </details>
                                                         </td>
 
                                                         <td>{{ core()->formatBasePrice($item->base_total) }}</td>

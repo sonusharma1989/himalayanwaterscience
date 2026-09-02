@@ -94,5 +94,41 @@
                     hwsShowToast('An error occurred while updating the lead.', 'error');
                 });
         }
+
+        function hwsQuickAssignLead(leadId, agentId, selectElem) {
+            const originalBg = selectElem.style.background;
+            selectElem.disabled = true;
+            selectElem.style.background = '#e2e8f0';
+
+            fetch(`{{ url(config('app.admin_url', 'admin')) }}/field-service/sales-leads/${leadId}/patch`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    field: 'assigned_to',
+                    value: agentId || null
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                selectElem.disabled = false;
+                selectElem.style.background = originalBg;
+                if (data.success) {
+                    hwsShowToast(data.message || 'Agent assigned successfully!', 'success');
+                    selectElem.style.borderColor = '#10b981';
+                    setTimeout(() => selectElem.style.borderColor = '#cbd5e1', 2000);
+                } else {
+                    hwsShowToast('Failed to assign agent.', 'error');
+                }
+            })
+            .catch(() => {
+                selectElem.disabled = false;
+                selectElem.style.background = originalBg;
+                hwsShowToast('Error assigning agent.', 'error');
+            });
+        }
     </script>
 @stop

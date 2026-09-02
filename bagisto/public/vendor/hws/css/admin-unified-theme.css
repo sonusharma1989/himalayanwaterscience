@@ -29,5 +29,28 @@ body:not(.dark-mode) .label{border-radius:999px;background:var(--hws-soft);color
 body:not(.dark-mode) .pagination .page-item{border:1px solid var(--hws-border);border-radius:8px;color:#475569}
 body:not(.dark-mode) .pagination .page-item.active{background:var(--hws-primary);border-color:var(--hws-primary);color:#fff}
 body:not(.dark-mode) .modal-container{border-radius:16px;border:1px solid var(--hws-border);box-shadow:0 24px 60px rgba(15,23,42,.2)}
-body:not(.dark-mode) .alert-wrapper .alert{border-radius:10px}
 @media(max-width:770px){body:not(.dark-mode) .content-container .content .page-header{padding:14px 16px}body:not(.dark-mode) .content-container .content .page-content{padding:16px}body:not(.dark-mode) .sale-container .sale{display:block}body:not(.dark-mode) .sale-container .sale .sale-section{width:100%;margin-bottom:16px}}
+
+/* Sidebar Width & Clean Label Layout */
+.navbar-left.open {
+    width: 250px !important;
+}
+.padding-container-navbar-expand {
+    padding-left: 250px !important;
+}
+.navbar-left.open .menubar-bottom {
+    width: 240px !important;
+}
+.navbar-left.open ul.menubar li.menu-item a .menu-label {
+    width: 165px !important;
+    word-break: normal !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+.navbar-left.open ul.menubar li.menu-item ul.sub-menubar li.sub-menu-item a .menu-label {
+    width: auto !important;
+    word-break: normal !important;
+    white-space: nowrap !important;
+}
+

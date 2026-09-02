@@ -49,7 +49,7 @@
                             <span class="icon-menu icon {{ $menuItem['icon-class'] }}"
                             style="margin-right:10px; display: inline-block;vertical-align: middle;transform: scale(0.8);"></span>
 
-                            <span class="menu-label">{{ trans($menuItem['name']) }}</span>
+                            <span class="menu-label">{{ $menuItem['key'] === 'sales' ? 'Trading Orders' : trans($menuItem['name']) }}</span>
                             @if(count($menuItem['children']) || $menuItem['key'] == 'configuration' )
                             <span class="icon arrow-icon"></span>
                             @endif

@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="{{ asset('vendor/webkul/admin/assets/css/admin.css') }}">
         <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-field-service.css') }}?v=20260901-2">
         <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-menu-fixes.css') }}?v=20260901-2">
-        <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-unified-theme.css') }}?v=20260901-1">
+        <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-unified-theme.css') }}?v=20260902-3">
         <link rel="stylesheet" href="{{ asset('vendor/hws/css/admin-dashboard-modern.css') }}?v=20260901-1">
 
         @yield('head')
@@ -144,13 +144,68 @@
                     window.addEventListener('scroll', function() {
                         documentScrollWhenScrolled = $(document).scrollTop();
 
-                            if (documentScrollWhenScrolled <= differenceInHeight + 200) {
-                                $('.navbar-left').css('top', -documentScrollWhenScrolled + 60 + 'px');
-                                scrollTopValueWhenNavBarFixed = $(document).scrollTop();
-                            }
+                        if (documentScrollWhenScrolled <= differenceInHeight + 200) {
+                            $('.navbar-left').css('top', -documentScrollWhenScrolled + 60 + 'px');
+                            scrollTopValueWhenNavBarFixed = $(document).scrollTop();
+                        }
                     });
                 }
             });
+
+            window.hwsShowToast = function(message, type) {
+                type = type || 'success';
+                var toast = document.createElement('div');
+                Object.assign(toast.style, {
+                    position: 'fixed', top: '24px', right: '24px', zIndex: '100000',
+                    padding: '12px 24px', borderRadius: '10px', fontWeight: '700',
+                    fontSize: '13px', color: '#fff', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.18)',
+                    transition: 'all .35s cubic-bezier(.4,0,.2,1)', opacity: '0', transform: 'translateY(-20px)',
+                    background: type === 'success' ? '#10b981' : '#ef4444',
+                    display: 'flex', alignItems: 'center', gap: '8px'
+                });
+                toast.innerText = (type === 'success' ? '✓ ' : '⚠ ') + message;
+                document.body.appendChild(toast);
+                setTimeout(function() { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; }, 50);
+                setTimeout(function() {
+                    toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)';
+                    setTimeout(function() { toast.remove(); }, 350);
+                }, 3000);
+            };
+
+            window.hwsQuickAssignOrderManager = function(orderId, managerId, selectElem) {
+                var originalBg = selectElem.style.background;
+                selectElem.disabled = true;
+                selectElem.style.background = '#e2e8f0';
+
+                fetch('{{ url(config("app.admin_url", "admin")) }}/field-service/orders/' + orderId + '/assign-account-manager', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        account_manager_id: managerId || null
+                    })
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    selectElem.disabled = false;
+                    selectElem.style.background = originalBg;
+                    if (data.success) {
+                        selectElem.style.borderColor = '#10b981';
+                        setTimeout(function() { selectElem.style.borderColor = '#cbd5e1'; }, 2000);
+                        window.hwsShowToast(data.message || 'Account manager assigned successfully!', 'success');
+                    } else {
+                        window.hwsShowToast('Failed to assign account manager.', 'error');
+                    }
+                })
+                .catch(function() {
+                    selectElem.disabled = false;
+                    selectElem.style.background = originalBg;
+                    window.hwsShowToast('Error assigning account manager.', 'error');
+                });
+            };
         </script>
 
         @stack('scripts')

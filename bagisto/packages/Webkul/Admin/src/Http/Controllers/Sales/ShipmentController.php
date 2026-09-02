@@ -92,6 +92,15 @@ class ShipmentController extends Controller
 
         $data = request()->all();
 
+        // Ensure ONLY QC passed items are being shipped
+        foreach ($data['shipment']['items'] ?? [] as $itemId => $inventorySources) {
+            $orderItem = $this->orderItemRepository->find($itemId);
+            if (! $orderItem || ($orderItem->qc_status !== 'passed')) {
+                session()->flash('error', 'Item (' . ($orderItem->name ?? 'Unknown') . ') must pass Quality Check (QC) before it can be shipped.');
+                return redirect()->back();
+            }
+        }
+
         if (! $this->isInventoryValidate($data)) {
             session()->flash('error', trans('admin::app.sales.shipments.quantity-invalid'));
 
@@ -153,15 +162,21 @@ class ShipmentController extends Controller
                         }
                     }
                 } else {
-                    $availableQty = $orderItem->product->inventories()
-                        ->where('inventory_source_id', $inventorySourceId)
-                        ->sum('qty');
+                    if ($orderItem->product) {
+                        $availableQty = $orderItem->product->inventories()
+                            ->where('inventory_source_id', $inventorySourceId)
+                            ->sum('qty');
 
-                    if (
-                        $orderItem->qty_to_ship < $qty
-                        || $availableQty < $qty
-                    ) {
-                        return false;
+                        if (
+                            $orderItem->qty_to_ship < $qty
+                            || $availableQty < $qty
+                        ) {
+                            return false;
+                        }
+                    } else {
+                        if ($orderItem->qty_to_ship < $qty) {
+                            return false;
+                        }
                     }
                 }
 

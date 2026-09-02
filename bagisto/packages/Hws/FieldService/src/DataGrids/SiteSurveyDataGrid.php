@@ -193,9 +193,15 @@ class SiteSurveyDataGrid extends DataGrid
             'sortable'   => false,
             'filterable' => false,
             'closure'    => function ($row) {
-                $employee = $this->employees->firstWhere('id', $row->assigned_to);
+                $optionsHtml = '<option value="">Unassigned</option>';
+                foreach ($this->employees as $emp) {
+                    $selected = ((string)$row->assigned_to === (string)$emp->id) ? 'selected' : '';
+                    $optionsHtml .= '<option value="' . e($emp->id) . '" ' . $selected . '>' . e($emp->name) . '</option>';
+                }
 
-                return $employee ? e($employee->name) : 'Unassigned';
+                return '<select onchange="hwsQuickAssignLead(' . $row->id . ', this.value, this)" style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 12px; background: #f8fafc; font-weight: 600; color: #1e293b; cursor: pointer; outline: none; transition: border-color 0.2s;">'
+                    . $optionsHtml
+                    . '</select>';
             },
         ]);
 

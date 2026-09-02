@@ -99,6 +99,10 @@ Route::group(['middleware' => ['web', 'admin'], 'prefix' => config('app.admin_ur
             ->name('hws.admin.quotations.convert-to-order');
         Route::post('orders/{id}/manual-payment', [QuotationController::class, 'recordManualPayment'])
             ->name('hws.admin.orders.manual-payment');
+        Route::post('orders/{id}/item-qc', [\Webkul\Admin\Http\Controllers\Sales\OrderController::class, 'updateItemQc'])
+            ->name('hws.admin.orders.item-qc');
+        Route::post('orders/{id}/assign-account-manager', [\Webkul\Admin\Http\Controllers\Sales\OrderController::class, 'assignAccountManager'])
+            ->name('hws.admin.orders.assign-account-manager');
 
         Route::get('inventory', [InventoryController::class, 'index'])
             ->name('hws.admin.inventory.index');

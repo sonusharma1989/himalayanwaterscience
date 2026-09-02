@@ -40,7 +40,9 @@ class OrderDataGrid extends DataGrid
                 $leftJoin->on('order_address_billing.order_id', '=', 'orders.id')
                     ->where('order_address_billing.address_type', OrderAddress::ADDRESS_TYPE_BILLING);
             })
-            ->addSelect('orders.id', 'orders.increment_id', 'orders.base_sub_total', 'orders.base_grand_total', 'orders.created_at', 'channel_name', 'status', 'orders.sales_type')
+            ->leftJoin('admins as account_managers', 'account_managers.id', '=', 'orders.account_manager_id')
+            ->addSelect('orders.id', 'orders.increment_id', 'orders.base_sub_total', 'orders.base_grand_total', 'orders.created_at', 'orders.channel_name', 'orders.status', 'orders.sales_type', 'orders.account_manager_id')
+            ->addSelect('account_managers.name as account_manager_name')
             ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_billing.first_name, " ", ' . DB::getTablePrefix() . 'order_address_billing.last_name) as billed_to'))
             ->addSelect(DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name) as shipped_to'))
             ->selectRaw("(SELECT COALESCE(SUM(CASE WHEN ot.amount > 0 THEN ot.amount ELSE CAST(JSON_UNQUOTE(JSON_EXTRACT(ot.data, '$.amount')) AS DECIMAL(12,2)) END), 0) FROM {$dbPrefix}order_transactions as ot WHERE ot.order_id = {$dbPrefix}orders.id) as paid_amount")
@@ -59,7 +61,10 @@ class OrderDataGrid extends DataGrid
         $this->addFilter('shipped_to', DB::raw('CONCAT(' . DB::getTablePrefix() . 'order_address_shipping.first_name, " ", ' . DB::getTablePrefix() . 'order_address_shipping.last_name)'));
         $this->addFilter('increment_id', 'orders.increment_id');
         $this->addFilter('created_at', 'orders.created_at');
+        $this->addFilter('status', 'orders.status');
+        $this->addFilter('channel_name', 'orders.channel_name');
         $this->addFilter('sales_type', 'orders.sales_type');
+        $this->addFilter('account_manager_name', 'account_managers.name');
 
         $this->setQueryBuilder($queryBuilder);
     }
@@ -133,6 +138,27 @@ class OrderDataGrid extends DataGrid
             'filterable' => true,
             'closure'    => function ($value) {
                 return $value->created_at ? \Carbon\Carbon::parse($value->created_at)->format('d M Y, h:i A') : '—';
+            },
+        ]);
+
+        $this->addColumn([
+            'index'      => 'account_manager_name',
+            'label'      => 'Account Manager',
+            'type'       => 'string',
+            'searchable' => true,
+            'sortable'   => true,
+            'filterable' => true,
+            'closure'    => function ($row) {
+                $employees = DB::table('admins')->select('id', 'name')->get();
+                $optionsHtml = '<option value="">Unassigned</option>';
+                foreach ($employees as $emp) {
+                    $selected = ((string)$row->account_manager_id === (string)$emp->id) ? 'selected' : '';
+                    $optionsHtml .= '<option value="' . e($emp->id) . '" ' . $selected . '>' . e($emp->name) . '</option>';
+                }
+
+                return '<select onchange="hwsQuickAssignOrderManager(' . $row->id . ', this.value, this)" style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 12px; background: #f8fafc; font-weight: 600; color: #1e293b; cursor: pointer; outline: none; transition: border-color 0.2s;">'
+                    . $optionsHtml
+                    . '</select>';
             },
         ]);
 

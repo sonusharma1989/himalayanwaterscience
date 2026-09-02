@@ -56,6 +56,10 @@ class OrderItem extends Model implements OrderItemContract
      */
     public function isStockable(): bool
     {
+        if (! $this->product) {
+            return true;
+        }
+
         return $this->getTypeInstance()->isStockable();
     }
 
