@@ -151,6 +151,17 @@ class OrderController extends Controller
 
         $order->update(['qc_status' => $overallStatus]);
 
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success'        => true,
+                'message'        => "Item QC updated to " . strtoupper($data['qc_status']) . ".",
+                'qc_status'      => $data['qc_status'],
+                'qc_serial_no'   => $item->qc_serial_no,
+                'overall_status' => $overallStatus,
+                'can_ship'       => $order->canShip() && ($overallStatus === 'passed' || $overallStatus === 'partially_passed'),
+            ]);
+        }
+
         session()->flash('success', "Item QC status updated to " . strtoupper($data['qc_status']) . " successfully.");
 
         return redirect()->back();

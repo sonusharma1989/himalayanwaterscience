@@ -80,17 +80,19 @@
                     $isQcPassed = ($order->qc_status === 'passed') || ($shippableItems->isNotEmpty() && $shippableItems->contains(fn($i) => ($i->qc_status ?? 'pending') === 'passed')) || $anyItemPassed;
                 @endphp
 
-                @if ($order->canShip())
-                    @if ($isQcPassed)
-                        <a href="{{ $order->sales_type === 'projects' ? route('hws.admin.projects.shipments.create', $order->id) : route('admin.sales.shipments.create', $order->id) }}" class="btn btn-lg btn-primary">
-                            {{ __('admin::app.sales.orders.shipment-btn-title') }}
-                        </a>
-                    @else
-                        <button type="button" class="btn btn-lg" style="background: #94a3b8; color: #fff; cursor: not-allowed;" title="At least one ordered item must pass Quality Check (QC) before creating shipment" onclick="window.hwsShowToast ? window.hwsShowToast('Cannot ship order: Quality Check (QC) is pending. Please mark items as QC Passed first.', 'error') : alert('Cannot ship order: QC is pending.');">
-                            QC Pending (Cannot Ship)
-                        </button>
+                <div id="order-shipment-action-wrapper" style="display:inline-block;">
+                    @if ($order->canShip())
+                        @if ($isQcPassed)
+                            <a id="order-shipment-btn" href="{{ $order->sales_type === 'projects' ? route('hws.admin.projects.shipments.create', $order->id) : route('admin.sales.shipments.create', $order->id) }}" class="btn btn-lg btn-primary">
+                                {{ __('admin::app.sales.orders.shipment-btn-title') }}
+                            </a>
+                        @else
+                            <button id="order-shipment-btn" type="button" class="btn btn-lg" style="background: #94a3b8; color: #fff; cursor: not-allowed;" title="At least one ordered item must pass Quality Check (QC) before creating shipment" onclick="window.hwsShowToast ? window.hwsShowToast('Cannot ship order: Quality Check (QC) is pending. Please mark items as QC Passed first.', 'error') : alert('Cannot ship order: QC is pending.');">
+                                QC Pending (Cannot Ship)
+                            </button>
+                        @endif
                     @endif
-                @endif
+                </div>
 
                 {!! view_render_event('sales.order.page_action.after', ['order' => $order]) !!}
             </div>
@@ -435,7 +437,7 @@
                                                         </td>
 
                                                         <!-- Item-Level QC Column -->
-                                                        <td style="min-width: 170px;">
+                                                        <td style="min-width: 170px;" id="item-qc-cell-{{ $item->id }}">
                                                             @php
                                                                 $qcItemStatus = $item->qc_status ?? 'pending';
                                                                 $qcBadgeStyle = match($qcItemStatus) {
@@ -444,20 +446,18 @@
                                                                     default  => 'background:#fef3c7;color:#92400e;border:1px solid #fde68a;',
                                                                 };
                                                             @endphp
-                                                            <div style="margin-bottom: 6px;">
-                                                                <span style="display:inline-block; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; {{ $qcBadgeStyle }}">
+                                                            <div class="qc-badge-wrapper" style="margin-bottom: 6px;">
+                                                                <span class="qc-badge-pill" style="display:inline-block; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; {{ $qcBadgeStyle }}">
                                                                     {{ $qcItemStatus === 'passed' ? '✓ Passed' : ($qcItemStatus === 'failed' ? '✕ Failed' : '⏳ Pending') }}
                                                                 </span>
-                                                                @if($item->qc_serial_no)
-                                                                    <div style="font-size: 11px; color: #64748b; margin-top: 3px;">
-                                                                        <b>S/N:</b> {{ $item->qc_serial_no }}
-                                                                    </div>
-                                                                @endif
+                                                                <div class="qc-sn-text" style="font-size: 11px; color: #64748b; margin-top: 3px; {{ empty($item->qc_serial_no) ? 'display:none;' : '' }}">
+                                                                    <b>S/N:</b> <span>{{ $item->qc_serial_no }}</span>
+                                                                </div>
                                                             </div>
 
                                                             <details style="font-size: 12px; cursor: pointer;">
                                                                 <summary style="color: #3c50e0; font-weight: 600;">Update QC</summary>
-                                                                <form method="POST" action="{{ route('hws.admin.orders.item-qc', $order->id) }}" style="margin-top: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                                                <form onsubmit="submitItemQcAjax(event, this, {{ $item->id }})" method="POST" action="{{ route('hws.admin.orders.item-qc', $order->id) }}" style="margin-top: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
                                                                     @csrf
                                                                     <input type="hidden" name="item_id" value="{{ $item->id }}">
                                                                     <div style="margin-bottom: 6px;">
@@ -837,4 +837,101 @@
         </div>
 
     </div>
+
+    <script>
+        function submitItemQcAjax(event, form, itemId) {
+            event.preventDefault();
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerText;
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Saving...';
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+
+                if (data.success) {
+                    if (window.hwsShowToast) {
+                        window.hwsShowToast(data.message || 'QC updated successfully!', 'success');
+                    }
+
+                    // Dynamically update QC Badge
+                    const cell = document.getElementById(`item-qc-cell-${itemId}`);
+                    if (cell) {
+                        const badgePill = cell.querySelector('.qc-badge-pill');
+                        if (badgePill) {
+                            if (data.qc_status === 'passed') {
+                                badgePill.innerText = '✓ Passed';
+                                badgePill.style.background = '#d1fae5';
+                                badgePill.style.color = '#065f46';
+                                badgePill.style.border = '1px solid #a7f3d0';
+                            } else if (data.qc_status === 'failed') {
+                                badgePill.innerText = '✕ Failed';
+                                badgePill.style.background = '#fee2e2';
+                                badgePill.style.color = '#991b1b';
+                                badgePill.style.border = '1px solid #fecaca';
+                            } else {
+                                badgePill.innerText = '⏳ Pending';
+                                badgePill.style.background = '#fef3c7';
+                                badgePill.style.color = '#92400e';
+                                badgePill.style.border = '1px solid #fde68a';
+                            }
+                        }
+
+                        // Update serial no display
+                        const snWrapper = cell.querySelector('.qc-sn-text');
+                        if (snWrapper) {
+                            if (data.qc_serial_no) {
+                                snWrapper.style.display = 'block';
+                                snWrapper.querySelector('span').innerText = data.qc_serial_no;
+                            } else {
+                                snWrapper.style.display = 'none';
+                            }
+                        }
+
+                        // Auto-close details dropdown
+                        const details = cell.querySelector('details');
+                        if (details) details.removeAttribute('open');
+                    }
+
+                    // Dynamically enable shipment button if allowed
+                    if (data.can_ship) {
+                        const shipWrapper = document.getElementById('order-shipment-action-wrapper');
+                        if (shipWrapper) {
+                            const shipRoute = `{{ $order->sales_type === 'projects' ? route('hws.admin.projects.shipments.create', $order->id) : route('admin.sales.shipments.create', $order->id) }}`;
+                            shipWrapper.innerHTML = `<a id="order-shipment-btn" href="${shipRoute}" class="btn btn-lg btn-primary">{{ __('admin::app.sales.orders.shipment-btn-title') }}</a>`;
+                        }
+                    }
+                } else {
+                    if (window.hwsShowToast) {
+                        window.hwsShowToast(data.message || 'Failed to update QC.', 'error');
+                    } else {
+                        alert(data.message || 'Failed to update QC.');
+                    }
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+                if (window.hwsShowToast) {
+                    window.hwsShowToast('Error updating QC. Please try again.', 'error');
+                } else {
+                    alert('Error updating QC.');
+                }
+            });
+        }
+    </script>
 @stop
