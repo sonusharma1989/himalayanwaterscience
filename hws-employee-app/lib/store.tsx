@@ -69,19 +69,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const savedUser = localStorage.getItem("hws_user");
     if (savedToken && savedUser) {
       setToken(savedToken);
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {}
     }
   }, []);
 
-  // Fetch initial data when authenticated
+  // Fetch initial data in background when token is available (non-blocking)
   useEffect(() => {
     if (token) {
-      const loadInitialData = async () => {
-        setLoading(true);
-        await Promise.all([fetchTasks(), fetchAttendance(), fetchNotifications()]);
-        setLoading(false);
-      };
-      loadInitialData();
+      fetchTasks();
+      fetchAttendance();
+      fetchNotifications();
     }
   }, [token]);
 
@@ -248,23 +247,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     // Convert frontend string chips/values to DB enum strings
     const dbPropertyType = surveyData.propertyType?.[0]?.toLowerCase() || "other";
-    const dbWaterSource = surveyData.waterSource?.[0]?.toLowerCase() || "municipal";
-    const dbWastewaterDisposal = surveyData.wastewaterDisposal?.[0]?.toLowerCase()?.replace(" ", "_") || "none";
-    
-    let dbSpaceAvailable = "not_sure";
-    if (surveyData.spaceAvailable?.[0]) {
-      const space = surveyData.spaceAvailable[0].toLowerCase();
-      if (space.includes("open")) dbSpaceAvailable = "open_area";
-      else if (space.includes("limit")) dbSpaceAvailable = "limited";
-      else if (space.includes("basement")) dbSpaceAvailable = "basement_only";
-    }
-
-    const dbInquiryTypes = (surveyData.inquiryTypes || []).map((type: string) => 
-      type.toLowerCase().replace(" ", "_")
-    );
+    const dbWaterSource = surveyData.waterSource?.[0]?.toLowerCase().replace(/\s+/g, "_") || "borewell";
+    const dbWastewaterDisposal = surveyData.wastewaterDisposal?.[0]?.toLowerCase().replace(/\s+/g, "_") || "drain";
+    const dbSpaceAvailable = surveyData.spaceAvailable?.[0]?.toLowerCase().replace(/\s+/g, "_") || "terrace";
+    const dbInquiryTypes = surveyData.inquiryTypes?.map((t: string) => t.toLowerCase()) || [];
 
     const formData = {
-      id: id > 0 ? id : undefined,
+      task_id: id,
       customer_name: surveyData.customer_name,
       customer_phone: surveyData.customer_phone,
       customer_address: surveyData.customer_address,

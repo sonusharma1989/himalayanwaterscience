@@ -80,26 +80,25 @@ class AuthController extends Controller
      */
     private function getUserStats($userId)
     {
-        $jobsCount = \Hws\FieldService\Models\Task::where('assigned_to', $userId)->where('step', 4)->count();
-        $averageRating = round(\Hws\FieldService\Models\Task::where('assigned_to', $userId)->where('step', 4)->whereNotNull('rating')->avg('rating') ?? 5.0, 1);
+        try {
+            $jobsCount = \Hws\FieldService\Models\Task::where('assigned_to', $userId)->where('step', 4)->count();
+            $averageRating = \Hws\FieldService\Models\Task::where('assigned_to', $userId)->where('step', 4)->whereNotNull('rating')->avg('rating') ?: 5.0;
 
-        $firstAttendance = \Hws\FieldService\Models\Attendance::where('employee_id', $userId)->orderBy('date', 'asc')->first();
-        if ($firstAttendance) {
-            $daysSinceFirst = max(1, \Illuminate\Support\Carbon::parse($firstAttendance->date)->diffInDays(\Illuminate\Support\Carbon::now()) + 1);
-            $totalDaysToCompare = min(30, $daysSinceFirst);
-            $checkInsCount = \Hws\FieldService\Models\Attendance::where('employee_id', $userId)
+            $attendanceCount = \Hws\FieldService\Models\Attendance::where('employee_id', $userId)
                 ->where('date', '>=', \Illuminate\Support\Carbon::now()->subDays(30)->toDateString())
                 ->count();
-            $workingDays = max(1, round($totalDaysToCompare * 0.85));
-            $attendancePercentage = min(round(($checkInsCount / $workingDays) * 100), 100);
-        } else {
-            $attendancePercentage = 0;
-        }
 
-        return [
-            'jobs'       => $jobsCount,
-            'rating'     => $averageRating,
-            'attendance' => $attendancePercentage,
-        ];
+            return [
+                'jobs'       => $jobsCount,
+                'rating'     => round((float)$averageRating, 1),
+                'attendance' => min(100, round(($attendanceCount / 26) * 100)),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'jobs'       => 0,
+                'rating'     => 5.0,
+                'attendance' => 0,
+            ];
+        }
     }
 }

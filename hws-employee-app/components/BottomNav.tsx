@@ -16,15 +16,18 @@ const NAV_ITEMS = [
 const VISIBLE_ON = ["/home", "/tasks", "/survey", "/attendance", "/profile"];
 
 export function BottomNav() {
-  const pathname = usePathname();
+  const rawPath = usePathname() || "";
+  // Remove trailing slashes and normalize (e.g. /home/ -> /home)
+  const pathname = rawPath.replace(/\/+$/, "") || "/";
 
-  if (!VISIBLE_ON.includes(pathname)) return null;
+  const isVisible = VISIBLE_ON.some((route) => pathname === route || pathname.endsWith(route));
+  if (!isVisible) return null;
 
   return (
     <nav className="sticky bottom-0 z-20 shrink-0 border-t border-slate-100 bg-white/95 px-2 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur">
       <div className="mx-auto grid max-w-md grid-cols-5">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href;
+          const active = pathname === href || pathname.endsWith(href);
           return (
             <Link
               key={href}

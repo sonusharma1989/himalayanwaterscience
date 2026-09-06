@@ -23,9 +23,6 @@ export default function HomePage() {
   const router = useRouter();
   const greeting = useGreeting();
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
   const today = useMemo(
     () =>
       new Date().toLocaleDateString("en-IN", {
