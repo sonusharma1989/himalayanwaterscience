@@ -1,5 +1,9 @@
 import { TaskDetailClient } from "./TaskDetailClient";
 
+export function generateStaticParams() {
+  return [{ id: '0' }];
+}
+
 export default async function TaskDetailPage({
   params,
 }: {

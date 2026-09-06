@@ -29,8 +29,7 @@ class RefundController extends Controller
         protected OrderRepository $orderRepository,
         protected OrderItemRepository $orderItemRepository,
         protected RefundRepository $refundRepository
-    )
-    {
+    ) {
         $this->_config = request('_config');
     }
 
@@ -146,7 +145,6 @@ class RefundController extends Controller
     public function view($id)
     {
         $refund = $this->refundRepository->findOrFail($id);
-        \Hws\FieldService\Helpers\BranchScopeHelper::authorizeBranch($refund->order?->branch_id);
 
         return view($this->_config['view'], compact('refund'));
     }

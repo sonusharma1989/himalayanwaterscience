@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 31, 2026 at 07:41 PM
+-- Generation Time: Sep 04, 2026 at 07:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 7.4.33
 
@@ -21,6 +21,7 @@ SET time_zone = "+00:00";
 -- Database: `bagisto`
 --
 
+-- --------------------------------------------------------
 
 -- --------------------------------------------------------
 
@@ -53,6 +54,16 @@ CREATE TABLE `addresses` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
+--
+-- Dumping data for table `addresses`
+--
+
+INSERT INTO `addresses` (`id`, `address_type`, `customer_id`, `cart_id`, `order_id`, `first_name`, `last_name`, `gender`, `company_name`, `address1`, `address2`, `postcode`, `city`, `state`, `country`, `email`, `phone`, `vat_id`, `default_address`, `additional`, `created_at`, `updated_at`) VALUES
+(1, 'order_billing', NULL, NULL, 12, 'Syncack', 'Software Company', NULL, NULL, 'wdwq\r\nAnanad Vihar, Tekri', NULL, '0', 'N/A', 'N/A', 'IN', 'customer@hws.local', '09602124449', NULL, 0, NULL, '2026-08-31 19:20:30', '2026-08-31 19:20:30'),
+(2, 'order_shipping', NULL, NULL, 12, 'Syncack', 'Software Company', NULL, NULL, 'wdwq\r\nAnanad Vihar, Tekri', NULL, '0', 'N/A', 'N/A', 'IN', 'customer@hws.local', '09602124449', NULL, 0, NULL, '2026-08-31 19:20:30', '2026-08-31 19:20:30'),
+(3, 'order_billing', NULL, NULL, 13, 'Syncack', 'Software Company', NULL, NULL, 'wdwq\r\nAnanad Vihar, Tekri', NULL, '0', 'N/A', 'N/A', 'IN', 'customer@hws.local', '09602124449', NULL, 0, NULL, '2026-09-02 14:43:04', '2026-09-02 14:43:04'),
+(4, 'order_shipping', NULL, NULL, 13, 'Syncack', 'Software Company', NULL, NULL, 'wdwq\r\nAnanad Vihar, Tekri', NULL, '0', 'N/A', 'N/A', 'IN', 'customer@hws.local', '09602124449', NULL, 0, NULL, '2026-09-02 14:43:04', '2026-09-02 14:43:04');
+
 -- --------------------------------------------------------
 
 --
@@ -67,6 +78,7 @@ CREATE TABLE `admins` (
   `api_token` varchar(80) DEFAULT NULL,
   `status` tinyint(1) NOT NULL DEFAULT 0,
   `role_id` int(10) UNSIGNED NOT NULL,
+  `branch_id` bigint(20) UNSIGNED DEFAULT NULL,
   `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -77,9 +89,9 @@ CREATE TABLE `admins` (
 -- Dumping data for table `admins`
 --
 
-INSERT INTO `admins` (`id`, `name`, `email`, `password`, `api_token`, `status`, `role_id`, `remember_token`, `created_at`, `updated_at`, `image`) VALUES
-(1, 'Example', 'admin@example.com', '$2y$10$3D5TZOciSwyxNXINruJ6nO7hDf9uokVyY99Yq7gDyQh6/mhc3tiMG', 'SnHCtUssHl6jzHUntDY1TAZ4SNTMw1lowO7d6gUpUqZyv8JbBjg0duFjqDacbfIUQqBg4U2xrKGAjIhI', 1, 1, NULL, '2026-08-04 00:23:08', '2026-08-04 00:23:08', NULL),
-(3, 'Test Employee', 'test@hws.in', '$2y$10$lcrwPdTqaBMpVja2Jl8MduCLBG7mOiC46lR25xM0dA.DjtgUzqB52', NULL, 1, 1, NULL, '2026-08-12 10:29:34', '2026-08-12 10:29:34', NULL);
+INSERT INTO `admins` (`id`, `name`, `email`, `password`, `api_token`, `status`, `role_id`, `branch_id`, `remember_token`, `created_at`, `updated_at`, `image`) VALUES
+(1, 'Example', 'admin@example.com', '$2y$10$3D5TZOciSwyxNXINruJ6nO7hDf9uokVyY99Yq7gDyQh6/mhc3tiMG', 'SnHCtUssHl6jzHUntDY1TAZ4SNTMw1lowO7d6gUpUqZyv8JbBjg0duFjqDacbfIUQqBg4U2xrKGAjIhI', 1, 1, 1, NULL, '2026-08-04 00:23:08', '2026-08-04 00:23:08', NULL),
+(3, 'Test Employee', 'test@hws.in', '$2y$10$lcrwPdTqaBMpVja2Jl8MduCLBG7mOiC46lR25xM0dA.DjtgUzqB52', NULL, 1, 1, 1, NULL, '2026-08-12 10:29:34', '2026-08-12 10:29:34', NULL);
 
 -- --------------------------------------------------------
 
@@ -153,7 +165,8 @@ INSERT INTO `attributes` (`id`, `code`, `admin_name`, `type`, `validation`, `pos
 (24, 'size', 'Size', 'select', NULL, 27, 0, 0, 0, 0, 1, 1, 1, 0, '2026-08-04 00:23:03', '2026-08-04 00:23:03', NULL, 1, 0, 0),
 (25, 'brand', 'Brand', 'select', NULL, 28, 0, 0, 0, 0, 1, 0, 1, 1, '2026-08-04 00:23:03', '2026-08-04 00:23:03', NULL, 1, 0, 0),
 (26, 'guest_checkout', 'Guest Checkout', 'boolean', NULL, 8, 1, 0, 0, 0, 0, 0, 0, 0, '2026-08-04 00:23:03', '2026-08-04 00:23:03', NULL, 1, 0, 0),
-(27, 'product_number', 'Product Number', 'text', NULL, 2, 0, 1, 0, 0, 0, 0, 0, 0, '2026-08-04 00:23:03', '2026-08-04 00:23:03', NULL, 1, 0, 0);
+(27, 'product_number', 'Product Number', 'text', NULL, 2, 0, 1, 0, 0, 0, 0, 0, 0, '2026-08-04 00:23:03', '2026-08-04 00:23:03', NULL, 1, 0, 0),
+(28, 'hsn_code', 'HSN Code', 'text', NULL, 3, 0, 0, 0, 0, 0, 0, 1, 1, '2026-09-01 17:59:32', '2026-09-01 17:59:32', NULL, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -244,7 +257,8 @@ INSERT INTO `attribute_group_mappings` (`attribute_id`, `attribute_group_id`, `p
 (24, 1, 12),
 (25, 1, 13),
 (26, 1, 9),
-(27, 1, 2);
+(27, 1, 2),
+(28, 1, 3);
 
 -- --------------------------------------------------------
 
@@ -349,7 +363,8 @@ INSERT INTO `attribute_translations` (`id`, `locale`, `name`, `attribute_id`) VA
 (24, 'en', 'Size', 24),
 (25, 'en', 'Brand', 25),
 (26, 'en', 'Allow Guest Checkout', 26),
-(27, 'en', 'Product Number', 27);
+(27, 'en', 'Product Number', 27),
+(28, 'en', 'HSN Code', 28);
 
 -- --------------------------------------------------------
 
@@ -527,7 +542,8 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `customer_email`, `customer_first_name`, `customer_last_name`, `shipping_method`, `coupon_code`, `is_gift`, `items_count`, `items_qty`, `exchange_rate`, `global_currency_code`, `base_currency_code`, `channel_currency_code`, `cart_currency_code`, `grand_total`, `base_grand_total`, `sub_total`, `base_sub_total`, `tax_total`, `base_tax_total`, `discount_amount`, `base_discount_amount`, `checkout_method`, `is_guest`, `is_active`, `conversion_time`, `customer_id`, `channel_id`, `created_at`, `updated_at`, `applied_cart_rule_ids`) VALUES
-(2, NULL, NULL, NULL, NULL, NULL, 0, 1, '1.0000', NULL, 'USD', 'USD', 'USD', 'USD', '59.9900', '59.9900', '59.9900', '59.9900', '0.0000', '0.0000', '0.0000', '0.0000', NULL, 1, 1, NULL, NULL, 1, '2026-08-18 13:50:05', '2026-08-18 13:50:11', '');
+(2, NULL, NULL, NULL, NULL, NULL, 0, 1, '1.0000', NULL, 'USD', 'USD', 'USD', 'USD', '59.9900', '59.9900', '59.9900', '59.9900', '0.0000', '0.0000', '0.0000', '0.0000', NULL, 1, 1, NULL, NULL, 1, '2026-08-18 13:50:05', '2026-08-18 13:50:11', ''),
+(3, NULL, NULL, NULL, NULL, NULL, 0, 1, '2.0000', NULL, 'USD', 'USD', 'INR', 'INR', '840000.0000', '840000.0000', '840000.0000', '840000.0000', '0.0000', '0.0000', '0.0000', '0.0000', NULL, 1, 1, NULL, NULL, 1, '2026-09-02 14:52:12', '2026-09-02 14:52:22', '');
 
 -- --------------------------------------------------------
 
@@ -571,7 +587,8 @@ CREATE TABLE `cart_items` (
 --
 
 INSERT INTO `cart_items` (`id`, `quantity`, `sku`, `type`, `name`, `coupon_code`, `weight`, `total_weight`, `base_total_weight`, `price`, `base_price`, `total`, `base_total`, `tax_percent`, `tax_amount`, `base_tax_amount`, `discount_percent`, `discount_amount`, `base_discount_amount`, `additional`, `parent_id`, `product_id`, `cart_id`, `tax_category_id`, `created_at`, `updated_at`, `custom_price`, `applied_cart_rule_ids`) VALUES
-(2, 1, 'ELEC-HEADPHONE-001', 'simple', 'Wireless Headphones', NULL, '1.0000', '1.0000', '1.0000', '59.9900', '59.9900', '59.9900', '59.9900', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '{\"is_buy_now\":\"0\",\"_token\":\"3PRJffxddZ4yFIWPwcYtOmtkjDa5pAU8FiDAf0Ra\",\"product_id\":\"1\",\"quantity\":1}', NULL, 1, 2, NULL, '2026-08-18 13:50:05', '2026-08-18 13:50:11', NULL, '');
+(2, 1, 'ELEC-HEADPHONE-001', 'simple', 'Wireless Headphones', NULL, '1.0000', '1.0000', '1.0000', '59.9900', '59.9900', '59.9900', '59.9900', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '{\"is_buy_now\":\"0\",\"_token\":\"3PRJffxddZ4yFIWPwcYtOmtkjDa5pAU8FiDAf0Ra\",\"product_id\":\"1\",\"quantity\":1}', NULL, 1, 2, NULL, '2026-08-18 13:50:05', '2026-08-18 13:50:11', NULL, ''),
+(3, 2, 'IND-RO-5000', 'simple', '5000 LPH High Capacity RO Plant', NULL, '0.0000', '0.0000', '0.0000', '420000.0000', '420000.0000', '840000.0000', '840000.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '{\"is_buy_now\":\"0\",\"_token\":\"HA58HYQLjPU4DGuNy6lviaFcgtLpffn33Q2EBJeg\",\"product_id\":\"5\",\"quantity\":2}', NULL, 5, 3, NULL, '2026-09-02 14:52:12', '2026-09-02 14:52:22', NULL, '');
 
 -- --------------------------------------------------------
 
@@ -864,8 +881,6 @@ INSERT INTO `categories` (`id`, `position`, `image`, `status`, `_lft`, `_rgt`, `
 (155, 1, NULL, 1, 1, 2, 154, '2026-08-18 19:01:59', '2026-08-18 19:01:59', 'products_and_description', NULL, NULL),
 (156, 1, NULL, 1, 1, 2, 154, '2026-08-18 19:02:00', '2026-08-18 19:02:00', 'products_and_description', NULL, NULL);
 
-
-
 -- --------------------------------------------------------
 
 --
@@ -979,8 +994,6 @@ INSERT INTO `category_translations` (`id`, `name`, `slug`, `description`, `meta_
 (164, 'RO & UF Membranes', 'ro-uf-membranes', 'Industrial 4040 and 8040 RO membranes for water purification plants.', 'RO & UF Membranes', 'Industrial 4040 and 8040 RO membranes for water purification plants.', 'RO & UF Membranes', 155, 'en', NULL, 'ro-plants/wastewater-treatment/water-atm-dispensing/water-chillers-coolers/components-spare-parts/commercial-ro-plants/industrial-ro-plants/sewage-treatment-plants-stp/effluent-treatment-plants-etp/coin-card-water-atms/industrial-water-chillers/ro-uf-memb'),
 (165, 'Multiport Valves & Media', 'multiport-valves-media', 'Top/Side mounted Multiport Valves, Activated Carbon, and Quartz Sand Filter Media.', 'Multiport Valves & Media', 'Top/Side mounted Multiport Valves, Activated Carbon, and Quartz Sand Filter Media.', 'Multiport Valves & Media', 156, 'en', NULL, 'ro-plants/wastewater-treatment/water-atm-dispensing/water-chillers-coolers/components-spare-parts/commercial-ro-plants/industrial-ro-plants/sewage-treatment-plants-stp/effluent-treatment-plants-etp/coin-card-water-atms/industrial-water-chillers/ro-uf-memb');
 
-
-
 -- --------------------------------------------------------
 
 --
@@ -1009,7 +1022,7 @@ CREATE TABLE `channels` (
 --
 
 INSERT INTO `channels` (`id`, `code`, `timezone`, `theme`, `hostname`, `logo`, `favicon`, `is_maintenance_on`, `allowed_ips`, `default_locale_id`, `base_currency_id`, `created_at`, `updated_at`, `root_category_id`) VALUES
-(1, 'default', NULL, 'velocity', 'http://localhost:8000', NULL, NULL, 0, NULL, 1, 3, NULL, NULL, 1);
+(1, 'default', NULL, 'velocity', 'http://localhost:8000', NULL, NULL, 0, '', 1, 3, NULL, '2026-09-01 14:46:24', 1);
 
 -- --------------------------------------------------------
 
@@ -1027,7 +1040,6 @@ CREATE TABLE `channel_currencies` (
 --
 
 INSERT INTO `channel_currencies` (`channel_id`, `currency_id`) VALUES
-(1, 1),
 (1, 3);
 
 -- --------------------------------------------------------
@@ -1091,7 +1103,7 @@ CREATE TABLE `channel_translations` (
 --
 
 INSERT INTO `channel_translations` (`id`, `channel_id`, `locale`, `name`, `description`, `home_page_content`, `footer_content`, `maintenance_mode_text`, `home_seo`, `created_at`, `updated_at`) VALUES
-(1, 1, 'en', 'Default', NULL, '\r\n                    <p>@include(\"shop::home.slider\") @include(\"shop::home.featured-products\") @include(\"shop::home.new-products\")</p>\r\n                        <div class=\"banner-container\">\r\n                        <div class=\"left-banner\">\r\n                            <img src=http://localhost:8000/themes/default/assets/images/1.webp data-src=http://localhost:8000/themes/default/assets/images/1.webp class=\"lazyload\" alt=\"test\" width=\"720\" height=\"720\" />\r\n                        </div>\r\n                        <div class=\"right-banner\">\r\n                            <img src=http://localhost:8000/themes/default/assets/images/2.webp data-src=http://localhost:8000/themes/default/assets/images/2.webp class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" />\r\n                            <img src=http://localhost:8000/themes/default/assets/images/3.webp data-src=http://localhost:8000/themes/default/assets/images/3.webp  class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" />\r\n                        </div>\r\n                    </div>\r\n                ', '\r\n                    <div class=\"list-container\">\r\n                        <span class=\"list-heading\">Quick Links</span>\r\n                        <ul class=\"list-group\">\r\n                            <li><a href=\"http://localhost:8000/page/about-us\">About Us</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/return-policy\">Return Policy</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/refund-policy\">Refund Policy</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/terms-conditions\">Terms and conditions</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/terms-of-use\">Terms of Use</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/contact-us\">Contact Us</a></li>\r\n                        </ul>\r\n                    </div>\r\n                    <div class=\"list-container\">\r\n                        <span class=\"list-heading\">Connect With Us</span>\r\n                            <ul class=\"list-group\">\r\n                                <li><a href=\"#\"><span class=\"icon icon-facebook\"></span>Facebook </a></li>\r\n                                <li><a href=\"#\"><span class=\"icon icon-twitter\"></span> Twitter </a></li>\r\n                                <li><a href=\"#\"><span class=\"icon icon-instagram\"></span> Instagram </a></li>\r\n                                <li><a href=\"#\"> <span class=\"icon icon-google-plus\"></span>Google+ </a></li>\r\n                                <li><a href=\"#\"> <span class=\"icon icon-linkedin\"></span>LinkedIn </a></li>\r\n                            </ul>\r\n                        </div>\r\n                ', NULL, '{\"meta_title\": \"Demo store\", \"meta_keywords\": \"Demo store meta keyword\", \"meta_description\": \"Demo store meta description\"}', NULL, NULL),
+(1, 1, 'en', 'Default', '', '<p>@include(\"shop::home.slider\") @include(\"shop::home.featured-products\") @include(\"shop::home.new-products\")</p>\r\n<div class=\"banner-container\">\r\n<div class=\"left-banner\"><img src=\"http://localhost:8000/themes/default/assets/images/1.webp\" data-src=\"http://localhost:8000/themes/default/assets/images/1.webp\" class=\"lazyload\" alt=\"test\" width=\"720\" height=\"720\" /></div>\r\n<div class=\"right-banner\"><img src=\"http://localhost:8000/themes/default/assets/images/2.webp\" data-src=\"http://localhost:8000/themes/default/assets/images/2.webp\" class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" /> <img src=\"http://localhost:8000/themes/default/assets/images/3.webp\" data-src=\"http://localhost:8000/themes/default/assets/images/3.webp\" class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" /></div>\r\n</div>', '<div class=\"list-container\"><span class=\"list-heading\">Quick Links</span>\r\n<ul class=\"list-group\">\r\n<li><a href=\"http://localhost:8000/page/about-us\">About Us</a></li>\r\n<li><a href=\"http://localhost:8000/page/return-policy\">Return Policy</a></li>\r\n<li><a href=\"http://localhost:8000/page/refund-policy\">Refund Policy</a></li>\r\n<li><a href=\"http://localhost:8000/page/terms-conditions\">Terms and conditions</a></li>\r\n<li><a href=\"http://localhost:8000/page/terms-of-use\">Terms of Use</a></li>\r\n<li><a href=\"http://localhost:8000/page/contact-us\">Contact Us</a></li>\r\n</ul>\r\n</div>\r\n<div class=\"list-container\"><span class=\"list-heading\">Connect With Us</span>\r\n<ul class=\"list-group\">\r\n<li><a href=\"#\"><span class=\"icon icon-facebook\"></span>Facebook </a></li>\r\n<li><a href=\"#\"><span class=\"icon icon-twitter\"></span> Twitter </a></li>\r\n<li><a href=\"#\"><span class=\"icon icon-instagram\"></span> Instagram </a></li>\r\n<li><a href=\"#\"> <span class=\"icon icon-google-plus\"></span>Google+ </a></li>\r\n<li><a href=\"#\"> <span class=\"icon icon-linkedin\"></span>LinkedIn </a></li>\r\n</ul>\r\n</div>', '', '{\"meta_title\":\"Demo store\",\"meta_description\":\"Demo store meta description\",\"meta_keywords\":\"Demo store meta keyword\"}', NULL, '2026-09-01 14:46:24'),
 (2, 1, 'fr', 'Default', NULL, '\r\n                    <p>@include(\"shop::home.slider\") @include(\"shop::home.featured-products\") @include(\"shop::home.new-products\")</p>\r\n                        <div class=\"banner-container\">\r\n                        <div class=\"left-banner\">\r\n                            <img src=http://localhost:8000/themes/default/assets/images/1.webp data-src=http://localhost:8000/themes/default/assets/images/1.webp class=\"lazyload\" alt=\"test\" width=\"720\" height=\"720\" />\r\n                        </div>\r\n                        <div class=\"right-banner\">\r\n                            <img src=http://localhost:8000/themes/default/assets/images/2.webp data-src=http://localhost:8000/themes/default/assets/images/2.webp class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" />\r\n                            <img src=http://localhost:8000/themes/default/assets/images/3.webp data-src=http://localhost:8000/themes/default/assets/images/3.webp  class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" />\r\n                        </div>\r\n                    </div>\r\n                ', '\r\n                    <div class=\"list-container\">\r\n                        <span class=\"list-heading\">Quick Links</span>\r\n                        <ul class=\"list-group\">\r\n                            <li><a href=\"http://localhost:8000/page/about-us\">About Us</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/return-policy\">Return Policy</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/refund-policy\">Refund Policy</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/terms-conditions\">Terms and conditions</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/terms-of-use\">Terms of Use</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/contact-us\">Contact Us</a></li>\r\n                        </ul>\r\n                    </div>\r\n                    <div class=\"list-container\">\r\n                        <span class=\"list-heading\">Connect With Us</span>\r\n                            <ul class=\"list-group\">\r\n                                <li><a href=\"#\"><span class=\"icon icon-facebook\"></span>Facebook </a></li>\r\n                                <li><a href=\"#\"><span class=\"icon icon-twitter\"></span> Twitter </a></li>\r\n                                <li><a href=\"#\"><span class=\"icon icon-instagram\"></span> Instagram </a></li>\r\n                                <li><a href=\"#\"> <span class=\"icon icon-google-plus\"></span>Google+ </a></li>\r\n                                <li><a href=\"#\"> <span class=\"icon icon-linkedin\"></span>LinkedIn </a></li>\r\n                            </ul>\r\n                        </div>\r\n                ', NULL, '{\"meta_title\": \"Demo store\", \"meta_keywords\": \"Demo store meta keyword\", \"meta_description\": \"Demo store meta description\"}', NULL, NULL),
 (3, 1, 'nl', 'Default', NULL, '\r\n                    <p>@include(\"shop::home.slider\") @include(\"shop::home.featured-products\") @include(\"shop::home.new-products\")</p>\r\n                        <div class=\"banner-container\">\r\n                        <div class=\"left-banner\">\r\n                            <img src=http://localhost:8000/themes/default/assets/images/1.webp data-src=http://localhost:8000/themes/default/assets/images/1.webp class=\"lazyload\" alt=\"test\" width=\"720\" height=\"720\" />\r\n                        </div>\r\n                        <div class=\"right-banner\">\r\n                            <img src=http://localhost:8000/themes/default/assets/images/2.webp data-src=http://localhost:8000/themes/default/assets/images/2.webp class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" />\r\n                            <img src=http://localhost:8000/themes/default/assets/images/3.webp data-src=http://localhost:8000/themes/default/assets/images/3.webp  class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" />\r\n                        </div>\r\n                    </div>\r\n                ', '\r\n                    <div class=\"list-container\">\r\n                        <span class=\"list-heading\">Quick Links</span>\r\n                        <ul class=\"list-group\">\r\n                            <li><a href=\"http://localhost:8000/page/about-us\">About Us</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/return-policy\">Return Policy</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/refund-policy\">Refund Policy</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/terms-conditions\">Terms and conditions</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/terms-of-use\">Terms of Use</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/contact-us\">Contact Us</a></li>\r\n                        </ul>\r\n                    </div>\r\n                    <div class=\"list-container\">\r\n                        <span class=\"list-heading\">Connect With Us</span>\r\n                            <ul class=\"list-group\">\r\n                                <li><a href=\"#\"><span class=\"icon icon-facebook\"></span>Facebook </a></li>\r\n                                <li><a href=\"#\"><span class=\"icon icon-twitter\"></span> Twitter </a></li>\r\n                                <li><a href=\"#\"><span class=\"icon icon-instagram\"></span> Instagram </a></li>\r\n                                <li><a href=\"#\"> <span class=\"icon icon-google-plus\"></span>Google+ </a></li>\r\n                                <li><a href=\"#\"> <span class=\"icon icon-linkedin\"></span>LinkedIn </a></li>\r\n                            </ul>\r\n                        </div>\r\n                ', NULL, '{\"meta_title\": \"Demo store\", \"meta_keywords\": \"Demo store meta keyword\", \"meta_description\": \"Demo store meta description\"}', NULL, NULL),
 (4, 1, 'tr', 'Default', NULL, '\r\n                    <p>@include(\"shop::home.slider\") @include(\"shop::home.featured-products\") @include(\"shop::home.new-products\")</p>\r\n                        <div class=\"banner-container\">\r\n                        <div class=\"left-banner\">\r\n                            <img src=http://localhost:8000/themes/default/assets/images/1.webp data-src=http://localhost:8000/themes/default/assets/images/1.webp class=\"lazyload\" alt=\"test\" width=\"720\" height=\"720\" />\r\n                        </div>\r\n                        <div class=\"right-banner\">\r\n                            <img src=http://localhost:8000/themes/default/assets/images/2.webp data-src=http://localhost:8000/themes/default/assets/images/2.webp class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" />\r\n                            <img src=http://localhost:8000/themes/default/assets/images/3.webp data-src=http://localhost:8000/themes/default/assets/images/3.webp  class=\"lazyload\" alt=\"test\" width=\"460\" height=\"330\" />\r\n                        </div>\r\n                    </div>\r\n                ', '\r\n                    <div class=\"list-container\">\r\n                        <span class=\"list-heading\">Quick Links</span>\r\n                        <ul class=\"list-group\">\r\n                            <li><a href=\"http://localhost:8000/page/about-us\">About Us</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/return-policy\">Return Policy</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/refund-policy\">Refund Policy</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/terms-conditions\">Terms and conditions</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/terms-of-use\">Terms of Use</a></li>\r\n                            <li><a href=\"http://localhost:8000/page/contact-us\">Contact Us</a></li>\r\n                        </ul>\r\n                    </div>\r\n                    <div class=\"list-container\">\r\n                        <span class=\"list-heading\">Connect With Us</span>\r\n                            <ul class=\"list-group\">\r\n                                <li><a href=\"#\"><span class=\"icon icon-facebook\"></span>Facebook </a></li>\r\n                                <li><a href=\"#\"><span class=\"icon icon-twitter\"></span> Twitter </a></li>\r\n                                <li><a href=\"#\"><span class=\"icon icon-instagram\"></span> Instagram </a></li>\r\n                                <li><a href=\"#\"> <span class=\"icon icon-google-plus\"></span>Google+ </a></li>\r\n                                <li><a href=\"#\"> <span class=\"icon icon-linkedin\"></span>LinkedIn </a></li>\r\n                            </ul>\r\n                        </div>\r\n                ', NULL, '{\"meta_title\": \"Demo store\", \"meta_keywords\": \"Demo store meta keyword\", \"meta_description\": \"Demo store meta description\"}', NULL, NULL),
@@ -5670,6 +5682,36 @@ INSERT INTO `hws_attendance` (`id`, `employee_id`, `date`, `check_in_time`, `che
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `hws_branches`
+--
+
+CREATE TABLE `hws_branches` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `code` varchar(191) NOT NULL,
+  `name` varchar(191) NOT NULL,
+  `phone` varchar(191) DEFAULT NULL,
+  `email` varchar(191) DEFAULT NULL,
+  `gstin` varchar(191) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `city` varchar(191) DEFAULT NULL,
+  `state` varchar(191) DEFAULT NULL,
+  `pincode` varchar(191) DEFAULT NULL,
+  `is_head_office` tinyint(1) NOT NULL DEFAULT 0,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `hws_branches`
+--
+
+INSERT INTO `hws_branches` (`id`, `code`, `name`, `phone`, `email`, `gstin`, `address`, `city`, `state`, `pincode`, `is_head_office`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'HO-MAIN', 'Head Office (Main Branch)', '+91-9876543210', 'ho@himalayanwaterscience.com', '05AAAAA0000A1Z5', 'Industrial Area, Phase 1', 'Dehradun', 'Uttarakhand', '248001', 1, 1, '2026-09-01 17:59:32', '2026-09-01 17:59:32');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `hws_expense_claims`
 --
 
@@ -5719,7 +5761,37 @@ INSERT INTO `hws_lead_activities` (`id`, `survey_id`, `action_by`, `activity_typ
 (10, 3, 1, 'note', 'Lead temperature updated from \'WARM\' to \'HOT\'', '2026-08-12 11:52:50', '2026-08-12 11:52:50'),
 (11, 3, 1, 'note', 'Lead stage updated from \'PROPOSAL_SENT\' to \'CONTACTED\'', '2026-08-12 11:52:55', '2026-08-12 11:52:55'),
 (12, 3, 1, 'note', 'Lead stage updated from \'CONTACTED\' to \'NEGOTIATION\'', '2026-08-12 11:52:59', '2026-08-12 11:52:59'),
-(13, 3, 1, 'note', 'Lead assignee changed from \'Unassigned\' to \'Example\'', '2026-08-12 11:53:14', '2026-08-12 11:53:14');
+(13, 3, 1, 'note', 'Lead assignee changed from \'Unassigned\' to \'Example\'', '2026-08-12 11:53:14', '2026-08-12 11:53:14'),
+(14, 3, 1, 'note', 'Sales type updated from \'TRADING\' to \'PROJECTS\'', '2026-08-31 18:41:11', '2026-08-31 18:41:11'),
+(15, 3, 1, 'note', 'Sales type updated from \'PROJECTS\' to \'SERVICES\'', '2026-08-31 18:41:14', '2026-08-31 18:41:14'),
+(16, 3, 1, 'note', 'Sales type updated from \'SERVICES\' to \'TRADING\'', '2026-08-31 18:41:15', '2026-08-31 18:41:15'),
+(17, 3, 1, 'note', 'Sales type updated from \'TRADING\' to \'SERVICES\'', '2026-08-31 18:48:36', '2026-08-31 18:48:36'),
+(18, 3, 1, 'note', 'Lead assignee changed from \'Example\' to \'Unassigned\'', '2026-08-31 19:09:02', '2026-08-31 19:09:02'),
+(19, 3, 1, 'note', 'Lead stage updated from \'NEGOTIATION\' to \'CONTACTED\'', '2026-08-31 19:09:03', '2026-08-31 19:09:03'),
+(20, 3, 1, 'note', 'Lead temperature updated from \'HOT\' to \'WARM\'', '2026-08-31 19:09:05', '2026-08-31 19:09:05'),
+(21, 3, 1, 'note', 'Quotation QT-2026-0001 converted to Order #1.', '2026-08-31 19:20:30', '2026-08-31 19:20:30'),
+(22, 3, 1, 'note', 'Lead assignee changed from \'Unassigned\' to \'Test Employee\'', '2026-09-02 14:36:43', '2026-09-02 14:36:43'),
+(23, 3, 1, 'note', 'Follow-up reminder scheduled', '2026-09-02 14:36:44', '2026-09-02 14:36:44'),
+(24, 2, 1, 'note', 'Quotation created: QT-2026-0002 for amount ₹53,100.00', '2026-09-02 14:42:30', '2026-09-02 14:42:30'),
+(25, 2, 1, 'note', 'Quotation QT-2026-0002 converted to Order #13.', '2026-09-02 14:43:04', '2026-09-02 14:43:04');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hws_leave_requests`
+--
+
+CREATE TABLE `hws_leave_requests` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `employee_id` bigint(20) UNSIGNED NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `reason` varchar(191) DEFAULT NULL,
+  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `reviewed_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
 
@@ -5746,6 +5818,7 @@ CREATE TABLE `hws_notifications` (
 CREATE TABLE `hws_quotations` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `lead_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `order_id` int(10) UNSIGNED DEFAULT NULL,
   `quote_no` varchar(191) NOT NULL,
   `customer_name` varchar(191) NOT NULL,
   `customer_email` varchar(191) DEFAULT NULL,
@@ -5764,8 +5837,9 @@ CREATE TABLE `hws_quotations` (
 -- Dumping data for table `hws_quotations`
 --
 
-INSERT INTO `hws_quotations` (`id`, `lead_id`, `quote_no`, `customer_name`, `customer_email`, `customer_phone`, `customer_address`, `subtotal`, `discount`, `tax_amount`, `grand_total`, `status`, `created_at`, `updated_at`) VALUES
-(1, 3, 'QT-2026-0001', 'Syncack Software Company', '', '09602124449', 'wdwq\r\nAnanad Vihar, Tekri', '19241.00', '1200.00', '3247.38', '21288.38', 'draft', '2026-08-12 07:02:51', '2026-08-12 07:02:51');
+INSERT INTO `hws_quotations` (`id`, `lead_id`, `order_id`, `quote_no`, `customer_name`, `customer_email`, `customer_phone`, `customer_address`, `subtotal`, `discount`, `tax_amount`, `grand_total`, `status`, `created_at`, `updated_at`) VALUES
+(1, 3, 12, 'QT-2026-0001', 'Syncack Software Company', '', '09602124449', 'wdwq\r\nAnanad Vihar, Tekri', '19241.00', '1200.00', '3247.38', '21288.38', 'accepted', '2026-08-12 07:02:51', '2026-08-31 19:20:30'),
+(2, 2, 13, 'QT-2026-0002', 'Syncack Software Company', '', '09602124449', 'wdwq\r\nAnanad Vihar, Tekri', '45000.00', '0.00', '8100.00', '53100.00', 'accepted', '2026-09-02 14:42:30', '2026-09-02 14:43:04');
 
 -- --------------------------------------------------------
 
@@ -5792,7 +5866,8 @@ INSERT INTO `hws_quotation_items` (`id`, `quotation_id`, `item_name`, `quantity`
 (1, 1, 'STP jknvk', 1, '1400.00', '1400.00', '2026-08-12 07:02:51', '2026-08-12 07:02:51'),
 (2, 1, 'kjnasckasc', 1, '1520.00', '1520.00', '2026-08-12 07:02:51', '2026-08-12 07:02:51'),
 (3, 1, 'sklcnjkasc', 1, '1200.00', '1200.00', '2026-08-12 07:02:51', '2026-08-12 07:02:51'),
-(4, 1, 'sacasc', 1, '15121.00', '15121.00', '2026-08-12 07:02:51', '2026-08-12 07:02:51');
+(4, 1, 'sacasc', 1, '15121.00', '15121.00', '2026-08-12 07:02:51', '2026-08-12 07:02:51'),
+(5, 2, '250 LPH Commercial RO Plant (SS Skid)', 1, '45000.00', '45000.00', '2026-09-02 14:42:30', '2026-09-02 14:42:30');
 
 -- --------------------------------------------------------
 
@@ -5802,6 +5877,7 @@ INSERT INTO `hws_quotation_items` (`id`, `quotation_id`, `item_name`, `quantity`
 
 CREATE TABLE `hws_site_surveys` (
   `id` bigint(20) UNSIGNED NOT NULL,
+  `branch_id` bigint(20) UNSIGNED DEFAULT 1,
   `task_id` bigint(20) UNSIGNED DEFAULT NULL,
   `customer_id` int(10) UNSIGNED DEFAULT NULL,
   `order_id` int(10) UNSIGNED DEFAULT NULL,
@@ -5823,6 +5899,7 @@ CREATE TABLE `hws_site_surveys` (
   `status` enum('draft','submitted','new','contacted','proposal_sent','negotiation','won','lost') DEFAULT 'draft',
   `temperature` enum('hot','warm','cold') DEFAULT 'warm',
   `source` varchar(191) DEFAULT NULL,
+  `sales_type` enum('trading','projects','services') NOT NULL DEFAULT 'trading',
   `request_type` varchar(50) DEFAULT NULL,
   `reference_no` varchar(50) DEFAULT NULL,
   `request_details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`request_details`)),
@@ -5838,10 +5915,10 @@ CREATE TABLE `hws_site_surveys` (
 -- Dumping data for table `hws_site_surveys`
 --
 
-INSERT INTO `hws_site_surveys` (`id`, `task_id`, `customer_id`, `order_id`, `customer_name`, `customer_phone`, `customer_email`, `customer_address`, `property_type`, `floors`, `built_up_area_sqft`, `rooms_units`, `water_use_kld`, `water_source`, `wastewater_disposal`, `space_available`, `notes`, `follow_up_date`, `photos`, `status`, `temperature`, `source`, `request_type`, `reference_no`, `request_details`, `assigned_to`, `next_follow_up_at`, `latitude`, `longitude`, `created_at`, `updated_at`) VALUES
-(1, 3, NULL, NULL, NULL, NULL, NULL, NULL, 'hotel', NULL, NULL, NULL, NULL, 'municipal', 'septic_tank', 'open_area', 'Interested in replacing a 12-year-old STP. Decision maker available after 4pm.', '2026-08-09', NULL, 'submitted', 'warm', NULL, NULL, NULL, NULL, NULL, NULL, '8.2551200', '86.6609310', '2026-08-12 11:00:46', '2026-08-12 11:00:46'),
-(2, NULL, NULL, NULL, 'Syncack Software Company', '09602124449', NULL, 'wdwq\nAnanad Vihar, Tekri', 'hotel', 1, 12121, 22, '19.00', 'borewell', 'open_drain', 'basement_only', 'Interested in replacing a 12-year-old STP. Decision maker available after 4pm.', '2026-08-09', '[\"http://127.0.0.1:8000/storage/tasks/photos/6a7c076888fde.png\"]', 'submitted', 'warm', NULL, NULL, NULL, NULL, NULL, NULL, '8.2551200', '86.6609310', '2026-08-12 11:10:56', '2026-08-12 11:10:56'),
-(3, NULL, NULL, NULL, 'Syncack Software Company', '09602124449', 'vikramrathore66223@gmail.com', 'wdwq\r\nAnanad Vihar, Tekri', 'bungalow', NULL, NULL, NULL, NULL, 'municipal', 'septic_tank', 'open_area', 'Interested in replacing a 12-year-old STP. Decision maker available after 4pm.', '2026-08-09', '[\"http://127.0.0.1:8000/storage/tasks/photos/6a7c07b52d89c.png\"]', 'negotiation', 'hot', 'Website', NULL, NULL, NULL, 1, '2026-08-31 12:54:00', '8.2551200', '86.6609310', '2026-08-12 11:11:33', '2026-08-12 11:53:14');
+INSERT INTO `hws_site_surveys` (`id`, `branch_id`, `task_id`, `customer_id`, `order_id`, `customer_name`, `customer_phone`, `customer_email`, `customer_address`, `property_type`, `floors`, `built_up_area_sqft`, `rooms_units`, `water_use_kld`, `water_source`, `wastewater_disposal`, `space_available`, `notes`, `follow_up_date`, `photos`, `status`, `temperature`, `source`, `sales_type`, `request_type`, `reference_no`, `request_details`, `assigned_to`, `next_follow_up_at`, `latitude`, `longitude`, `created_at`, `updated_at`) VALUES
+(1, 1, 3, NULL, NULL, NULL, NULL, NULL, NULL, 'hotel', NULL, NULL, NULL, NULL, 'municipal', 'septic_tank', 'open_area', 'Interested in replacing a 12-year-old STP. Decision maker available after 4pm.', '2026-08-09', NULL, 'submitted', 'warm', NULL, 'trading', NULL, NULL, NULL, NULL, NULL, '8.2551200', '86.6609310', '2026-08-12 11:00:46', '2026-08-12 11:00:46'),
+(2, 1, NULL, NULL, 13, 'Syncack Software Company', '09602124449', NULL, 'wdwq\nAnanad Vihar, Tekri', 'hotel', 1, 12121, 22, '19.00', 'borewell', 'open_drain', 'basement_only', 'Interested in replacing a 12-year-old STP. Decision maker available after 4pm.', '2026-08-09', '[\"http://127.0.0.1:8000/storage/tasks/photos/6a7c076888fde.png\"]', 'won', 'warm', NULL, 'trading', NULL, NULL, NULL, NULL, NULL, '8.2551200', '86.6609310', '2026-08-12 11:10:56', '2026-09-02 14:43:04'),
+(3, 1, NULL, NULL, 12, 'Syncack Software Company', '09602124449', 'vikramrathore66223@gmail.com', 'wdwq\r\nAnanad Vihar, Tekri', 'bungalow', NULL, NULL, NULL, NULL, 'municipal', 'septic_tank', 'open_area', 'Interested in replacing a 12-year-old STP. Decision maker available after 4pm.', '2026-08-09', '[\"http://127.0.0.1:8000/storage/tasks/photos/6a7c07b52d89c.png\"]', 'won', 'warm', 'Website', 'projects', NULL, NULL, NULL, 3, '2026-08-31 12:54:00', '8.2551200', '86.6609310', '2026-08-12 11:11:33', '2026-09-02 14:36:43');
 
 -- --------------------------------------------------------
 
@@ -5878,6 +5955,7 @@ CREATE TABLE `hws_tasks` (
   `customer_id` int(10) UNSIGNED DEFAULT NULL,
   `order_id` int(10) UNSIGNED DEFAULT NULL,
   `task_no` varchar(255) NOT NULL,
+  `branch_id` bigint(20) UNSIGNED DEFAULT 1,
   `type` enum('installation','amc_service','complaint','service','sales_visit','site_survey') NOT NULL,
   `source` varchar(100) DEFAULT NULL,
   `reference_no` varchar(50) DEFAULT NULL,
@@ -5902,10 +5980,10 @@ CREATE TABLE `hws_tasks` (
 -- Dumping data for table `hws_tasks`
 --
 
-INSERT INTO `hws_tasks` (`id`, `customer_id`, `order_id`, `task_no`, `type`, `source`, `reference_no`, `customer_name`, `customer_phone`, `customer_email`, `customer_address`, `priority`, `step`, `scheduled_at`, `assigned_to`, `work_description`, `signature_path`, `rating`, `sale_amount`, `amc_renewal_date`, `created_at`, `updated_at`) VALUES
-(1, NULL, NULL, 'TSK-1024', 'service', NULL, NULL, 'John Doe', '9876543210', NULL, '123, Rajpur Road, Dehradun', 'normal', 4, '2026-08-08 18:40:04', 3, 'RO membrane replacement and full system service. Water quality tested — TDS reduced from 180 to 12 ppm.', 'tasks/signatures/6a772e1d47821.png', 0, NULL, NULL, '2026-08-08 18:40:04', '2026-08-08 18:54:45'),
-(2, NULL, NULL, 'TSK-3048', 'installation', NULL, NULL, 'Hotel Premium', '8888888888', NULL, 'Mussoorie Diversion, Dehradun', 'urgent', 1, '2026-08-08 20:40:04', 3, NULL, NULL, NULL, NULL, NULL, '2026-08-08 18:40:04', '2026-08-08 19:03:36'),
-(3, NULL, NULL, 'SRV-0512', 'site_survey', NULL, NULL, 'Royal Hospital', '9999999999', NULL, 'ISBT Road, Dehradun', 'high', 4, '2026-08-09 18:40:04', 3, NULL, NULL, NULL, NULL, NULL, '2026-08-08 18:40:04', '2026-08-12 11:00:47');
+INSERT INTO `hws_tasks` (`id`, `customer_id`, `order_id`, `task_no`, `branch_id`, `type`, `source`, `reference_no`, `customer_name`, `customer_phone`, `customer_email`, `customer_address`, `priority`, `step`, `scheduled_at`, `assigned_to`, `work_description`, `signature_path`, `rating`, `sale_amount`, `amc_renewal_date`, `created_at`, `updated_at`) VALUES
+(1, NULL, NULL, 'TSK-1024', 1, 'service', NULL, NULL, 'John Doe', '9876543210', NULL, '123, Rajpur Road, Dehradun', 'normal', 4, '2026-08-08 18:40:04', 3, 'RO membrane replacement and full system service. Water quality tested — TDS reduced from 180 to 12 ppm.', 'tasks/signatures/6a772e1d47821.png', 0, NULL, NULL, '2026-08-08 18:40:04', '2026-08-08 18:54:45'),
+(2, NULL, NULL, 'TSK-3048', 1, 'installation', NULL, NULL, 'Hotel Premium', '8888888888', NULL, 'Mussoorie Diversion, Dehradun', 'urgent', 1, '2026-08-08 20:40:04', 3, NULL, NULL, NULL, NULL, NULL, '2026-08-08 18:40:04', '2026-08-08 19:03:36'),
+(3, NULL, NULL, 'SRV-0512', 1, 'site_survey', NULL, NULL, 'Royal Hospital', '9999999999', NULL, 'ISBT Road, Dehradun', 'high', 4, '2026-08-09 18:40:04', 3, NULL, NULL, NULL, NULL, NULL, '2026-08-08 18:40:04', '2026-08-12 11:00:47');
 
 -- --------------------------------------------------------
 
@@ -6015,6 +6093,7 @@ CREATE TABLE `invoices` (
   `discount_amount` decimal(12,4) DEFAULT 0.0000,
   `base_discount_amount` decimal(12,4) DEFAULT 0.0000,
   `order_id` int(10) UNSIGNED DEFAULT NULL,
+  `branch_id` bigint(20) UNSIGNED DEFAULT 1,
   `order_address_id` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -6022,6 +6101,13 @@ CREATE TABLE `invoices` (
   `reminders` int(11) NOT NULL DEFAULT 0,
   `next_reminder_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `invoices`
+--
+
+INSERT INTO `invoices` (`id`, `increment_id`, `state`, `email_sent`, `total_qty`, `base_currency_code`, `channel_currency_code`, `order_currency_code`, `sub_total`, `base_sub_total`, `grand_total`, `base_grand_total`, `shipping_amount`, `base_shipping_amount`, `tax_amount`, `base_tax_amount`, `discount_amount`, `base_discount_amount`, `order_id`, `branch_id`, `order_address_id`, `created_at`, `updated_at`, `transaction_id`, `reminders`, `next_reminder_at`) VALUES
+(1, '1', 'paid', 0, 4, 'USD', 'USD', 'USD', '19241.0000', '19241.0000', '21288.3800', '21288.3800', '0.0000', '0.0000', '3247.3800', '3247.3800', '1200.0000', '1200.0000', 12, 1, 1, '2026-09-01 16:29:01', '2026-09-01 16:29:02', NULL, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -6034,6 +6120,7 @@ CREATE TABLE `invoice_items` (
   `name` varchar(191) DEFAULT NULL,
   `description` varchar(191) DEFAULT NULL,
   `sku` varchar(191) DEFAULT NULL,
+  `hsn_code` varchar(191) DEFAULT NULL,
   `qty` int(11) DEFAULT NULL,
   `price` decimal(12,4) NOT NULL DEFAULT 0.0000,
   `base_price` decimal(12,4) NOT NULL DEFAULT 0.0000,
@@ -6053,6 +6140,16 @@ CREATE TABLE `invoice_items` (
   `discount_amount` decimal(12,4) DEFAULT 0.0000,
   `base_discount_amount` decimal(12,4) DEFAULT 0.0000
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `invoice_items`
+--
+
+INSERT INTO `invoice_items` (`id`, `name`, `description`, `sku`, `hsn_code`, `qty`, `price`, `base_price`, `total`, `base_total`, `tax_amount`, `base_tax_amount`, `product_id`, `product_type`, `order_item_id`, `invoice_id`, `parent_id`, `additional`, `created_at`, `updated_at`, `discount_percent`, `discount_amount`, `base_discount_amount`) VALUES
+(1, 'STP jknvk', NULL, 'QUOTE-1-1', NULL, 1, '1400.0000', '1400.0000', '1400.0000', '1400.0000', '236.2836', '236.2836', NULL, NULL, 1, 1, NULL, '{\"quotation_id\":1}', '2026-09-01 16:29:02', '2026-09-01 16:29:02', '0.0000', '87.3135', '87.3135'),
+(2, 'kjnasckasc', NULL, 'QUOTE-1-2', NULL, 1, '1520.0000', '1520.0000', '1520.0000', '1520.0000', '256.5364', '256.5364', NULL, NULL, 2, 1, NULL, '{\"quotation_id\":1}', '2026-09-01 16:29:02', '2026-09-01 16:29:02', '0.0000', '94.7976', '94.7976'),
+(3, 'sklcnjkasc', NULL, 'QUOTE-1-3', NULL, 1, '1200.0000', '1200.0000', '1200.0000', '1200.0000', '202.5288', '202.5288', NULL, NULL, 3, 1, NULL, '{\"quotation_id\":1}', '2026-09-01 16:29:02', '2026-09-01 16:29:02', '0.0000', '74.8402', '74.8402'),
+(4, 'sacasc', NULL, 'QUOTE-1-4', NULL, 1, '15121.0000', '15121.0000', '15121.0000', '15121.0000', '2552.0312', '2552.0312', NULL, NULL, 4, 1, NULL, '{\"quotation_id\":1}', '2026-09-01 16:29:02', '2026-09-01 16:29:02', '0.0000', '943.0487', '943.0487');
 
 -- --------------------------------------------------------
 
@@ -6392,7 +6489,26 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (217, '2022_04_18_173912_create_push_notification_translations_table', 2),
 (218, '2025_06_02_173912_alter_customers_table', 2),
 (219, '2026_08_18_000013_link_customers_orders_and_requests', 3),
-(220, '2026_08_08_000010_create_hws_notifications_table', 4);
+(220, '2026_08_08_000010_create_hws_notifications_table', 4),
+(221, '2026_08_31_000014_add_sales_type_to_leads_and_orders', 5),
+(222, '2026_09_01_000015_link_quotations_to_orders', 6),
+(223, '2026_09_01_000016_add_gst_billing_to_orders', 7),
+(224, '2026_09_01_000017_add_gst_supply_fields_to_orders', 8),
+(225, '2026_08_04_000001_create_hws_tasks_table', 9),
+(226, '2026_08_04_000002_create_hws_task_materials_table', 9),
+(227, '2026_08_04_000003_create_hws_task_photos_table', 9),
+(228, '2026_08_04_000004_create_hws_site_surveys_table', 9),
+(229, '2026_08_04_000005_create_hws_survey_inquiry_types_table', 9),
+(230, '2026_08_04_000006_create_hws_attendance_table', 9),
+(231, '2026_08_04_000007_create_hws_leave_requests_table', 10),
+(232, '2026_08_04_000008_create_hws_expense_claims_table', 10),
+(233, '2026_08_08_000009_add_sale_amount_and_amc_renewal_to_hws_tasks_table', 11),
+(234, '2026_08_12_000011_make_task_id_nullable_in_hws_site_surveys', 12),
+(235, '2026_08_12_000012_create_lead_management_and_quotations_tables', 13),
+(236, '2026_09_01_000018_add_hsn_code_to_products_and_sales_tables', 13),
+(237, '2026_09_01_000019_create_hws_branches_and_scoping_tables', 13),
+(238, '2026_09_01_000020_add_branch_id_to_hws_site_surveys', 14),
+(239, '2026_09_01_000021_add_branch_indexes_and_backfill', 15);
 
 -- --------------------------------------------------------
 
@@ -6419,7 +6535,15 @@ CREATE TABLE `orders` (
   `id` int(10) UNSIGNED NOT NULL,
   `increment_id` varchar(191) NOT NULL,
   `status` varchar(191) DEFAULT NULL,
+  `qc_status` varchar(50) NOT NULL DEFAULT 'pending',
+  `sales_type` enum('trading','projects','services') NOT NULL DEFAULT 'trading',
+  `is_gst_invoice` tinyint(1) NOT NULL DEFAULT 0,
+  `billing_company_name` varchar(191) DEFAULT NULL,
+  `gstin` varchar(15) DEFAULT NULL,
+  `gst_place_of_supply` varchar(191) DEFAULT NULL,
+  `gst_tax_type` varchar(20) DEFAULT NULL,
   `channel_name` varchar(191) DEFAULT NULL,
+  `branch_id` bigint(20) UNSIGNED DEFAULT 1,
   `is_guest` tinyint(1) DEFAULT NULL,
   `customer_email` varchar(191) DEFAULT NULL,
   `customer_first_name` varchar(191) DEFAULT NULL,
@@ -6468,6 +6592,7 @@ CREATE TABLE `orders` (
   `shipping_refunded` decimal(12,4) DEFAULT 0.0000,
   `base_shipping_refunded` decimal(12,4) DEFAULT 0.0000,
   `customer_id` int(10) UNSIGNED DEFAULT NULL,
+  `account_manager_id` bigint(20) UNSIGNED DEFAULT NULL,
   `customer_type` varchar(191) DEFAULT NULL,
   `channel_id` int(10) UNSIGNED DEFAULT NULL,
   `channel_type` varchar(191) DEFAULT NULL,
@@ -6478,6 +6603,14 @@ CREATE TABLE `orders` (
   `shipping_discount_amount` decimal(12,4) DEFAULT 0.0000,
   `base_shipping_discount_amount` decimal(12,4) DEFAULT 0.0000
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `increment_id`, `status`, `qc_status`, `sales_type`, `is_gst_invoice`, `billing_company_name`, `gstin`, `gst_place_of_supply`, `gst_tax_type`, `channel_name`, `branch_id`, `is_guest`, `customer_email`, `customer_first_name`, `customer_last_name`, `customer_company_name`, `customer_vat_id`, `shipping_method`, `shipping_title`, `shipping_description`, `coupon_code`, `is_gift`, `total_item_count`, `total_qty_ordered`, `base_currency_code`, `channel_currency_code`, `order_currency_code`, `grand_total`, `base_grand_total`, `grand_total_invoiced`, `base_grand_total_invoiced`, `grand_total_refunded`, `base_grand_total_refunded`, `sub_total`, `base_sub_total`, `sub_total_invoiced`, `base_sub_total_invoiced`, `sub_total_refunded`, `base_sub_total_refunded`, `discount_percent`, `discount_amount`, `base_discount_amount`, `discount_invoiced`, `base_discount_invoiced`, `discount_refunded`, `base_discount_refunded`, `tax_amount`, `base_tax_amount`, `tax_amount_invoiced`, `base_tax_amount_invoiced`, `tax_amount_refunded`, `base_tax_amount_refunded`, `shipping_amount`, `base_shipping_amount`, `shipping_invoiced`, `base_shipping_invoiced`, `shipping_refunded`, `base_shipping_refunded`, `customer_id`, `account_manager_id`, `customer_type`, `channel_id`, `channel_type`, `created_at`, `updated_at`, `cart_id`, `applied_cart_rule_ids`, `shipping_discount_amount`, `base_shipping_discount_amount`) VALUES
+(12, '1', 'processing', 'partially_passed', 'projects', 1, 'Syncack Software Company', '08AAFCT4410K1ZB', NULL, NULL, 'Default', 1, 1, 'customer@hws.local', 'Syncack', 'Software Company', NULL, NULL, NULL, NULL, NULL, NULL, 0, 4, 4, 'USD', 'USD', 'USD', '21288.3800', '21288.3800', '21288.3800', '21288.3800', '0.0000', '0.0000', '19241.0000', '19241.0000', '19241.0000', '19241.0000', '0.0000', '0.0000', '0.0000', '1200.0000', '1200.0000', '1200.0000', '1200.0000', '0.0000', '0.0000', '3247.3800', '3247.3800', '3247.3800', '3247.3800', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', NULL, 1, NULL, 1, 'Webkul\\Core\\Models\\Channel', '2026-08-31 19:20:30', '2026-09-02 17:51:12', NULL, NULL, '0.0000', '0.0000'),
+(13, '13', 'processing', 'passed', 'trading', 0, NULL, NULL, NULL, NULL, 'Default', 1, 1, 'customer@hws.local', 'Syncack', 'Software Company', NULL, NULL, NULL, NULL, NULL, NULL, 0, 1, 1, 'USD', 'USD', 'USD', '53100.0000', '53100.0000', '0.0000', '0.0000', '0.0000', '0.0000', '45000.0000', '45000.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '8100.0000', '8100.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', NULL, NULL, NULL, 1, 'Webkul\\Core\\Models\\Channel', '2026-09-02 14:43:04', '2026-09-02 14:44:35', NULL, NULL, '0.0000', '0.0000');
 
 -- --------------------------------------------------------
 
@@ -6519,6 +6652,7 @@ CREATE TABLE `order_comments` (
 CREATE TABLE `order_items` (
   `id` int(10) UNSIGNED NOT NULL,
   `sku` varchar(191) DEFAULT NULL,
+  `hsn_code` varchar(191) DEFAULT NULL,
   `type` varchar(191) DEFAULT NULL,
   `name` varchar(191) DEFAULT NULL,
   `coupon_code` varchar(191) DEFAULT NULL,
@@ -6556,9 +6690,25 @@ CREATE TABLE `order_items` (
   `order_id` int(10) UNSIGNED DEFAULT NULL,
   `parent_id` int(10) UNSIGNED DEFAULT NULL,
   `additional` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`additional`)),
+  `qc_status` varchar(50) NOT NULL DEFAULT 'pending',
+  `qc_notes` text DEFAULT NULL,
+  `qc_serial_no` varchar(191) DEFAULT NULL,
+  `qc_checked_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `qc_checked_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `sku`, `hsn_code`, `type`, `name`, `coupon_code`, `weight`, `total_weight`, `qty_ordered`, `qty_shipped`, `qty_invoiced`, `qty_canceled`, `qty_refunded`, `price`, `base_price`, `total`, `base_total`, `total_invoiced`, `base_total_invoiced`, `amount_refunded`, `base_amount_refunded`, `discount_percent`, `discount_amount`, `base_discount_amount`, `discount_invoiced`, `base_discount_invoiced`, `discount_refunded`, `base_discount_refunded`, `tax_percent`, `tax_amount`, `base_tax_amount`, `tax_amount_invoiced`, `base_tax_amount_invoiced`, `tax_amount_refunded`, `base_tax_amount_refunded`, `product_id`, `product_type`, `order_id`, `parent_id`, `additional`, `qc_status`, `qc_notes`, `qc_serial_no`, `qc_checked_by`, `qc_checked_at`, `created_at`, `updated_at`) VALUES
+(1, 'QUOTE-1-1', NULL, 'simple', 'STP jknvk', NULL, '0.0000', '0.0000', 1, 0, 1, 0, 0, '1400.0000', '1400.0000', '1400.0000', '1400.0000', '1400.0000', '1400.0000', '0.0000', '0.0000', '0.0000', '87.3135', '87.3135', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '236.2836', '236.2836', '236.2836', '236.2836', '0.0000', '0.0000', NULL, NULL, 12, NULL, '{\"quotation_id\":1}', 'passed', '', '', 1, '2026-09-02 17:52:51', '2026-08-31 19:20:30', '2026-09-02 17:52:51'),
+(2, 'QUOTE-1-2', NULL, 'simple', 'kjnasckasc', NULL, '0.0000', '0.0000', 1, 0, 1, 0, 0, '1520.0000', '1520.0000', '1520.0000', '1520.0000', '1520.0000', '1520.0000', '0.0000', '0.0000', '0.0000', '94.7976', '94.7976', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '256.5364', '256.5364', '256.5364', '256.5364', '0.0000', '0.0000', NULL, NULL, 12, NULL, '{\"quotation_id\":1}', 'pending', NULL, NULL, NULL, NULL, '2026-08-31 19:20:30', '2026-09-01 16:29:02'),
+(3, 'QUOTE-1-3', NULL, 'simple', 'sklcnjkasc', NULL, '0.0000', '0.0000', 1, 0, 1, 0, 0, '1200.0000', '1200.0000', '1200.0000', '1200.0000', '1200.0000', '1200.0000', '0.0000', '0.0000', '0.0000', '74.8402', '74.8402', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '202.5288', '202.5288', '202.5288', '202.5288', '0.0000', '0.0000', NULL, NULL, 12, NULL, '{\"quotation_id\":1}', 'pending', NULL, NULL, NULL, NULL, '2026-08-31 19:20:30', '2026-09-01 16:29:02'),
+(4, 'QUOTE-1-4', NULL, 'simple', 'sacasc', NULL, '0.0000', '0.0000', 1, 0, 1, 0, 0, '15121.0000', '15121.0000', '15121.0000', '15121.0000', '15121.0000', '15121.0000', '0.0000', '0.0000', '0.0000', '943.0487', '943.0487', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '2552.0312', '2552.0312', '2552.0312', '2552.0312', '0.0000', '0.0000', NULL, NULL, 12, NULL, '{\"quotation_id\":1}', 'pending', NULL, NULL, NULL, NULL, '2026-08-31 19:20:30', '2026-09-01 16:29:02'),
+(5, 'QUOTE-2-5', NULL, 'simple', '250 LPH Commercial RO Plant (SS Skid)', NULL, '0.0000', '0.0000', 1, 0, 0, 0, 0, '45000.0000', '45000.0000', '45000.0000', '45000.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '8100.0000', '8100.0000', '0.0000', '0.0000', '0.0000', '0.0000', NULL, NULL, 13, NULL, '{\"quotation_id\":2}', 'pending', NULL, NULL, NULL, NULL, '2026-09-02 14:43:04', '2026-09-02 14:43:04');
 
 -- --------------------------------------------------------
 
@@ -6575,6 +6725,14 @@ CREATE TABLE `order_payment` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `order_payment`
+--
+
+INSERT INTO `order_payment` (`id`, `method`, `method_title`, `order_id`, `additional`, `created_at`, `updated_at`) VALUES
+(1, 'cash', 'Cash', 12, '{\"last_transaction_id\":\"MAN-20260901010704-12\",\"reference\":\"adasdsa\"}', '2026-08-31 19:20:30', '2026-08-31 19:37:04'),
+(2, 'bank_transfer', 'Bank Transfer', 13, '{\"last_transaction_id\":\"MAN-20260902201435-13\",\"reference\":\"66767ghhgh\"}', '2026-09-02 14:43:04', '2026-09-02 14:44:35');
 
 -- --------------------------------------------------------
 
@@ -6595,6 +6753,14 @@ CREATE TABLE `order_transactions` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `amount` decimal(12,4) DEFAULT 0.0000
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Dumping data for table `order_transactions`
+--
+
+INSERT INTO `order_transactions` (`id`, `transaction_id`, `status`, `type`, `payment_method`, `data`, `invoice_id`, `order_id`, `created_at`, `updated_at`, `amount`) VALUES
+(1, 'MAN-20260901010704-12', 'paid', 'manual', 'cash', '{\"amount\":500,\"reference\":\"adasdsa\",\"notes\":\"\",\"recorded_by\":\"Example\"}', 0, 12, '2026-08-31 19:37:04', '2026-08-31 19:37:04', '0.0000'),
+(2, 'MAN-20260902201435-13', 'paid', 'manual', 'bank_transfer', '{\"amount\":53100,\"reference\":\"66767ghhgh\",\"notes\":\"\",\"recorded_by\":\"Example\"}', 0, 13, '2026-09-02 14:44:35', '2026-09-02 14:44:35', '53100.0000');
 
 -- --------------------------------------------------------
 
@@ -7050,6 +7216,7 @@ CREATE TABLE `product_flat` (
   `id` int(10) UNSIGNED NOT NULL,
   `sku` varchar(191) NOT NULL,
   `product_number` varchar(191) DEFAULT NULL,
+  `hsn_code` varchar(191) DEFAULT NULL,
   `name` varchar(191) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `url_key` varchar(191) DEFAULT NULL,
@@ -7089,23 +7256,23 @@ CREATE TABLE `product_flat` (
 -- Dumping data for table `product_flat`
 --
 
-INSERT INTO `product_flat` (`id`, `sku`, `product_number`, `name`, `description`, `url_key`, `new`, `featured`, `status`, `thumbnail`, `price`, `cost`, `special_price`, `special_price_from`, `special_price_to`, `weight`, `color`, `color_label`, `size`, `size_label`, `created_at`, `locale`, `channel`, `product_id`, `updated_at`, `parent_id`, `visible_individually`, `min_price`, `max_price`, `short_description`, `meta_title`, `meta_keywords`, `meta_description`, `width`, `height`, `depth`) VALUES
-(1, 'IND-RO-250', NULL, '250 LPH Commercial RO Plant (SS Skid)', 'High performance 250 Liters Per Hour Commercial RO Plant mounted on heavy-duty Stainless Steel skid frame with automatic control panel and CRI pump.', '250-lph-commercial-ro-plant-ss-skid-439', 1, 1, 1, NULL, '45000.0000', NULL, NULL, NULL, NULL, '80.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:51', 'en', 'default', 1, '2026-08-19 00:31:51', NULL, 1, '45000.0000', '45000.0000', '250 LPH SS Skid Commercial RO Water Plant.', NULL, NULL, NULL, NULL, NULL, NULL),
-(2, 'IND-RO-500', NULL, '500 LPH Commercial RO Plant (FRP/SS)', 'Robust 500 LPH Commercial Reverse Osmosis Water Treatment Plant with high rejection membranes, sand & carbon filters.', '500-lph-commercial-ro-plant-frpss-794', 1, 1, 1, NULL, '65000.0000', NULL, NULL, NULL, NULL, '120.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:52', 'en', 'default', 2, '2026-08-19 00:31:52', NULL, 1, '65000.0000', '65000.0000', '500 LPH Commercial RO Plant with FRP Vessels.', NULL, NULL, NULL, NULL, NULL, NULL),
-(3, 'IND-RO-1000', NULL, '1000 LPH Industrial RO Water Plant', '1000 Liters Per Hour heavy duty Industrial Reverse Osmosis Plant equipped with TDS Controller, Multiport Valves, and Stainless Steel High Pressure Pump.', '1000-lph-industrial-ro-water-plant-359', 1, 1, 1, NULL, '115000.0000', NULL, NULL, NULL, NULL, '200.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:52', 'en', 'default', 3, '2026-08-19 00:31:52', NULL, 1, '115000.0000', '115000.0000', '1000 LPH Industrial RO Plant for factories & institutions.', NULL, NULL, NULL, NULL, NULL, NULL),
-(4, 'IND-RO-2000', NULL, '2000 LPH Industrial RO Plant', '2000 LPH Heavy Industrial Reverse Osmosis System with advanced monitoring instruments, flow meters, pressure gauges, and automated backwash.', '2000-lph-industrial-ro-plant-252', 1, 1, 1, NULL, '195000.0000', NULL, NULL, NULL, NULL, '350.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:53', 'en', 'default', 4, '2026-08-19 00:31:53', NULL, 1, '195000.0000', '195000.0000', '2000 LPH Industrial RO System.', NULL, NULL, NULL, NULL, NULL, NULL),
-(5, 'IND-RO-5000', NULL, '5000 LPH High Capacity RO Plant', '5000 LPH High Capacity Industrial RO Plant with PLC automated control panel, Grundfos/CRI high pressure pumps and Dow Filmtec membranes.', '5000-lph-high-capacity-ro-plant-645', 1, 1, 1, NULL, '420000.0000', NULL, NULL, NULL, NULL, '750.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:54', 'en', 'default', 5, '2026-08-19 00:31:54', NULL, 1, '420000.0000', '420000.0000', '5000 LPH High Capacity Industrial RO System.', NULL, NULL, NULL, NULL, NULL, NULL),
-(6, 'IND-STP-MBBR-10K', NULL, '10 KLD MBBR Sewage Treatment Plant', '10 KLD Moving Bed Biofilm Reactor (MBBR) STP Plant for efficient biological treatment of sewage water.', '10-kld-mbbr-sewage-treatment-plant-151', 1, 1, 1, NULL, '280000.0000', NULL, NULL, NULL, NULL, '500.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:55', 'en', 'default', 6, '2026-08-19 00:31:55', NULL, 1, '280000.0000', '280000.0000', '10 KLD MBBR Sewage Treatment Plant.', NULL, NULL, NULL, NULL, NULL, NULL),
-(7, 'IND-STP-50K', NULL, '50 KLD Packaged Sewage Treatment Plant', '50 KLD Packaged STP Plant suitable for residential apartments, hotels, and hospitals with low power consumption.', '50-kld-packaged-sewage-treatment-plant-756', 1, 1, 1, NULL, '650000.0000', NULL, NULL, NULL, NULL, '1200.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:55', 'en', 'default', 7, '2026-08-19 00:31:55', NULL, 1, '650000.0000', '650000.0000', '50 KLD Packaged STP Plant.', NULL, NULL, NULL, NULL, NULL, NULL),
-(8, 'IND-ETP-25K', NULL, '25 KLD Industrial Effluent Treatment Plant', '25 KLD Industrial ETP with chemical dosing tanks, flash mixer, clarifier, and pressure sand filter.', '25-kld-industrial-effluent-treatment-plant-971', 1, 1, 1, NULL, '480000.0000', NULL, NULL, NULL, NULL, '900.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:56', 'en', 'default', 8, '2026-08-19 00:31:56', NULL, 1, '480000.0000', '480000.0000', '25 KLD Industrial ETP Plant.', NULL, NULL, NULL, NULL, NULL, NULL),
-(9, 'IND-ATM-COIN-500', NULL, '500 LPH Automatic Coin & Card Water ATM', '500 LPH RO Water ATM with Stainless Steel cabinet, GSM cloud reporting, Coin and Smart Card dispenser.', '500-lph-automatic-coin-card-water-atm-247', 1, 1, 1, NULL, '135000.0000', NULL, NULL, NULL, NULL, '150.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:56', 'en', 'default', 9, '2026-08-19 00:31:56', NULL, 1, '135000.0000', '135000.0000', '500 LPH RO Water ATM Machine.', NULL, NULL, NULL, NULL, NULL, NULL),
-(10, 'IND-ATM-SOLAR-250', NULL, 'Solar Powered Water ATM Booth 250 LPH', 'Eco-friendly 250 LPH Solar Powered Water ATM with battery backup and all-weather SS kiosk.', 'solar-powered-water-atm-booth-250-lph-645', 1, 1, 1, NULL, '185000.0000', NULL, NULL, NULL, NULL, '220.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:57', 'en', 'default', 10, '2026-08-19 00:31:57', NULL, 1, '185000.0000', '185000.0000', '250 LPH Solar Powered Water ATM Kiosk.', NULL, NULL, NULL, NULL, NULL, NULL),
-(11, 'IND-CHILL-2TR', NULL, '2 TR Air Cooled Industrial Water Chiller', '2 Ton Air Cooled Water Chiller with digital temperature controller, Emerson Copeland compressor, and insulated SS tank.', '2-tr-air-cooled-industrial-water-chiller-687', 1, 1, 1, NULL, '95000.0000', NULL, NULL, NULL, NULL, '110.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:58', 'en', 'default', 11, '2026-08-19 00:31:58', NULL, 1, '95000.0000', '95000.0000', '2 TR Air Cooled Industrial Chiller.', NULL, NULL, NULL, NULL, NULL, NULL),
-(12, 'IND-CHILL-5TR', NULL, '5 TR Industrial Water Chiller Plant', '5 Ton Heavy Duty Air Cooled Process Water Chiller for commercial applications.', '5-tr-industrial-water-chiller-plant-253', 1, 1, 1, NULL, '175000.0000', NULL, NULL, NULL, NULL, '240.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:58', 'en', 'default', 12, '2026-08-19 00:31:58', NULL, 1, '175000.0000', '175000.0000', '5 TR Heavy Duty Industrial Water Chiller.', NULL, NULL, NULL, NULL, NULL, NULL),
-(13, 'IND-MEM-4040', NULL, 'Industrial 4040 RO Membrane (High TDS Rejection)', 'High performance 4040 Industrial RO Membrane with 99.5% salt rejection for brackish water.', 'industrial-4040-ro-membrane-high-tds-rejection-648', 1, 1, 1, NULL, '6500.0000', NULL, NULL, NULL, NULL, '4.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:59', 'en', 'default', 13, '2026-08-19 00:31:59', NULL, 1, '6500.0000', '6500.0000', '4040 Industrial RO Membrane.', NULL, NULL, NULL, NULL, NULL, NULL),
-(14, 'IND-MEM-8040', NULL, 'Industrial 8040 RO Membrane', 'High capacity 8040 RO Membrane element for large scale industrial RO water systems.', 'industrial-8040-ro-membrane-700', 1, 1, 1, NULL, '18500.0000', NULL, NULL, NULL, NULL, '14.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:59', 'en', 'default', 14, '2026-08-19 00:31:59', NULL, 1, '18500.0000', '18500.0000', '8040 High Capacity RO Membrane.', NULL, NULL, NULL, NULL, NULL, NULL),
-(15, 'IND-MPV-25', NULL, '25NB Top Mounted Multiport Valve (Filter/Softener)', '25NB Top Mounted Multiport Valve for Sand Filters and Water Softeners.', '25nb-top-mounted-multiport-valve-filtersoftener-768', 1, 1, 1, NULL, '2400.0000', NULL, NULL, NULL, NULL, '2.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:32:00', 'en', 'default', 15, '2026-08-19 00:32:00', NULL, 1, '2400.0000', '2400.0000', '25NB Multiport Valve for Filters.', NULL, NULL, NULL, NULL, NULL, NULL),
-(16, 'IND-CARBON-IV900', NULL, 'Activated Carbon IV 900 (50 Kg Bag)', 'High Iodine Value (IV 900) Coconut Shell Activated Carbon for odor, color, and organic removal in water filters.', 'activated-carbon-iv-900-50-kg-bag-995', 1, 1, 1, NULL, '4200.0000', NULL, NULL, NULL, NULL, '50.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:32:00', 'en', 'default', 16, '2026-08-19 00:32:00', NULL, 1, '4200.0000', '4200.0000', 'Activated Carbon IV 900 (50kg).', NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `product_flat` (`id`, `sku`, `product_number`, `hsn_code`, `name`, `description`, `url_key`, `new`, `featured`, `status`, `thumbnail`, `price`, `cost`, `special_price`, `special_price_from`, `special_price_to`, `weight`, `color`, `color_label`, `size`, `size_label`, `created_at`, `locale`, `channel`, `product_id`, `updated_at`, `parent_id`, `visible_individually`, `min_price`, `max_price`, `short_description`, `meta_title`, `meta_keywords`, `meta_description`, `width`, `height`, `depth`) VALUES
+(1, 'IND-RO-250', NULL, NULL, '250 LPH Commercial RO Plant (SS Skid)', 'High performance 250 Liters Per Hour Commercial RO Plant mounted on heavy-duty Stainless Steel skid frame with automatic control panel and CRI pump.', '250-lph-commercial-ro-plant-ss-skid-439', 1, 1, 1, NULL, '45000.0000', NULL, NULL, NULL, NULL, '80.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:51', 'en', 'default', 1, '2026-08-19 00:31:51', NULL, 1, '45000.0000', '45000.0000', '250 LPH SS Skid Commercial RO Water Plant.', NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 'IND-RO-500', NULL, NULL, '500 LPH Commercial RO Plant (FRP/SS)', 'Robust 500 LPH Commercial Reverse Osmosis Water Treatment Plant with high rejection membranes, sand & carbon filters.', '500-lph-commercial-ro-plant-frpss-794', 1, 1, 1, NULL, '65000.0000', NULL, NULL, NULL, NULL, '120.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:52', 'en', 'default', 2, '2026-08-19 00:31:52', NULL, 1, '65000.0000', '65000.0000', '500 LPH Commercial RO Plant with FRP Vessels.', NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 'IND-RO-1000', NULL, NULL, '1000 LPH Industrial RO Water Plant', '1000 Liters Per Hour heavy duty Industrial Reverse Osmosis Plant equipped with TDS Controller, Multiport Valves, and Stainless Steel High Pressure Pump.', '1000-lph-industrial-ro-water-plant-359', 1, 1, 1, NULL, '115000.0000', NULL, NULL, NULL, NULL, '200.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:52', 'en', 'default', 3, '2026-08-19 00:31:52', NULL, 1, '115000.0000', '115000.0000', '1000 LPH Industrial RO Plant for factories & institutions.', NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 'IND-RO-2000', NULL, NULL, '2000 LPH Industrial RO Plant', '2000 LPH Heavy Industrial Reverse Osmosis System with advanced monitoring instruments, flow meters, pressure gauges, and automated backwash.', '2000-lph-industrial-ro-plant-252', 1, 1, 1, NULL, '195000.0000', NULL, NULL, NULL, NULL, '350.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:53', 'en', 'default', 4, '2026-08-19 00:31:53', NULL, 1, '195000.0000', '195000.0000', '2000 LPH Industrial RO System.', NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 'IND-RO-5000', NULL, NULL, '5000 LPH High Capacity RO Plant', '5000 LPH High Capacity Industrial RO Plant with PLC automated control panel, Grundfos/CRI high pressure pumps and Dow Filmtec membranes.', '5000-lph-high-capacity-ro-plant-645', 1, 1, 1, NULL, '420000.0000', NULL, NULL, NULL, NULL, '750.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:54', 'en', 'default', 5, '2026-08-19 00:31:54', NULL, 1, '420000.0000', '420000.0000', '5000 LPH High Capacity Industrial RO System.', NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 'IND-STP-MBBR-10K', NULL, NULL, '10 KLD MBBR Sewage Treatment Plant', '10 KLD Moving Bed Biofilm Reactor (MBBR) STP Plant for efficient biological treatment of sewage water.', '10-kld-mbbr-sewage-treatment-plant-151', 1, 1, 1, NULL, '280000.0000', NULL, NULL, NULL, NULL, '500.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:55', 'en', 'default', 6, '2026-08-19 00:31:55', NULL, 1, '280000.0000', '280000.0000', '10 KLD MBBR Sewage Treatment Plant.', NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 'IND-STP-50K', NULL, NULL, '50 KLD Packaged Sewage Treatment Plant', '50 KLD Packaged STP Plant suitable for residential apartments, hotels, and hospitals with low power consumption.', '50-kld-packaged-sewage-treatment-plant-756', 1, 1, 1, NULL, '650000.0000', NULL, NULL, NULL, NULL, '1200.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:55', 'en', 'default', 7, '2026-08-19 00:31:55', NULL, 1, '650000.0000', '650000.0000', '50 KLD Packaged STP Plant.', NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 'IND-ETP-25K', NULL, NULL, '25 KLD Industrial Effluent Treatment Plant', '25 KLD Industrial ETP with chemical dosing tanks, flash mixer, clarifier, and pressure sand filter.', '25-kld-industrial-effluent-treatment-plant-971', 1, 1, 1, NULL, '480000.0000', NULL, NULL, NULL, NULL, '900.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:56', 'en', 'default', 8, '2026-08-19 00:31:56', NULL, 1, '480000.0000', '480000.0000', '25 KLD Industrial ETP Plant.', NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 'IND-ATM-COIN-500', NULL, NULL, '500 LPH Automatic Coin & Card Water ATM', '500 LPH RO Water ATM with Stainless Steel cabinet, GSM cloud reporting, Coin and Smart Card dispenser.', '500-lph-automatic-coin-card-water-atm-247', 1, 1, 1, NULL, '135000.0000', NULL, NULL, NULL, NULL, '150.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:56', 'en', 'default', 9, '2026-08-19 00:31:56', NULL, 1, '135000.0000', '135000.0000', '500 LPH RO Water ATM Machine.', NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 'IND-ATM-SOLAR-250', NULL, NULL, 'Solar Powered Water ATM Booth 250 LPH', 'Eco-friendly 250 LPH Solar Powered Water ATM with battery backup and all-weather SS kiosk.', 'solar-powered-water-atm-booth-250-lph-645', 1, 1, 1, NULL, '185000.0000', NULL, NULL, NULL, NULL, '220.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:57', 'en', 'default', 10, '2026-08-19 00:31:57', NULL, 1, '185000.0000', '185000.0000', '250 LPH Solar Powered Water ATM Kiosk.', NULL, NULL, NULL, NULL, NULL, NULL),
+(11, 'IND-CHILL-2TR', NULL, NULL, '2 TR Air Cooled Industrial Water Chiller', '2 Ton Air Cooled Water Chiller with digital temperature controller, Emerson Copeland compressor, and insulated SS tank.', '2-tr-air-cooled-industrial-water-chiller-687', 1, 1, 1, NULL, '95000.0000', NULL, NULL, NULL, NULL, '110.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:58', 'en', 'default', 11, '2026-08-19 00:31:58', NULL, 1, '95000.0000', '95000.0000', '2 TR Air Cooled Industrial Chiller.', NULL, NULL, NULL, NULL, NULL, NULL),
+(12, 'IND-CHILL-5TR', NULL, NULL, '5 TR Industrial Water Chiller Plant', '5 Ton Heavy Duty Air Cooled Process Water Chiller for commercial applications.', '5-tr-industrial-water-chiller-plant-253', 1, 1, 1, NULL, '175000.0000', NULL, NULL, NULL, NULL, '240.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:58', 'en', 'default', 12, '2026-08-19 00:31:58', NULL, 1, '175000.0000', '175000.0000', '5 TR Heavy Duty Industrial Water Chiller.', NULL, NULL, NULL, NULL, NULL, NULL),
+(13, 'IND-MEM-4040', NULL, NULL, 'Industrial 4040 RO Membrane (High TDS Rejection)', 'High performance 4040 Industrial RO Membrane with 99.5% salt rejection for brackish water.', 'industrial-4040-ro-membrane-high-tds-rejection-648', 1, 1, 1, NULL, '6500.0000', NULL, NULL, NULL, NULL, '4.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:59', 'en', 'default', 13, '2026-08-19 00:31:59', NULL, 1, '6500.0000', '6500.0000', '4040 Industrial RO Membrane.', NULL, NULL, NULL, NULL, NULL, NULL),
+(14, 'IND-MEM-8040', NULL, NULL, 'Industrial 8040 RO Membrane', 'High capacity 8040 RO Membrane element for large scale industrial RO water systems.', 'industrial-8040-ro-membrane-700', 1, 1, 1, NULL, '18500.0000', NULL, NULL, NULL, NULL, '14.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:31:59', 'en', 'default', 14, '2026-08-19 00:31:59', NULL, 1, '18500.0000', '18500.0000', '8040 High Capacity RO Membrane.', NULL, NULL, NULL, NULL, NULL, NULL),
+(15, 'IND-MPV-25', NULL, NULL, '25NB Top Mounted Multiport Valve (Filter/Softener)', '25NB Top Mounted Multiport Valve for Sand Filters and Water Softeners.', '25nb-top-mounted-multiport-valve-filtersoftener-768', 1, 1, 1, NULL, '2400.0000', NULL, NULL, NULL, NULL, '2.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:32:00', 'en', 'default', 15, '2026-08-19 00:32:00', NULL, 1, '2400.0000', '2400.0000', '25NB Multiport Valve for Filters.', NULL, NULL, NULL, NULL, NULL, NULL),
+(16, 'IND-CARBON-IV900', NULL, NULL, 'Activated Carbon IV 900 (50 Kg Bag)', 'High Iodine Value (IV 900) Coconut Shell Activated Carbon for odor, color, and organic removal in water filters.', 'activated-carbon-iv-900-50-kg-bag-995', 1, 1, 1, NULL, '4200.0000', NULL, NULL, NULL, NULL, '50.0000', NULL, NULL, NULL, NULL, '2026-08-19 00:32:00', 'en', 'default', 16, '2026-08-19 00:32:00', NULL, 1, '4200.0000', '4200.0000', 'Activated Carbon IV 900 (50kg).', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -8118,6 +8285,13 @@ ALTER TABLE `hws_attendance`
   ADD UNIQUE KEY `hws_attendance_employee_id_date_unique` (`employee_id`,`date`);
 
 --
+-- Indexes for table `hws_branches`
+--
+ALTER TABLE `hws_branches`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `hws_branches_code_unique` (`code`);
+
+--
 -- Indexes for table `hws_expense_claims`
 --
 ALTER TABLE `hws_expense_claims`
@@ -8132,6 +8306,12 @@ ALTER TABLE `hws_lead_activities`
   ADD KEY `fk_activities_action_by` (`action_by`);
 
 --
+-- Indexes for table `hws_leave_requests`
+--
+ALTER TABLE `hws_leave_requests`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `hws_notifications`
 --
 ALTER TABLE `hws_notifications`
@@ -8144,6 +8324,7 @@ ALTER TABLE `hws_notifications`
 ALTER TABLE `hws_quotations`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `quotations_quote_no_unique` (`quote_no`),
+  ADD UNIQUE KEY `hws_quotations_order_id_unique` (`order_id`),
   ADD KEY `fk_quotations_lead_id` (`lead_id`);
 
 --
@@ -8646,7 +8827,7 @@ ALTER TABLE `wishlist`
 -- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `admins`
@@ -8658,7 +8839,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `attributes`
 --
 ALTER TABLE `attributes`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `attribute_families`
@@ -8688,7 +8869,7 @@ ALTER TABLE `attribute_option_translations`
 -- AUTO_INCREMENT for table `attribute_translations`
 --
 ALTER TABLE `attribute_translations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `bookings`
@@ -8742,13 +8923,13 @@ ALTER TABLE `booking_product_table_slots`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `cart_items`
 --
 ALTER TABLE `cart_items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `cart_item_inventories`
@@ -8898,7 +9079,7 @@ ALTER TABLE `currency_exchange_rates`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `customer_groups`
@@ -8931,6 +9112,12 @@ ALTER TABLE `hws_attendance`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `hws_branches`
+--
+ALTER TABLE `hws_branches`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `hws_expense_claims`
 --
 ALTER TABLE `hws_expense_claims`
@@ -8940,31 +9127,37 @@ ALTER TABLE `hws_expense_claims`
 -- AUTO_INCREMENT for table `hws_lead_activities`
 --
 ALTER TABLE `hws_lead_activities`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
+-- AUTO_INCREMENT for table `hws_leave_requests`
+--
+ALTER TABLE `hws_leave_requests`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `hws_notifications`
 --
 ALTER TABLE `hws_notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- AUTO_INCREMENT for table `hws_quotations`
 --
 ALTER TABLE `hws_quotations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `hws_quotation_items`
 --
 ALTER TABLE `hws_quotation_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `hws_site_surveys`
 --
 ALTER TABLE `hws_site_surveys`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `hws_survey_inquiry_types`
@@ -8976,7 +9169,7 @@ ALTER TABLE `hws_survey_inquiry_types`
 -- AUTO_INCREMENT for table `hws_tasks`
 --
 ALTER TABLE `hws_tasks`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `hws_task_materials`
@@ -9000,13 +9193,13 @@ ALTER TABLE `inventory_sources`
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `invoice_items`
 --
 ALTER TABLE `invoice_items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -9042,7 +9235,7 @@ ALTER TABLE `marketing_templates`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=221;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=240;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -9054,7 +9247,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `order_brands`
@@ -9072,19 +9265,19 @@ ALTER TABLE `order_comments`
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `order_payment`
 --
 ALTER TABLE `order_payment`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `order_transactions`
 --
 ALTER TABLE `order_transactions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -9629,7 +9822,8 @@ ALTER TABLE `hws_notifications`
 -- Constraints for table `hws_quotations`
 --
 ALTER TABLE `hws_quotations`
-  ADD CONSTRAINT `fk_quotations_lead_id` FOREIGN KEY (`lead_id`) REFERENCES `hws_site_surveys` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `fk_quotations_lead_id` FOREIGN KEY (`lead_id`) REFERENCES `hws_site_surveys` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `hws_quotations_order_id_foreign` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `hws_quotation_items`
