@@ -270,139 +270,230 @@
                 <h2>Trusted by businesses across India</h2>
             </div>
             <div class="hws-testimonials__nav">
-                <button class="hws-testimonials__arrow hws-testimonials__arrow--prev" aria-label="Previous testimonial" onclick="hwsTestimonials.prev()">←</button>
-                <button class="hws-testimonials__arrow hws-testimonials__arrow--next" aria-label="Next testimonial" onclick="hwsTestimonials.next()">→</button>
+                <button class="hws-testimonials__arrow hws-testimonials__arrow--prev" aria-label="Previous testimonial" id="hwsTestPrev">←</button>
+                <button class="hws-testimonials__arrow hws-testimonials__arrow--next" aria-label="Next testimonial" id="hwsTestNext">→</button>
             </div>
         </div>
 
-        <div class="hws-testimonials__track" id="hwsTestimonialsTrack">
-            {{-- Testimonial 1 --}}
-            <article class="hws-testimonial">
-                <div class="hws-testimonial__stars">★★★★★</div>
-                <blockquote class="hws-testimonial__quote">
-                    "HWS delivered a 2000 LPH RO plant for our factory in just 18 days. The water quality has been consistent, their engineer visited twice for post-commissioning checks, and the pricing was transparent from day one. No hidden costs."
-                </blockquote>
-                <div class="hws-testimonial__author">
-                    <img src="{{ asset('images/hws-testimonials/customer-1.png') }}" alt="Rajesh Mehta" loading="lazy" />
-                    <div>
-                        <strong>Rajesh Mehta</strong>
-                        <span>Director, Shree Industries Pvt. Ltd.</span>
-                        <small>Pune, Maharashtra</small>
+        <div class="hws-testimonials__viewport" id="hwsTestViewport">
+            <div class="hws-testimonials__track" id="hwsTestimonialsTrack">
+                {{-- Testimonial 1 --}}
+                <article class="hws-testimonial">
+                    <div class="hws-testimonial__stars">★★★★★</div>
+                    <blockquote class="hws-testimonial__quote">
+                        "HWS delivered a 2000 LPH RO plant for our factory in just 18 days. The water quality has been consistent, their engineer visited twice for post-commissioning checks, and the pricing was transparent from day one. No hidden costs."
+                    </blockquote>
+                    <div class="hws-testimonial__author">
+                        <img src="{{ asset('images/hws-testimonials/customer-1.png') }}" alt="Rajesh Mehta" loading="lazy" />
+                        <div>
+                            <strong>Rajesh Mehta</strong>
+                            <span>Director, Shree Industries Pvt. Ltd.</span>
+                            <small>Pune, Maharashtra</small>
+                        </div>
                     </div>
-                </div>
-            </article>
+                </article>
 
-            {{-- Testimonial 2 --}}
-            <article class="hws-testimonial">
-                <div class="hws-testimonial__stars">★★★★★</div>
-                <blockquote class="hws-testimonial__quote">
-                    "We needed an STP for our 120-room hotel that met CPCB norms and could handle variable occupancy. HWS designed a compact MBBR system that runs reliably, and the treated water is used in our gardens and flushing lines."
-                </blockquote>
-                <div class="hws-testimonial__author">
-                    <img src="{{ asset('images/hws-testimonials/customer-2.png') }}" alt="Priya Sharma" loading="lazy" />
-                    <div>
-                        <strong>Priya Sharma</strong>
-                        <span>General Manager, The Grand Residency</span>
-                        <small>Nashik, Maharashtra</small>
+                {{-- Testimonial 2 --}}
+                <article class="hws-testimonial">
+                    <div class="hws-testimonial__stars">★★★★★</div>
+                    <blockquote class="hws-testimonial__quote">
+                        "We needed an STP for our 120-room hotel that met CPCB norms and could handle variable occupancy. HWS designed a compact MBBR system that runs reliably, and the treated water is used in our gardens and flushing lines."
+                    </blockquote>
+                    <div class="hws-testimonial__author">
+                        <img src="{{ asset('images/hws-testimonials/customer-2.png') }}" alt="Priya Sharma" loading="lazy" />
+                        <div>
+                            <strong>Priya Sharma</strong>
+                            <span>General Manager, The Grand Residency</span>
+                            <small>Nashik, Maharashtra</small>
+                        </div>
                     </div>
-                </div>
-            </article>
+                </article>
 
-            {{-- Testimonial 3 --}}
-            <article class="hws-testimonial">
-                <div class="hws-testimonial__stars">★★★★★</div>
-                <blockquote class="hws-testimonial__quote">
-                    "As a plant head, I was skeptical of smaller vendors. HWS proved me wrong. Their 5000 LPH industrial RO has been running for 14 months now without a single membrane replacement. Their AMC team is responsive and knowledgeable."
-                </blockquote>
-                <div class="hws-testimonial__author">
-                    <img src="{{ asset('images/hws-testimonials/customer-3.png') }}" alt="Suresh Patil" loading="lazy" />
-                    <div>
-                        <strong>Suresh Patil</strong>
-                        <span>Plant Head, Sahyadri Steel Works</span>
-                        <small>Kolhapur, Maharashtra</small>
+                {{-- Testimonial 3 --}}
+                <article class="hws-testimonial">
+                    <div class="hws-testimonial__stars">★★★★★</div>
+                    <blockquote class="hws-testimonial__quote">
+                        "As a plant head, I was skeptical of smaller vendors. HWS proved me wrong. Their 5000 LPH industrial RO has been running for 14 months now without a single membrane replacement. Their AMC team is responsive and knowledgeable."
+                    </blockquote>
+                    <div class="hws-testimonial__author">
+                        <img src="{{ asset('images/hws-testimonials/customer-3.png') }}" alt="Suresh Patil" loading="lazy" />
+                        <div>
+                            <strong>Suresh Patil</strong>
+                            <span>Plant Head, Sahyadri Steel Works</span>
+                            <small>Kolhapur, Maharashtra</small>
+                        </div>
                     </div>
-                </div>
-            </article>
+                </article>
 
-            {{-- Testimonial 4 --}}
-            <article class="hws-testimonial">
-                <div class="hws-testimonial__stars">★★★★★</div>
-                <blockquote class="hws-testimonial__quote">
-                    "For our pharma unit, water purity is non-negotiable. HWS installed a multi-stage purification system with real-time TDS monitoring. The documentation they provided for our FDA audit was thorough and professional."
-                </blockquote>
-                <div class="hws-testimonial__author">
-                    <img src="{{ asset('images/hws-testimonials/customer-4.png') }}" alt="Dr. Anjali Deshmukh" loading="lazy" />
-                    <div>
-                        <strong>Dr. Anjali Deshmukh</strong>
-                        <span>Quality Director, MedPure Pharmaceuticals</span>
-                        <small>Aurangabad, Maharashtra</small>
+                {{-- Testimonial 4 --}}
+                <article class="hws-testimonial">
+                    <div class="hws-testimonial__stars">★★★★★</div>
+                    <blockquote class="hws-testimonial__quote">
+                        "For our pharma unit, water purity is non-negotiable. HWS installed a multi-stage purification system with real-time TDS monitoring. The documentation they provided for our FDA audit was thorough and professional."
+                    </blockquote>
+                    <div class="hws-testimonial__author">
+                        <img src="{{ asset('images/hws-testimonials/customer-4.png') }}" alt="Dr. Anjali Deshmukh" loading="lazy" />
+                        <div>
+                            <strong>Dr. Anjali Deshmukh</strong>
+                            <span>Quality Director, MedPure Pharmaceuticals</span>
+                            <small>Aurangabad, Maharashtra</small>
+                        </div>
                     </div>
-                </div>
-            </article>
+                </article>
 
-            {{-- Testimonial 5 --}}
-            <article class="hws-testimonial">
-                <div class="hws-testimonial__stars">★★★★★</div>
-                <blockquote class="hws-testimonial__quote">
-                    "We run a 40-room resort and needed both a water softener and heat pump hot water system. HWS handled the entire project—plumbing, electrical, commissioning—everything. Guests notice the water quality difference."
-                </blockquote>
-                <div class="hws-testimonial__author">
-                    <img src="{{ asset('images/hws-testimonials/customer-5.png') }}" alt="Vikram Joshi" loading="lazy" />
-                    <div>
-                        <strong>Vikram Joshi</strong>
-                        <span>Owner, Sahyadri Valley Resort</span>
-                        <small>Mahabaleshwar, Maharashtra</small>
+                {{-- Testimonial 5 --}}
+                <article class="hws-testimonial">
+                    <div class="hws-testimonial__stars">★★★★★</div>
+                    <blockquote class="hws-testimonial__quote">
+                        "We run a 40-room resort and needed both a water softener and heat pump hot water system. HWS handled the entire project—plumbing, electrical, commissioning—everything. Guests notice the water quality difference."
+                    </blockquote>
+                    <div class="hws-testimonial__author">
+                        <img src="{{ asset('images/hws-testimonials/customer-5.png') }}" alt="Vikram Joshi" loading="lazy" />
+                        <div>
+                            <strong>Vikram Joshi</strong>
+                            <span>Owner, Sahyadri Valley Resort</span>
+                            <small>Mahabaleshwar, Maharashtra</small>
+                        </div>
                     </div>
-                </div>
-            </article>
+                </article>
+            </div>
         </div>
 
-        <div class="hws-testimonials__dots" id="hwsTestimonialsDots">
-            <button class="is-active" aria-label="Slide 1" onclick="hwsTestimonials.goTo(0)"></button>
-            <button aria-label="Slide 2" onclick="hwsTestimonials.goTo(1)"></button>
-            <button aria-label="Slide 3" onclick="hwsTestimonials.goTo(2)"></button>
-            <button aria-label="Slide 4" onclick="hwsTestimonials.goTo(3)"></button>
-            <button aria-label="Slide 5" onclick="hwsTestimonials.goTo(4)"></button>
-        </div>
+        <div class="hws-testimonials__dots" id="hwsTestimonialsDots"></div>
     </div>
 </section>
 
 @push('scripts')
 <script>
 (function(){
-    const track = document.getElementById('hwsTestimonialsTrack');
-    const dots  = document.querySelectorAll('#hwsTestimonialsDots button');
-    if (!track || !dots.length) return;
-    let current = 0, total = dots.length, timer;
+    var viewport = document.getElementById('hwsTestViewport');
+    var track    = document.getElementById('hwsTestimonialsTrack');
+    var dotsWrap = document.getElementById('hwsTestimonialsDots');
+    var prevBtn  = document.getElementById('hwsTestPrev');
+    var nextBtn  = document.getElementById('hwsTestNext');
+    if (!track || !viewport) return;
+
+    var slides = Array.prototype.slice.call(track.querySelectorAll('.hws-testimonial'));
+    var total  = slides.length;
+    if (!total) return;
+
+    var current   = 0;
+    var perView   = 3;          // cards visible at once (updated on resize)
+    var gap       = 20;         // matches CSS gap
+    var timer     = null;
+    var startX    = null;
+    var startY    = null;
+    var isDragging = false;
+
+    // Build dot buttons
+    function buildDots() {
+        dotsWrap.innerHTML = '';
+        var maxSlide = Math.max(0, total - perView);
+        for (var i = 0; i <= maxSlide; i++) {
+            var btn = document.createElement('button');
+            btn.setAttribute('aria-label', 'Slide ' + (i + 1));
+            btn.setAttribute('data-idx', i);
+            if (i === current) btn.classList.add('is-active');
+            dotsWrap.appendChild(btn);
+        }
+    }
+
+    function getPerView() {
+        var w = window.innerWidth;
+        if (w <= 760) return 1;
+        if (w <= 1050) return 2;
+        return 3;
+    }
+
+    function getCardWidth() {
+        var vpWidth = viewport.offsetWidth;
+        return (vpWidth - gap * (perView - 1)) / perView;
+    }
+
+    function render() {
+        var maxSlide = Math.max(0, total - perView);
+        if (current > maxSlide) current = maxSlide;
+        if (current < 0) current = 0;
+
+        var cardW = getCardWidth();
+        var offset = current * (cardW + gap);
+        track.style.transform = 'translate3d(-' + offset + 'px, 0, 0)';
+
+        // Set card widths
+        slides.forEach(function(s) {
+            s.style.flex = '0 0 ' + cardW + 'px';
+            s.style.maxWidth = cardW + 'px';
+        });
+
+        // Update dots
+        var dotBtns = dotsWrap.querySelectorAll('button');
+        dotBtns.forEach(function(d, i) {
+            d.classList.toggle('is-active', i === current);
+        });
+    }
 
     function goTo(i) {
-        current = ((i % total) + total) % total;
-        const card = track.children[current];
-        if (card) track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: 'smooth' });
-        dots.forEach((d, idx) => d.classList.toggle('is-active', idx === current));
+        current = i;
+        render();
         resetTimer();
     }
-    function next() { goTo(current + 1); }
-    function prev() { goTo(current - 1); }
-    function resetTimer() { clearInterval(timer); timer = setInterval(next, 6000); }
+    function next() { goTo(current + 1 > total - perView ? 0 : current + 1); }
+    function prev() { goTo(current - 1 < 0 ? Math.max(0, total - perView) : current - 1); }
 
-    // sync dots on manual scroll
-    let scrollTimeout;
-    track.addEventListener('scroll', function() {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(function() {
-            const scrollLeft = track.scrollLeft;
-            let closest = 0, minDist = Infinity;
-            Array.from(track.children).forEach(function(card, idx) {
-                const dist = Math.abs(card.offsetLeft - track.offsetLeft - scrollLeft);
-                if (dist < minDist) { minDist = dist; closest = idx; }
-            });
-            if (closest !== current) { current = closest; dots.forEach((d, idx) => d.classList.toggle('is-active', idx === current)); }
-        }, 80);
+    function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(next, 6000);
+    }
+
+    // Arrow buttons
+    if (prevBtn) prevBtn.addEventListener('click', function(e) { e.preventDefault(); prev(); });
+    if (nextBtn) nextBtn.addEventListener('click', function(e) { e.preventDefault(); next(); });
+
+    // Dot clicks
+    dotsWrap.addEventListener('click', function(e) {
+        var btn = e.target.closest('button');
+        if (btn && btn.hasAttribute('data-idx')) {
+            goTo(parseInt(btn.getAttribute('data-idx'), 10));
+        }
     });
 
+    // Touch / pointer swipe
+    viewport.addEventListener('pointerdown', function(e) {
+        startX = e.clientX;
+        startY = e.clientY;
+        isDragging = true;
+    });
+    document.addEventListener('pointerup', function(e) {
+        if (!isDragging || startX === null) { isDragging = false; return; }
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        isDragging = false;
+        startX = null;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+            if (dx < 0) next(); else prev();
+        }
+    });
+
+    // Pause on hover
+    viewport.addEventListener('mouseenter', function() { clearInterval(timer); });
+    viewport.addEventListener('mouseleave', function() { resetTimer(); });
+
+    // Responsive recalculation
+    function onResize() {
+        var newPerView = getPerView();
+        if (newPerView !== perView) {
+            perView = newPerView;
+            buildDots();
+        }
+        render();
+    }
+    window.addEventListener('resize', onResize);
+
+    // Init
+    perView = getPerView();
+    buildDots();
+    render();
     resetTimer();
-    window.hwsTestimonials = { goTo, next, prev };
 })();
 </script>
 
