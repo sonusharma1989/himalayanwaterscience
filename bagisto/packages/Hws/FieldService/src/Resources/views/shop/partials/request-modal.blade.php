@@ -15,6 +15,18 @@
                 <label><span>Phone *</span><input name="customer_phone" required maxlength="30" value="{{ auth('customer')->user()?->phone }}"></label>
                 <label><span>Email</span><input type="email" name="customer_email" maxlength="255" value="{{ auth('customer')->user()?->email }}"></label>
                 <label><span>Company</span><input name="company" maxlength="255"></label>
+                <label class="hws-request-wide"><span>Service Type</span>
+                    <select name="service_type" id="hwsServiceType">
+                        <option value="">— Select a service —</option>
+                        @foreach (\Hws\FieldService\Support\ServiceCatalog::grouped() as $group => $services)
+                            <optgroup label="{{ $group }}">
+                                @foreach ($services as $svc)
+                                    <option value="{{ $svc['slug'] }}">{{ $svc['title'] }}</option>
+                                @endforeach
+                            </optgroup>
+                        @endforeach
+                    </select>
+                </label>
                 <label class="hws-request-wide"><span>Address / City</span><input name="customer_address" maxlength="1000"></label>
                 <label><span>Product / System</span><input name="product" maxlength="255"></label>
                 <label><span>Quantity / Capacity</span><input name="quantity" maxlength="100"></label>
@@ -50,6 +62,22 @@ document.addEventListener('DOMContentLoaded', function () {
         form.reset();
         form.elements.request_type.value = type;
         if (product) form.elements.product.value = product;
+
+        // Auto-select service type dropdown if a matching slug or title is found
+        const serviceSelect = document.getElementById('hwsServiceType');
+        if (serviceSelect && product) {
+            const slug = product.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            let matched = false;
+            for (const opt of serviceSelect.options) {
+                if (opt.value === slug || opt.textContent.trim().toLowerCase() === product.toLowerCase()) {
+                    serviceSelect.value = opt.value;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) serviceSelect.value = '';
+        }
+
         title.textContent = titles[type] || 'Send a request';
         status.textContent = '';
         status.className = '';
