@@ -90,7 +90,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch(`${API_URL}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
@@ -114,7 +117,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (token) {
       fetch(`${API_URL}/logout`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }).catch(() => {});
     }
     setToken(null);
@@ -131,7 +137,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!token) return;
     try {
       const res = await fetch(`${API_URL}/tasks`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
       if (res.ok) {
@@ -170,6 +179,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${API_URL}/tasks/${id}/step`, {
         method: "POST",
         headers: {
+          "Accept": "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -200,7 +210,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!token) return;
     try {
       const res = await fetch(`${API_URL}/attendance/today`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
       if (res.ok) {
@@ -227,6 +240,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${API_URL}/attendance/${method}`, {
         method: "POST",
         headers: {
+          "Accept": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: formData,
@@ -299,7 +313,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!token) return;
     try {
       const res = await fetch(`${API_URL}/notifications`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
       if (res.ok) {
@@ -315,6 +332,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${API_URL}/notifications/mark-read`, {
         method: "POST",
         headers: {
+          "Accept": "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
