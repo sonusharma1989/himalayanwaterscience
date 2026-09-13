@@ -160,18 +160,19 @@
 </div></section>
 
 @php
-    // Groups we have real site photography for point at hws-plants; the rest keep the
-    // existing illustrative renders in hws-services.
-    $serviceGroupImages = [
-        'Water Treatment & Purification' => 'hws-plants/ro-plant-twin-vessel-warehouse.jpg',
-        'Wastewater Treatment' => 'hws-services/service-wastewater.png',
-        'Hot Water & Energy Systems' => 'hws-services/service-hot-water.png',
-        'Project & Lifecycle Support' => 'hws-plants/ro-plant-rooftop-install.jpg',
+    // Per-service-slug images — each card gets a unique photograph
+    $serviceImages = [
+        'water-treatment-plants'                  => 'hws-plants/industrial-ro-plant-hall.jpg',
+        'reverse-osmosis-plants'                  => 'hws-plants/ro-plant-skid-control-panel.jpg',
+        'sewage-treatment-plants'                 => 'hws-services/service-wastewater.png',
+        'effluent-treatment-plants'               => 'hws-services/service-purification.png',
+        'industrial-water-purification-systems'   => 'hws-plants/ro-plant-twin-vessel-warehouse.jpg',
+        'commercial-residential-water-filtration'  => 'hws-plants/compact-ro-filtration-unit.jpg',
     ];
     $categoryImages = [
-        'ro-plants' => 'hws-plants/commercial-ro-plant-skid.jpg',
-        'wastewater-treatment' => 'hws-services/service-wastewater.png',
-        'water-atm-dispensing' => 'hws-plants/twin-vessel-ro-plant-unit.jpg',
+        'ro-plants'              => 'hws-plants/commercial-ro-plant-skid.jpg',
+        'wastewater-treatment'   => 'hws-plants/ro-plant-softener-pair.jpg',
+        'water-atm-dispensing'   => 'hws-plants/twin-vessel-ro-plant-unit.jpg',
         'water-chillers-coolers' => 'hws-services/service-hot-water.png',
         'components-spare-parts' => 'hws-services/service-maintenance.png',
     ];
@@ -186,7 +187,7 @@
             <div class="hws-home-service">
                 <div class="hws-home-service__img">
                     <a class="hws-home-service__imglink" href="{{ route('hws.services.show', $service['slug']) }}">
-                        <img src="{{ asset('images/' . ($serviceGroupImages[$service['group']] ?? 'hws-services/service-water-treatment.png')) }}" alt="{{ $service['title'] }}" loading="lazy" />
+                        <img src="{{ asset('images/' . ($serviceImages[$service['slug']] ?? $service['photo'] ?? 'hws-services/service-water-treatment.png')) }}" alt="{{ $service['title'] }}" loading="lazy" />
                     </a>
                     <a class="hws-home-service__quote" href="#" data-hws-request="engineer_callback" data-hws-product="{{ $service['title'] }}">Get quote</a>
                 </div>
