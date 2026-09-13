@@ -14,7 +14,7 @@
         <p>From water analysis and process design to installation, commissioning and AMC—we take responsibility for the complete system.</p>
         <div class="hws-service-hero__actions">
             <a class="hws-btn hws-btn--primary" href="#core-services">Explore services</a>
-            <a class="hws-btn hws-btn--glass" href="#service-enquiry" data-hws-request="bulk_quote">Discuss a project</a>
+            <a class="hws-btn hws-btn--glass" href="#service-enquiry" data-hws-request="service_quote">Discuss a project</a>
         </div>
     </div>
 </section>

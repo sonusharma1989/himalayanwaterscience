@@ -123,6 +123,13 @@
     </div>
 </div></section>
 
+<section class="hws-process-help"><div class="hws-container">
+    <div class="hws-process-help__inner">
+        <div><small>Not sure where to start?</small><h3>Need help selecting the right process?</h3></div>
+        <a class="hws-btn hws-btn--primary" href="#" data-hws-request="engineer_callback">Discuss your project with an engineer <b>→</b></a>
+    </div>
+</div></section>
+
 <section class="hws-home-stories" id="project-stories"><div class="hws-container">
     <div class="hws-home-stories__head">
         <div><span class="hws-eyebrow">Engineered in the field</span><h2>Systems you can see.<br>Performance you can measure.</h2></div>
@@ -151,11 +158,6 @@
                 <div class="hws-home-story__copy"><small>03 · Efficient hot water</small><h3>Lower-energy heating with dependable service support.</h3><b>Heating systems ↗</b></div>
             </a>
         </div>
-    </div>
-
-    <div class="hws-home-stories__foot">
-        <div><small>Not sure where to start?</small><h3>Need help selecting the right process?</h3></div>
-        <a class="hws-btn hws-btn--primary" href="#" data-hws-request="engineer_callback">Discuss your project with an engineer <b>→</b></a>
     </div>
 </div></section>
 
@@ -562,5 +564,5 @@
     </div>
 </div></section>
 
-<section class="hws-oem"><div class="hws-container hws-oem__inner"><div><span class="hws-eyebrow">For OEMs & system integrators</span><h2>Building plants at scale?</h2><p>Get project-site delivery, consolidated GST billing, datasheet packs and a dedicated engineer for sizing and commissioning.</p></div><a class="hws-btn hws-btn--primary" href="#" data-hws-request="bulk_quote">Request a bulk quote</a></div></section>
+<section class="hws-oem"><div class="hws-container hws-oem__inner"><div><span class="hws-eyebrow">For OEMs & system integrators</span><h2>Building plants at scale?</h2><p>Get project-site delivery, consolidated GST billing, datasheet packs and a dedicated engineer for sizing and commissioning.</p></div><a class="hws-btn hws-btn--primary" href="#" data-hws-request="service_quote">Request a quote</a></div></section>
 @endsection

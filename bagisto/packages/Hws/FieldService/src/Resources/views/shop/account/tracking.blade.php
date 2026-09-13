@@ -6,7 +6,7 @@
     @php
         $taskSteps = [0 => 'Assigned', 1 => 'Accepted', 2 => 'Engineer travelling', 3 => 'Work in progress', 4 => 'Completed'];
         $requestLabels = [
-            'checkout' => 'Website order', 'bulk_quote' => 'Bulk quotation',
+            'checkout' => 'Website order', 'service_quote' => 'Service quotation',
             'engineer_callback' => 'Engineer callback', 'site_survey' => 'Site survey',
         ];
     @endphp
@@ -66,7 +66,7 @@
         </section>
 
         <section class="hws-tracking-section">
-            <div class="hws-tracking-head"><h2>Quotes & enquiries</h2><button class="hws-btn hws-btn--outline" data-hws-request="bulk_quote">Request quote</button></div>
+            <div class="hws-tracking-head"><h2>Quotes & enquiries</h2><button class="hws-btn hws-btn--outline" data-hws-request="service_quote">Request quote</button></div>
             <div class="hws-track-list">
                 @forelse($leads->where('request_type', '!=', 'checkout') as $lead)
                     <article class="hws-track-card">

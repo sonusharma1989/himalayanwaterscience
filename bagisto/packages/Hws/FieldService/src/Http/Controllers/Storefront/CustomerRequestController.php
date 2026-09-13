@@ -17,7 +17,7 @@ class CustomerRequestController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'request_type'    => 'required|in:bulk_quote,engineer_callback,site_survey,installation,service,complaint,amc_service',
+            'request_type'    => 'required|in:service_quote,engineer_callback,site_survey,installation,service,complaint,amc_service',
             'customer_name'   => 'required|string|max:255',
             'customer_phone'  => 'required|string|max:30',
             'customer_email'  => 'nullable|email|max:255',
@@ -35,7 +35,7 @@ class CustomerRequestController extends Controller
         $address = ($data['customer_address'] ?? null) ?: 'Address to be confirmed';
 
         return DB::transaction(function () use ($data, $customerId, $email, $address) {
-            if (in_array($data['request_type'], ['bulk_quote', 'engineer_callback', 'site_survey'])) {
+            if (in_array($data['request_type'], ['service_quote', 'engineer_callback', 'site_survey'])) {
                 $reference = $this->reference('REQ');
                 $lead = SiteSurvey::create([
                     'customer_id'      => $customerId,
@@ -45,7 +45,7 @@ class CustomerRequestController extends Controller
                     'customer_address' => $address,
                     'property_type'    => 'other',
                     'status'           => 'new',
-                    'temperature'      => $data['request_type'] === 'bulk_quote' ? 'hot' : 'warm',
+                    'temperature'      => $data['request_type'] === 'service_quote' ? 'hot' : 'warm',
                     'source'           => 'Website',
                     'request_type'     => $data['request_type'],
                     'reference_no'     => $reference,

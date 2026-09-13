@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const title = document.getElementById('hwsRequestTitle');
     const status = document.getElementById('hwsRequestStatus');
     const titles = {
-        bulk_quote: 'Request a bulk quote',
+        service_quote: 'Request a quote for our services',
         engineer_callback: 'Talk to an engineer',
         site_survey: 'Book a site survey',
         installation: 'Request installation',
