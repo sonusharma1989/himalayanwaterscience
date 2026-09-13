@@ -90,7 +90,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch(`${API_URL}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
@@ -114,7 +117,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (token) {
       fetch(`${API_URL}/logout`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       }).catch(() => {});
     }
     setToken(null);
@@ -131,7 +137,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!token) return;
     try {
       const res = await fetch(`${API_URL}/tasks`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
       if (res.ok) {
@@ -170,6 +179,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${API_URL}/tasks/${id}/step`, {
         method: "POST",
         headers: {
+          "Accept": "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
@@ -200,7 +210,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!token) return;
     try {
       const res = await fetch(`${API_URL}/attendance/today`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
       if (res.ok) {
@@ -227,6 +240,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${API_URL}/attendance/${method}`, {
         method: "POST",
         headers: {
+          "Accept": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: formData,
@@ -248,9 +262,36 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // Convert frontend string chips/values to DB enum strings
     const dbPropertyType = surveyData.propertyType?.[0]?.toLowerCase() || "other";
     const dbWaterSource = surveyData.waterSource?.[0]?.toLowerCase().replace(/\s+/g, "_") || "borewell";
-    const dbWastewaterDisposal = surveyData.wastewaterDisposal?.[0]?.toLowerCase().replace(/\s+/g, "_") || "drain";
-    const dbSpaceAvailable = surveyData.spaceAvailable?.[0]?.toLowerCase().replace(/\s+/g, "_") || "terrace";
-    const dbInquiryTypes = surveyData.inquiryTypes?.map((t: string) => t.toLowerCase()) || [];
+    
+    // Map wastewater disposal
+    const rawWastewater = surveyData.wastewaterDisposal?.[0]?.toLowerCase() || "";
+    let dbWastewaterDisposal = "septic_tank";
+    if (rawWastewater.includes("open") || rawWastewater.includes("drain")) dbWastewaterDisposal = "open_drain";
+    else if (rawWastewater.includes("stp")) dbWastewaterDisposal = "existing_stp";
+    else if (rawWastewater.includes("none")) dbWastewaterDisposal = "none";
+
+    // Map space available: open_area, limited, basement_only, not_sure
+    const rawSpace = surveyData.spaceAvailable?.[0]?.toLowerCase() || "";
+    let dbSpaceAvailable = "open_area";
+    if (rawSpace.includes("limited")) dbSpaceAvailable = "limited";
+    else if (rawSpace.includes("basement")) dbSpaceAvailable = "basement_only";
+    else if (rawSpace.includes("not")) dbSpaceAvailable = "not_sure";
+
+    // Map inquiry types: in:stp,wtp,etp,ro_plant,softener,amc_only
+    const inquiryMap: Record<string, string> = {
+      "stp": "stp",
+      "wtp": "wtp",
+      "etp": "etp",
+      "ro plant": "ro_plant",
+      "ro_plant": "ro_plant",
+      "softener": "softener",
+      "amc only": "amc_only",
+      "amc_only": "amc_only",
+    };
+    const dbInquiryTypes = (surveyData.inquiryTypes || []).map((t: string) => {
+      const lower = t.toLowerCase().trim();
+      return inquiryMap[lower] || lower.replace(/\s+/g, "_");
+    });
 
     const formData = {
       task_id: id,
@@ -258,7 +299,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       customer_phone: surveyData.customer_phone,
       customer_address: surveyData.customer_address,
       property_type: dbPropertyType,
-      sales_type: surveyData.salesType?.[0]?.toLowerCase() || "trading",
+      sales_type: (surveyData.salesType?.[0] || "trading").toLowerCase().trim().replace(/\s+/g, "_"),
       floors: parseInt(surveyData.floors) || null,
       built_up_area_sqft: parseInt(surveyData.builtUpAreaSqft) || null,
       rooms_units: parseInt(surveyData.roomsUnits) || null,
@@ -299,7 +340,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!token) return;
     try {
       const res = await fetch(`${API_URL}/notifications`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          "Accept": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
       if (res.ok) {
@@ -315,6 +359,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${API_URL}/notifications/mark-read`, {
         method: "POST",
         headers: {
+          "Accept": "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },

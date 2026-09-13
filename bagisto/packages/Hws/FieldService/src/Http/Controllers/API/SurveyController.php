@@ -22,7 +22,7 @@ class SurveyController extends Controller
             'customer_phone'      => 'nullable|string',
             'customer_address'    => 'nullable|string',
             'property_type'       => 'required|in:hotel,hospital,bungalow,other',
-            'sales_type'          => 'nullable|in:trading,projects,services',
+            'sales_type'          => 'nullable|in:trading,projects,services,pool,retail_sales,retail',
             'floors'              => 'nullable|integer',
             'built_up_area_sqft'  => 'nullable|integer',
             'rooms_units'         => 'nullable|integer',
@@ -70,8 +70,17 @@ class SurveyController extends Controller
                 }
             }
 
+            $employee = auth()->guard('admin-api')->user();
+            $employeeBranchId = $employee ? $employee->branch_id : null;
+            if (!$employeeBranchId) {
+                $defaultBranch = DB::table('hws_branches')->first();
+                $employeeBranchId = $defaultBranch ? $defaultBranch->id : 1;
+            }
+
             // Create or update the survey record by its own ID
             $surveyData = [
+                'assigned_to'         => $employee ? $employee->id : null,
+                'branch_id'           => $employeeBranchId,
                 'customer_name'       => $request->input('customer_name'),
                 'customer_phone'      => $request->input('customer_phone') ?? '',
                 'customer_address'    => $request->input('customer_address') ?? '',

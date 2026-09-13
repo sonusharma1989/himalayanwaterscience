@@ -226,7 +226,7 @@ export default function SurveyPage() {
         <div className="mb-5">
           <FieldLabel>Sales type</FieldLabel>
           <ChipGroup
-            options={["Trading", "Projects", "Services"]}
+            options={["Trading", "Projects", "Services", "Pool", "Retail sales"]}
             value={salesType}
             onChange={setSalesType}
           />

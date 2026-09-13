@@ -79,6 +79,9 @@
 
         <a href="{{ route('hws.vision') }}">Our vision</a>
         <a href="{{ route('shop.home.index') }}#project-stories">Our projects</a>
-        <a class="hws-nav__quote" href="#" data-hws-request="bulk_quote">Request bulk quote</a>
+        <a class="hws-nav__quote" href="#" data-hws-request="bulk_quote" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg, #1a8cba 0%, #0e6e94 100%);color:#ffffff !important;font-weight:700;font-size:12.5px;padding:7px 16px;border-radius:999px;box-shadow:0 3px 10px rgba(26,140,186,0.3);text-decoration:none;transition:all 0.25s cubic-bezier(0.4, 0, 0.2, 1);letter-spacing:0.02em;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 5px 15px rgba(26,140,186,0.45)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 3px 10px rgba(26,140,186,0.3)';">
+            <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Get a quote
+        </a>
     </div></nav>
 </header>

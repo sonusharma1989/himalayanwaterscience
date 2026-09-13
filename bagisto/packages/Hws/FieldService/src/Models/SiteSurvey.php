@@ -14,6 +14,7 @@ class SiteSurvey extends Model
         'task_id',
         'customer_id',
         'order_id',
+        'branch_id',
         'customer_name',
         'customer_phone',
         'customer_email',
@@ -43,12 +44,12 @@ class SiteSurvey extends Model
     ];
 
     protected $casts = [
-        'follow_up_date' => 'date',
-        'water_use_kld'  => 'decimal:2',
-        'latitude'       => 'decimal:7',
-        'longitude'      => 'decimal:7',
-        'photos'         => 'array',
-        'request_details'=> 'array',
+        'follow_up_date'    => 'date',
+        'water_use_kld'     => 'decimal:2',
+        'latitude'          => 'decimal:7',
+        'longitude'         => 'decimal:7',
+        'photos'            => 'array',
+        'request_details'   => 'array',
         'next_follow_up_at' => 'datetime',
     ];
 
