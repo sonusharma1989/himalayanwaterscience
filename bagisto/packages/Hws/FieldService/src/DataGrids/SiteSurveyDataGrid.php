@@ -49,7 +49,15 @@ class SiteSurveyDataGrid extends DataGrid
         if ($this->salesType === 'projects') {
             $queryBuilder->where('hws_site_surveys.sales_type', 'projects');
         } elseif ($this->salesType === 'trading') {
-            $queryBuilder->where('hws_site_surveys.sales_type', 'trading');
+            // Trading leads list includes trading, pool, retail_sales, services
+            $queryBuilder->where(function ($q) {
+                $q->where('hws_site_surveys.sales_type', 'trading')
+                  ->orWhere('hws_site_surveys.sales_type', 'pool')
+                  ->orWhere('hws_site_surveys.sales_type', 'retail_sales')
+                  ->orWhere('hws_site_surveys.sales_type', 'retail')
+                  ->orWhere('hws_site_surveys.sales_type', 'services')
+                  ->orWhereNull('hws_site_surveys.sales_type');
+            });
         } elseif ($this->salesType) {
             $queryBuilder->where('hws_site_surveys.sales_type', $this->salesType);
         }
@@ -126,7 +134,13 @@ class SiteSurveyDataGrid extends DataGrid
                     $sourceOptionsHtml .= '<option value="' . e($option) . '" ' . $selected . '>' . e($option) . '</option>';
                 }
 
-                $salesTypeOptions = ['trading' => 'Trading', 'projects' => 'Projects', 'services' => 'Services'];
+                $salesTypeOptions = [
+                    'trading'      => 'Trading',
+                    'projects'     => 'Projects',
+                    'services'     => 'Services',
+                    'pool'         => 'Pool',
+                    'retail_sales' => 'Retail Sales',
+                ];
                 $salesTypeOptionsHtml = '';
                 foreach ($salesTypeOptions as $value => $label) {
                     $selected = $row->sales_type === $value ? 'selected' : '';
