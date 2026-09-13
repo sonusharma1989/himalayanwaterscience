@@ -6,6 +6,23 @@ use Illuminate\Support\Collection;
 
 class ServiceCatalog
 {
+    /**
+     * Real HWS site photography, keyed by service slug and relative to public/images.
+     * Only services we actually have photographs of are listed; the rest fall back to
+     * the illustrative renders in `image`. Used for card thumbnails and in-page media,
+     * not for the full-width service hero (these photos are too small to stretch).
+     */
+    private const PHOTOS = [
+        'water-treatment-plants'                    => 'hws-plants/industrial-ro-plant-hall.jpg',
+        'reverse-osmosis-plants'                    => 'hws-plants/ro-plant-skid-control-panel.jpg',
+        'industrial-water-purification-systems'     => 'hws-plants/ro-plant-twin-vessel-warehouse.jpg',
+        'commercial-residential-water-filtration'   => 'hws-plants/compact-ro-filtration-unit.jpg',
+        'water-softeners'                           => 'hws-plants/ro-plant-softener-pair.jpg',
+        'installation-commissioning'                => 'hws-plants/ro-plant-rooftop-install.jpg',
+        'annual-maintenance-contracts'              => 'hws-plants/twin-vessel-ro-plant-unit.jpg',
+        'technical-support-after-sales'             => 'hws-plants/commercial-ro-plant-skid.jpg',
+    ];
+
     public static function all(): Collection
     {
         return collect([
@@ -124,6 +141,8 @@ class ServiceCatalog
         array $inclusions,
         array $outcomes
     ): array {
-        return compact('slug', 'title', 'group', 'image', 'summary', 'intro', 'applications', 'inclusions', 'outcomes');
+        $photo = self::PHOTOS[$slug] ?? null;
+
+        return compact('slug', 'title', 'group', 'image', 'photo', 'summary', 'intro', 'applications', 'inclusions', 'outcomes');
     }
 }

@@ -19,7 +19,9 @@
         'Hot Water & Energy Systems' => 'service-hot-water.png',
         'Project & Lifecycle Support' => 'service-maintenance.png',
     ];
-    $contentImage = $serviceContentImages[$service['slug']] ?? $serviceGroupImages[$service['group']] ?? 'service-water-treatment.png';
+    // Prefer real site photography where we have it, then the per-slug render, then the group render.
+    $contentImage = $service['photo']
+        ?? 'hws-services/' . ($serviceContentImages[$service['slug']] ?? $serviceGroupImages[$service['group']] ?? 'service-water-treatment.png');
 @endphp
 
 @section('content-wrapper')
@@ -41,7 +43,7 @@
         <div class="hws-service-lead"><span class="hws-eyebrow">Designed for your site</span><h2>Right process. Right capacity. Clear operating plan.</h2><p>{{ $service['intro'] }}</p></div>
 
         <figure class="hws-service-media">
-            <img src="{{ asset('images/hws-services/' . $contentImage) }}" alt="{{ $service['title'] }} system" loading="lazy">
+            <img src="{{ asset('images/' . $contentImage) }}" alt="{{ $service['title'] }} system" loading="lazy">
             <figcaption><small>{{ $service['group'] }}</small><span>Real project deployments, sized and engineered around your site conditions.</span></figcaption>
         </figure>
 

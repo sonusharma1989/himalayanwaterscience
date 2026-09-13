@@ -39,7 +39,7 @@
                 @foreach ($groupServices as $service)
                     <article class="hws-service-card">
                         <a class="hws-service-card__media" href="{{ route('hws.services.show', $service['slug']) }}">
-                            <img src="{{ asset('images/hws-services/' . $service['image']) }}" alt="{{ $service['title'] }} engineering service" loading="lazy">
+                            <img src="{{ asset('images/' . ($service['photo'] ?? 'hws-services/' . $service['image'])) }}" alt="{{ $service['title'] }} engineering service" loading="lazy">
                             <span>{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                         </a>
                         <div class="hws-service-card__body">

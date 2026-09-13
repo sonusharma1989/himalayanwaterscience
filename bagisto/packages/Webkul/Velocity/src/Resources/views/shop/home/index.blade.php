@@ -15,23 +15,25 @@
         ->limit(8)
         ->get();
     $homeServices = \Hws\FieldService\Support\ServiceCatalog::all()->take(6);
+    // Hero slides use real HWS installation photography from public/images/hws-plants.
+    // Slide order is deliberate: the three highest-resolution site photos carry the hero.
     $heroServiceSlides = [
         [
-            'image' => 'service-water-treatment.png',
+            'image' => 'hws-plants/industrial-ro-plant-hall.jpg',
             'tag'   => 'Industrial',
             'title' => 'Industrial Water & HVAC Systems',
             'pills' => ['WTP', 'STP', 'ETP', 'RO up to 1000 m³/day', 'HVAC systems', 'Air-source heat pumps'],
             'slug'  => 'water-treatment-plants',
         ],
         [
-            'image' => 'service-softener.png',
+            'image' => 'hws-plants/ro-plant-skid-control-panel.jpg',
             'tag'   => 'Commercial',
             'title' => 'Commercial Water Systems',
             'pills' => ['Resin water softeners', 'RO up to 25,000 LPH', 'School RO plants'],
             'slug'  => 'reverse-osmosis-plants',
         ],
         [
-            'image' => 'service-hot-water.png',
+            'image' => 'hws-plants/ro-plant-softener-pair.jpg',
             'tag'   => 'Domestic',
             'title' => 'Domestic Water Systems',
             'pills' => ['RO plant 7–100 LPH', 'Softener up to 200L resin', 'Domestic heat pumps'],
@@ -64,7 +66,7 @@
                     <div class="hws-hero-slider__track">
                         @foreach ($heroServiceSlides as $i => $slide)
                             <div class="hws-hero-slider__slide" aria-hidden="{{ $i === 0 ? 'false' : 'true' }}">
-                                <img src="{{ asset('images/hws-services/' . $slide['image']) }}" alt="{{ $slide['title'] }}" loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
+                                <img src="{{ asset('images/' . $slide['image']) }}" alt="{{ $slide['title'] }}" loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
                                 <span class="hws-hero-slider__shade"></span>
                                 <div class="hws-hero-slider__copy">
                                     <small>{{ $slide['tag'] }}</small>
@@ -87,6 +89,39 @@
         </div>
     </div>
 </section>
+
+@php
+    // Reference photography. Captions describe only what is visible in each frame — no
+    // capacities, client names or build attribution is asserted, because these files are
+    // supplied stock/reference shots and two of them carry third-party brand marks
+    // (see twin-vessel-ro-plant-unit.jpg and ro-plant-skid-control-panel.jpg).
+    // Swap in own-site photography and this section can claim authorship directly.
+    $installationPhotos = [
+        ['image' => 'industrial-ro-plant-hall.jpg',           'tag' => 'Industrial',   'caption' => 'Multi-stage industrial RO train with horizontal membrane housings'],
+        ['image' => 'ro-plant-skid-control-panel.jpg',        'tag' => 'Commercial',   'caption' => 'RO skid with sand and carbon filtration and a stainless control panel'],
+        ['image' => 'ro-plant-softener-pair.jpg',             'tag' => 'Commercial',   'caption' => 'Twin FRP softener vessels feeding a packaged RO unit'],
+        ['image' => 'ro-plant-rooftop-install.jpg',           'tag' => 'Installation', 'caption' => 'Rooftop RO plant with booster pumps and pre-filtration'],
+        ['image' => 'ro-plant-twin-vessel-warehouse.jpg',     'tag' => 'Industrial',   'caption' => 'Twin-vessel RO plant in a warehouse installation'],
+        ['image' => 'commercial-ro-plant-skid.jpg',           'tag' => 'Commercial',   'caption' => 'Commercial RO plant built on a stainless steel skid frame'],
+        ['image' => 'twin-vessel-ro-plant-unit.jpg',          'tag' => 'Domestic',     'caption' => 'Compact twin-vessel RO unit for building-level supply'],
+        ['image' => 'compact-ro-filtration-unit.jpg',         'tag' => 'Domestic',     'caption' => 'Small-footprint RO with staged pre-filtration housings'],
+    ];
+@endphp
+<section class="hws-installations" id="installations"><div class="hws-container">
+    <div class="hws-section__head">
+        <div><span class="hws-eyebrow">System reference gallery</span><h2>RO &amp; treatment configurations we supply</h2></div>
+        <a href="#" data-hws-request="engineer_callback">Discuss a similar plant →</a>
+    </div>
+    <div class="hws-installations__grid">
+        @foreach ($installationPhotos as $photo)
+            <figure class="hws-installation">
+                <img src="{{ asset('images/hws-plants/' . $photo['image']) }}" alt="{{ $photo['caption'] }}" loading="lazy">
+                <span class="hws-installation__shade"></span>
+                <figcaption><small>{{ $photo['tag'] }}</small><span>{{ $photo['caption'] }}</span></figcaption>
+            </figure>
+        @endforeach
+    </div>
+</div></section>
 
 <section class="hws-home-stories" id="project-stories"><div class="hws-container">
     <div class="hws-home-stories__head">
@@ -125,11 +160,13 @@
 </div></section>
 
 @php
+    // Groups we have real site photography for point at hws-plants; the rest keep the
+    // existing illustrative renders in hws-services.
     $serviceGroupImages = [
-        'Water Treatment & Purification' => 'service-water-treatment.png',
-        'Wastewater Treatment' => 'service-wastewater.png',
-        'Hot Water & Energy Systems' => 'service-hot-water.png',
-        'Project & Lifecycle Support' => 'service-maintenance.png',
+        'Water Treatment & Purification' => 'hws-plants/ro-plant-twin-vessel-warehouse.jpg',
+        'Wastewater Treatment' => 'hws-services/service-wastewater.png',
+        'Hot Water & Energy Systems' => 'hws-services/service-hot-water.png',
+        'Project & Lifecycle Support' => 'hws-plants/ro-plant-rooftop-install.jpg',
     ];
 @endphp
 <section class="hws-home-services"><div class="hws-container">
@@ -139,7 +176,7 @@
             <div class="hws-home-service">
                 <div class="hws-home-service__img">
                     <a class="hws-home-service__imglink" href="{{ route('hws.services.show', $service['slug']) }}">
-                        <img src="{{ asset('images/hws-services/' . ($serviceGroupImages[$service['group']] ?? 'service-water-treatment.png')) }}" alt="{{ $service['title'] }}" loading="lazy" />
+                        <img src="{{ asset('images/' . ($serviceGroupImages[$service['group']] ?? 'hws-services/service-water-treatment.png')) }}" alt="{{ $service['title'] }}" loading="lazy" />
                     </a>
                     <a class="hws-home-service__quote" href="#" data-hws-request="engineer_callback" data-hws-product="{{ $service['title'] }}">Get quote</a>
                 </div>
@@ -155,11 +192,11 @@
 
 @php
     $categoryImages = [
-        'ro-plants' => 'service-purification.png',
-        'wastewater-treatment' => 'service-wastewater.png',
-        'water-atm-dispensing' => 'service-water-treatment.png',
-        'water-chillers-coolers' => 'service-hot-water.png',
-        'components-spare-parts' => 'service-maintenance.png',
+        'ro-plants' => 'hws-plants/commercial-ro-plant-skid.jpg',
+        'wastewater-treatment' => 'hws-services/service-wastewater.png',
+        'water-atm-dispensing' => 'hws-plants/twin-vessel-ro-plant-unit.jpg',
+        'water-chillers-coolers' => 'hws-services/service-hot-water.png',
+        'components-spare-parts' => 'hws-services/service-maintenance.png',
     ];
 @endphp
 <section class="hws-section" id="catalog"><div class="hws-container">
@@ -168,7 +205,7 @@
         @forelse ($categories->take(6) as $index => $category)
             @if ($category->slug)
                 <a class="hws-category" href="{{ route('shop.productOrCategory.index', $category->slug) }}">
-                    <img src="{{ asset('images/hws-services/' . ($categoryImages[$category->slug] ?? 'service-water-treatment.png')) }}" alt="{{ $category->name }}" loading="lazy">
+                    <img src="{{ asset('images/' . ($categoryImages[$category->slug] ?? 'hws-services/service-water-treatment.png')) }}" alt="{{ $category->name }}" loading="lazy">
                     <span class="hws-category__shade"></span>
                     <span class="hws-category__number">0{{ $index + 1 }}</span>
                     <div class="hws-category__copy"><h3>{{ $category->name }}</h3><p>Explore components</p></div>
@@ -177,7 +214,7 @@
             @endif
         @empty
             <a class="hws-category" href="{{ route('shop.search.index') }}?term=membrane">
-                <img src="{{ asset('images/hws-services/service-purification.png') }}" alt="RO Membranes" loading="lazy">
+                <img src="{{ asset('images/hws-plants/commercial-ro-plant-skid.jpg') }}" alt="RO Membranes" loading="lazy">
                 <span class="hws-category__shade"></span>
                 <span class="hws-category__number">01</span>
                 <div class="hws-category__copy"><h3>RO Membranes</h3><p>Explore components</p></div>
