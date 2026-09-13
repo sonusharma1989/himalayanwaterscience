@@ -168,9 +168,19 @@
         'Hot Water & Energy Systems' => 'hws-services/service-hot-water.png',
         'Project & Lifecycle Support' => 'hws-plants/ro-plant-rooftop-install.jpg',
     ];
+    $categoryImages = [
+        'ro-plants' => 'hws-plants/commercial-ro-plant-skid.jpg',
+        'wastewater-treatment' => 'hws-services/service-wastewater.png',
+        'water-atm-dispensing' => 'hws-plants/twin-vessel-ro-plant-unit.jpg',
+        'water-chillers-coolers' => 'hws-services/service-hot-water.png',
+        'components-spare-parts' => 'hws-services/service-maintenance.png',
+    ];
 @endphp
-<section class="hws-home-services"><div class="hws-container">
-    <div class="hws-section__head"><div><span class="hws-eyebrow">Our core services</span><h2>Engineering beyond equipment</h2></div><a href="{{ route('hws.services.index') }}">View all services →</a></div>
+<section class="hws-home-services" id="catalog"><div class="hws-container">
+    <div class="hws-section__head"><div><span class="hws-eyebrow">Our core services & products</span><h2>Engineering beyond equipment</h2></div><a href="{{ route('hws.services.index') }}">View all services →</a></div>
+
+    {{-- Services sub-section --}}
+    <h4 class="hws-subsection-label">Services</h4>
     <div class="hws-home-services__grid">
         @foreach ($homeServices as $service)
             <div class="hws-home-service">
@@ -188,19 +198,9 @@
             </div>
         @endforeach
     </div>
-</div></section>
 
-@php
-    $categoryImages = [
-        'ro-plants' => 'hws-plants/commercial-ro-plant-skid.jpg',
-        'wastewater-treatment' => 'hws-services/service-wastewater.png',
-        'water-atm-dispensing' => 'hws-plants/twin-vessel-ro-plant-unit.jpg',
-        'water-chillers-coolers' => 'hws-services/service-hot-water.png',
-        'components-spare-parts' => 'hws-services/service-maintenance.png',
-    ];
-@endphp
-<section class="hws-section" id="catalog"><div class="hws-container">
-    <div class="hws-section__head"><div><span class="hws-eyebrow">Browse the range</span><h2>Shop by system</h2></div><a href="{{ route('shop.search.index') }}?term=water">View all products →</a></div>
+    {{-- Shop by system sub-section --}}
+    <h4 class="hws-subsection-label" style="margin-top:48px">Shop by system <a href="{{ route('shop.search.index') }}?term=water" class="hws-subsection-link">View all products →</a></h4>
     <div class="hws-category-grid">
         @forelse ($categories->take(6) as $index => $category)
             @if ($category->slug)
